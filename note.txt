@@ -1,0 +1,18 @@
+#=====================================================================
+Diskusi Kesepakatan dan Kesepakatan Magang 24 Agustus 2026
+Projek diberikan pada hari/tanggal: Senin, 27 Juli 2026
+----------------------------------------------------------------------
+#=====================================================================
+Minggu 1 tanggal 27 Juli - 01 Agustus 2026
+  - Pembagian Tugas dan analisa kebutuhan sistem
+  - Pembuatan Diagaram: usecase, flowchart, activity, squence, class
+  - Pembuatan desain wireframe
+  - Laporan projek hari/tanggal: Sabtu, 01 Agustus 2026
+----------------------------------------------------------------------
+#=====================================================================
+Minggu 2 tanggal 03 Agustus - 08 Agustus 2026
+  - Penerapan projek ke kodingan halaman login dan register
+  - Pembuatan UI/UX
+  - Laporan projek hari/tanggal: Sabtu, 08 Agustus 2026
+----------------------------------------------------------------------
+#=====================================================================
