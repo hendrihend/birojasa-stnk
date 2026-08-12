@@ -28,9 +28,27 @@
                         </dd>
                     </div>
                     <div class="py-4 grid grid-cols-1 sm:grid-cols-3 sm:gap-4">
+                        <dt class="text-sm font-bold text-gray-500">Nomor Rangka</dt>
+                        <dd class="mt-1 text-base text-gray-900 sm:col-span-2 sm:mt-0 font-medium">
+                            {{ $vehicle->no_rangka ?? '-' }}
+                        </dd>
+                    </div>
+                    <div class="py-4 grid grid-cols-1 sm:grid-cols-3 sm:gap-4">
+                        <dt class="text-sm font-bold text-gray-500">Nomor Mesin</dt>
+                        <dd class="mt-1 text-base text-gray-900 sm:col-span-2 sm:mt-0 font-medium">
+                            {{ $vehicle->no_mesin ?? '-' }}
+                        </dd>
+                    </div>
+                    <div class="py-4 grid grid-cols-1 sm:grid-cols-3 sm:gap-4">
                         <dt class="text-sm font-bold text-gray-500">Tahun Pembuatan</dt>
                         <dd class="mt-1 text-base text-gray-900 sm:col-span-2 sm:mt-0 font-medium">
                             {{ $vehicle->tahun_pembuatan ?? '-' }}
+                        </dd>
+                    </div>
+                    <div class="py-4 grid grid-cols-1 sm:grid-cols-3 sm:gap-4">
+                        <dt class="text-sm font-bold text-gray-500">Warna</dt>
+                        <dd class="mt-1 text-base text-gray-900 sm:col-span-2 sm:mt-0 font-medium">
+                            {{ $vehicle->warna ?? '-' }}
                         </dd>
                     </div>
                     <div class="py-4 grid grid-cols-1 sm:grid-cols-3 sm:gap-4">
