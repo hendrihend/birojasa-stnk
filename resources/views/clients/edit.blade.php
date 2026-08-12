@@ -1,13 +1,14 @@
 @extends('layouts.app')
+
 @section('title', 'Edit Klien')
-@section('header_title', 'Edit Data Klien')
+@section('header_title', 'Edit Data Klien: ' . $client->nama_lengkap)
 
 @section('content')
-<div style="background: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); max-width: 600px;">
+    <div class="max-w-2xl mx-auto bg-white p-8 rounded-xl shadow-sm border border-gray-100">
         
         @if($errors->any())
-            <div style="color: red; margin-bottom: 15px;">
-                <ul style="padding-left: 20px;">
+            <div class="mb-6 px-4 py-3 bg-red-50 border-l-4 border-red-500 text-red-700 rounded shadow-sm">
+                <ul class="list-disc list-inside text-sm font-medium">
                     @foreach($errors->all() as $error)
                         <li>{{ $error }}</li>
                     @endforeach
@@ -15,34 +16,44 @@
             </div>
         @endif
 
-        <!-- Form mengarah ke route update dan membawa ID klien -->
         <form action="{{ route('clients.update', $client->id) }}" method="POST">
             @csrf
-            @method('PUT') <!-- Wajib untuk proses update di Laravel -->
+            @method('PUT')
+            
+            <div class="space-y-5">
+                <div>
+                    <label class="block text-sm font-bold text-gray-700 mb-1">Nama Lengkap <span class="text-red-500">*</span></label>
+                    <input type="text" name="nama_lengkap" value="{{ old('nama_lengkap', $client->nama_lengkap) }}" required 
+                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-shadow bg-gray-50 focus:bg-white">
+                </div>
 
-            <div style="margin-bottom: 15px;">
-                <label style="display: block; margin-bottom: 5px; font-weight: bold;">Nama Lengkap (Wajib)</label>
-                <input type="text" name="nama_lengkap" value="{{ old('nama_lengkap', $client->nama_lengkap) }}" required style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px;">
+                <div>
+                    <label class="block text-sm font-bold text-gray-700 mb-1">NIK</label>
+                    <input type="number" name="nik" value="{{ old('nik', $client->nik) }}" 
+                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-shadow bg-gray-50 focus:bg-white">
+                </div>
+
+                <div>
+                    <label class="block text-sm font-bold text-gray-700 mb-1">Nomor WhatsApp <span class="text-red-500">*</span></label>
+                    <input type="text" name="no_whatsapp" value="{{ old('no_whatsapp', $client->no_whatsapp) }}" required 
+                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-shadow bg-gray-50 focus:bg-white">
+                </div>
+
+                <div>
+                    <label class="block text-sm font-bold text-gray-700 mb-1">Alamat Lengkap</label>
+                    <textarea name="alamat" rows="3" 
+                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-shadow bg-gray-50 focus:bg-white resize-none">{{ old('alamat', $client->alamat) }}</textarea>
+                </div>
             </div>
 
-            <div style="margin-bottom: 15px;">
-                <label style="display: block; margin-bottom: 5px; font-weight: bold;">NIK KTP</label>
-                <input type="text" name="nik" value="{{ old('nik', $client->nik) }}" style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px;">
+            <div class="mt-8 flex gap-3">
+                <button type="submit" class="px-6 py-2.5 bg-gray-900 hover:bg-gray-800 text-white font-bold rounded-lg shadow-sm transition-colors">
+                    Perbarui Data
+                </button>
+                <a href="{{ route('clients.index') }}" class="px-6 py-2.5 bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold rounded-lg transition-colors">
+                    Batal
+                </a>
             </div>
-
-            <div style="margin-bottom: 15px;">
-                <label style="display: block; margin-bottom: 5px; font-weight: bold;">Nomor WhatsApp</label>
-                <input type="text" name="no_whatsapp" value="{{ old('no_whatsapp', $client->no_whatsapp) }}" style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px;">
-            </div>
-
-            <div style="margin-bottom: 20px;">
-                <label style="display: block; margin-bottom: 5px; font-weight: bold;">Alamat Domisili</label>
-                <textarea name="alamat" rows="4" style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px;">{{ old('alamat', $client->alamat) }}</textarea>
-            </div>
-
-            <button type="submit" style="padding: 10px 20px; background: #111; color: #fff; border: none; border-radius: 4px; cursor: pointer;">Update Data</button>
-            <a href="{{ route('clients.index') }}" style="margin-left: 15px; color: #666; text-decoration: none;">Batal</a>
         </form>
     </div>
-
 @endsection

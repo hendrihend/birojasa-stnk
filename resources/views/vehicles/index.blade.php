@@ -1,60 +1,85 @@
 @extends('layouts.app')
+
 @section('title', 'Data Kendaraan')
 @section('header_title', 'Manajemen Data Kendaraan')
 
 @section('content')
-<div style="background: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.05);">
-        
-        <!-- Pesan Sukses -->
-        @if(session('success'))
-            <div style="background: #d4edda; color: #155724; padding: 10px; margin-bottom: 15px; border-radius: 4px;">
-                {{ session('success') }}
-            </div>
+    <!-- Pesan Sukses -->
+    @if(session('success'))
+        <div class="mb-5 px-4 py-3 bg-green-100 border-l-4 border-green-500 text-green-700 rounded shadow-sm flex items-center gap-2">
+            <i class="fa-solid fa-circle-check"></i> {{ session('success') }}
+        </div>
+    @endif
+
+    <!-- Action Bar (Tombol Tambah & Search) -->
+    <div class="flex flex-col md:flex-row justify-between items-center gap-4 mb-6">
+        @if(Auth::user()->role === 'super_admin')
+            <a href="{{ route('vehicles.create') }}" class="px-5 py-2.5 bg-gray-900 hover:bg-gray-800 text-white font-bold rounded-lg shadow-sm transition-colors w-full md:w-auto text-center flex items-center justify-center gap-2">
+                <i class="fa-solid fa-plus"></i> Tambah Kendaraan Baru
+            </a>
+        @else
+            <!-- Spacer kosong agar form pencarian tetap di kanan untuk admin biasa -->
+            <div></div> 
         @endif
 
-        <a href="{{ route('vehicles.create') }}" style="display: inline-block; margin-bottom: 20px; padding: 10px 15px; background: #111; color: #fff; text-decoration: none; border-radius: 4px;">+ Tambah Kendaraan Baru</a>
+        <!-- Kotak Pencarian -->
+        <form action="{{ route('vehicles.index') }}" method="GET" class="flex w-full md:w-auto gap-2">
+            <input type="text" name="search" value="{{ request('search') }}" placeholder="Cari Nopol, Merk, atau Pemilik..." class="w-full md:w-80 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-shadow">
+            
+            @if(request('search'))
+                <a href="{{ route('vehicles.index') }}" class="px-4 py-2 bg-red-100 hover:bg-red-200 text-red-600 font-bold rounded-lg transition-colors flex items-center"><i class="fa-solid fa-rotate-left"></i></a>
+            @endif
+        </form>
+    </div>
 
-        <table style="width: 100%; border-collapse: collapse; text-align: left;">
-            <thead>
-                <tr style="border-bottom: 2px solid #eee;">
-                    <th style="padding: 12px 0;">No</th>
-                    <th>Nomor Polisi</th>
-                    <th>Nama Klien</th>
-                    <th>Nama Pemilik</th>
-                    <th>Merk & Tipe</th>
-                    <th>Tahun Pembuatan</th>
-                    <th>Aksi</th>
-                </tr>
-            </thead>
-            <tbody>
-                @forelse($vehicles as $index => $vehicle)
-                <tr style="border-bottom: 1px solid #eee;">
-                    <td style="padding: 12px 0;">{{ $index + 1 }}</td>
-                    <td style="font-weight: bold; text-transform: uppercase;">{{ $vehicle->nopol }}</td>
-                    
-                    <!-- Memanggil relasi data Klien -->
-                    <td>{{ $vehicle->client->nama_lengkap ?? 'Data Tidak Ditemukan' }}</td>
-                    <td>{{ $vehicle->nama_pemilik ?? 'Data Tidak Ditemukan' }}</td>
-                    
-                    <td>{{ $vehicle->merk }} {{ $vehicle->tipe }}</td>
-                    <td>{{ $vehicle->tahun_pembuatan ?? '-' }}</td>
-                    <td>
-                        <a href="{{ route('documents.index', $vehicle->id) }}" style="color: #27ae60; text-decoration: none; margin-right: 10px; font-weight:bold;">Arsip Dokumen</a>
-                        <a href="{{ route('vehicles.edit', $vehicle->id) }}" style="color: #3498db; text-decoration: none; margin-right: 10px;">Edit</a> 
-                        
-                        <form action="{{ route('vehicles.destroy', $vehicle->id) }}" method="POST" style="display:inline;" onsubmit="return confirm('Apakah Anda yakin ingin menghapus data kendaraan ini?');">
-                            @csrf
-                            @method('DELETE')
-                            <button type="submit" style="color: #e74c3c; background: none; border: none; cursor: pointer; font-size: 16px;">Hapus</button>
-                        </form>
-                    </td>
-                </tr>
-                @empty
-                <tr>
-                    <td colspan="6" style="text-align: center; padding: 20px; color: #666;">Belum ada data kendaraan.</td>
-                </tr>
-                @endforelse
-            </tbody>
-        </table>
+    <!-- Tabel Data Kendaraan -->
+    <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+        <div class="overflow-x-auto">
+            <table class="w-full text-left border-collapse">
+                <thead>
+                    <tr class="bg-gray-50 border-b border-gray-200 text-sm text-gray-600 uppercase tracking-wider">
+                        <th class="p-4 font-bold">No. Polisi</th>
+                        <th class="p-4 font-bold">Merk & Tipe</th>
+                        <th class="p-4 font-bold">Nama di STNK</th>
+                        <th class="p-4 font-bold">Klien (Pemilik)</th>
+                        <th class="p-4 font-bold text-center">Aksi</th>
+                    </tr>
+                </thead>
+                <tbody class="text-sm divide-y divide-gray-100">
+                    @forelse($vehicles as $vehicle)
+                    <tr class="hover:bg-gray-50/80 transition-colors">
+                        <td class="p-4 font-black text-gray-800 tracking-wider uppercase">{{ $vehicle->nopol }}</td>
+                        <td class="p-4 text-gray-700">
+                            {{ $vehicle->merk }} 
+                            <span class="text-xs font-bold bg-gray-200 text-gray-600 px-2 py-1 rounded ml-1">{{ $vehicle->tipe ?? '-' }}</span>
+                        </td>
+                        <td class="p-4 text-gray-600">{{ $vehicle->nama_pemilik }}</td>
+                        <td class="p-4">
+                            <span class="font-bold text-blue-700 bg-blue-50 border border-blue-100 px-3 py-1.5 rounded-full whitespace-nowrap flex items-center gap-1.5 w-max">
+                                <i class="fa-solid fa-user-tag"></i> {{ $vehicle->client->nama_lengkap ?? 'Tanpa Pemilik' }}
+                            </span>
+                        </td>
+                        <td class="p-4 flex flex-wrap justify-center gap-3">
+                            <a href="{{ route('documents.index', $vehicle->id) }}" class="text-green-600 hover:text-green-800 font-bold px-2 py-1 hover:bg-green-50 rounded transition-colors flex items-center gap-1"><i class="fa-solid fa-folder-open"></i> Dokumen</a>
+                            <a href="{{ route('vehicles.show', $vehicle->id) }}" class="text-purple-600 hover:text-purple-800 font-bold px-2 py-1 hover:bg-purple-50 rounded transition-colors flex items-center gap-1"><i class="fa-solid fa-qrcode"></i> QR</a>
+                            
+                            @if(Auth::user()->role === 'super_admin')
+                                <span class="text-gray-300 py-1">|</span>
+                                <a href="{{ route('vehicles.edit', $vehicle->id) }}" class="text-blue-500 hover:text-blue-700 font-bold px-2 py-1 hover:bg-blue-50 rounded transition-colors"><i class="fa-solid fa-pen-to-square"></i></a>
+                                <form action="{{ route('vehicles.destroy', $vehicle->id) }}" method="POST" onsubmit="return confirm('Yakin ingin menghapus data kendaraan ini?');" class="inline">
+                                    @csrf @method('DELETE')
+                                    <button type="submit" class="text-red-500 hover:text-red-700 font-bold px-2 py-1 hover:bg-red-50 rounded transition-colors"><i class="fa-solid fa-trash-can"></i></button>
+                                </form>
+                            @endif
+                        </td>
+                    </tr>
+                    @empty
+                    <tr>
+                        <td colspan="5" class="p-10 text-center text-gray-500 text-base">Belum ada data kendaraan yang tersimpan.</td>
+                    </tr>
+                    @endforelse
+                </tbody>
+            </table>
+        </div>
     </div>
 @endsection

@@ -17,7 +17,8 @@ return new class extends Migration
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
-            $table->enum('role', ['super_admin'])->default('super_admin');
+            // $table->enum('role', ['super_admin'])->default('super_admin');
+            $table->enum('role', ['super_admin', 'admin'])->default('admin')->after('password');
             $table->rememberToken();
             $table->timestamps();
         });
@@ -43,7 +44,9 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('users');
+        Schema::dropIfExists('users', function (Blueprint $table){
+            $table->dropColumn('role');
+        });
         Schema::dropIfExists('password_reset_tokens');
         Schema::dropIfExists('sessions');
     }

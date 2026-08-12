@@ -4,80 +4,102 @@
 @section('header_title', 'Jadwal Jatuh Tempo Pajak')
 
 @section('content')
-    <div style="background: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.05);">
-        
-        @if(session('success'))
-            <div style="background: #d4edda; color: #155724; padding: 10px; margin-bottom: 15px; border-radius: 4px;">{{ session('success') }}</div>
-        @endif
+    <!-- Pesan Sukses -->
+    @if(session('success'))
+        <div class="mb-5 px-4 py-3 bg-green-100 border-l-4 border-green-500 text-green-700 rounded shadow-sm flex items-center">
+            <span class="mr-2">✅</span> {{ session('success') }}
+        </div>
+    @endif
 
-        <a href="{{ route('stnk_records.create') }}" style="display: inline-block; margin-bottom: 20px; padding: 10px 15px; background: #111; color: #fff; text-decoration: none; border-radius: 4px;">+ Tambah Data STNK/Pajak</a>
+    <!-- Action Bar -->
+    <div class="flex flex-col md:flex-row justify-between items-center gap-4 mb-6">
+        <a href="{{ route('stnk_records.create') }}" class="px-5 py-2.5 bg-gray-900 hover:bg-gray-800 text-white font-bold rounded-lg shadow-sm transition-colors w-full md:w-auto text-center">
+            + Tambah Data STNK/Pajak
+        </a>
 
-        <table style="width: 100%; border-collapse: collapse; text-align: left; font-size: 14px;">
-            <thead>
-                <tr style="border-bottom: 2px solid #eee;">
-                    <th style="padding: 12px 0;">Kendaraan</th>
-                    <th>Nomor STNK</th>
-                    <th>Jatuh Tempo Pajak</th>
-                    <th>Jatuh Tempo Kaleng</th>
-                    <th>Status</th>
-                    <th>Aksi</th>
-                </tr>
-            </thead>
-            <tbody>
-                @forelse($records as $record)
-                
-                <!-- Logika Perhitungan Hari -->
-                @php
-                    $tglPajak = \Carbon\Carbon::parse($record->tgl_jatuh_tempo_pajak);
-                    $hariIni = \Carbon\Carbon::now()->startOfDay();
-                    $sisaHari = $hariIni->diffInDays($tglPajak, false);
-                    
-                    // Menentukan Warna Baris
-                    $bgColor = '';
-                    if($sisaHari < 0) {
-                        $bgColor = '#fff3f3'; // Merah Muda (Terlewat)
-                    } elseif ($sisaHari <= 30) {
-                        $bgColor = '#fffdf0'; // Kuning Muda (Mendekati)
-                    }
-                @endphp
+        <!-- Kotak Pencarian -->
+        <form action="{{ route('stnk_records.index') }}" method="GET" class="flex w-full md:w-auto gap-2">
+            <input type="text" name="search" value="{{ request('search') }}" placeholder="Cari Nopol atau No. STNK..." class="w-full md:w-80 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-shadow">
+            
+            @if(request('search'))
+                <a href="{{ route('stnk_records.index') }}" class="px-4 py-2 bg-red-100 hover:bg-red-200 text-red-600 font-bold rounded-lg transition-colors flex items-center">Reset</a>
+            @endif
+        </form>
+    </div>
 
-                <tr style="border-bottom: 1px solid #eee; background: {{ $bgColor }};">
-                    <td style="padding: 12px 5px;">
-                        <strong>{{ $record->vehicle->nopol ?? '-' }}</strong><br>
-                        <span style="color: #666; font-size: 12px;">{{ $record->vehicle->client->nama_lengkap ?? '-' }}</span>
-                    </td>
-                    <td>{{ $record->no_stnk }}</td>
+    <!-- Tabel Data STNK -->
+    <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+        <div class="overflow-x-auto">
+            <table class="w-full text-left border-collapse">
+                <thead>
+                    <tr class="bg-gray-50 border-b border-gray-200 text-sm text-gray-600 uppercase tracking-wider">
+                        <th class="p-4 font-bold">Kendaraan</th>
+                        <th class="p-4 font-bold">Nomor STNK</th>
+                        <th class="p-4 font-bold">Jatuh Tempo Pajak</th>
+                        <th class="p-4 font-bold">Jatuh Tempo Kaleng</th>
+                        <th class="p-4 font-bold text-center">Status</th>
+                        <th class="p-4 font-bold text-center">Aksi</th>
+                    </tr>
+                </thead>
+                <tbody class="text-sm divide-y divide-gray-100">
+                    @forelse($records as $record)
                     
-                    <!-- Kolom Jatuh Tempo Pajak Tahunan -->
-                    <td>
-                        <strong style="color: {{ $sisaHari < 0 ? '#e74c3c' : ($sisaHari <= 30 ? '#f39c12' : '#27ae60') }};">
-                            {{ $tglPajak->format('d M Y') }}
-                        </strong>
-                        <br>
-                        <span style="font-size: 12px; color: #666;">
-                            {{ $sisaHari < 0 ? 'Terlewat ' . abs($sisaHari) . ' hari' : ($sisaHari == 0 ? 'Hari ini!' : $sisaHari . ' hari lagi') }}
-                        </span>
-                    </td>
-                    
-                    <td>{{ \Carbon\Carbon::parse($record->tgl_habis_stnk)->format('d M Y') }}</td>
-                    
-                    <td>
-                        <span style="padding: 4px 8px; border-radius: 4px; font-size: 12px; background: {{ $record->status_aktif ? '#d4edda' : '#f8d7da' }}; color: {{ $record->status_aktif ? '#155724' : '#721c24' }};">
-                            {{ $record->status_aktif ? 'Aktif' : 'Nonaktif' }}
-                        </span>
-                    </td>
-                    <td>
-                        <form action="{{ route('stnk_records.destroy', $record->id) }}" method="POST" onsubmit="return confirm('Yakin ingin menghapus data STNK ini?');">
-                            @csrf
-                            @method('DELETE')
-                            <button type="submit" style="color: #e74c3c; background: none; border: none; cursor: pointer;">Hapus</button>
-                        </form>
-                    </td>
-                </tr>
-                @empty
-                <tr><td colspan="6" style="text-align: center; padding: 20px; color: #666;">Belum ada data STNK/Pajak.</td></tr>
-                @endforelse
-            </tbody>
-        </table>
+                    @php
+                        // Logika Perhitungan Hari & Warna Tailwind
+                        $tglPajak = \Carbon\Carbon::parse($record->tgl_jatuh_tempo_pajak);
+                        $hariIni = \Carbon\Carbon::now()->startOfDay();
+                        $sisaHari = $hariIni->diffInDays($tglPajak, false);
+                        
+                        $rowBg = 'hover:bg-gray-50/80'; // Default Putih
+                        $textDateColor = 'text-green-600'; // Default Aman
+                        
+                        if($sisaHari < 0) {
+                            $rowBg = 'bg-red-50/50 hover:bg-red-50'; // Terlewat (Merah)
+                            $textDateColor = 'text-red-600';
+                        } elseif ($sisaHari <= 30) {
+                            $rowBg = 'bg-yellow-50/50 hover:bg-yellow-50'; // Mendekati (Kuning)
+                            $textDateColor = 'text-yellow-600';
+                        }
+                    @endphp
+
+                    <tr class="{{ $rowBg }} transition-colors">
+                        <td class="p-4">
+                            <strong class="text-gray-800 text-base block">{{ $record->vehicle->nopol ?? '-' }}</strong>
+                            <span class="text-xs text-gray-500">{{ $record->vehicle->client->nama_lengkap ?? '-' }}</span>
+                        </td>
+                        <td class="p-4 text-gray-700 font-medium tracking-wide">{{ $record->no_stnk }}</td>
+                        
+                        <td class="p-4">
+                            <strong class="{{ $textDateColor }} block text-base">{{ $tglPajak->format('d M Y') }}</strong>
+                            <span class="text-xs font-bold text-gray-500 bg-white px-2 py-0.5 rounded shadow-sm border mt-1 inline-block">
+                                {{ $sisaHari < 0 ? 'Terlewat ' . abs($sisaHari) . ' hari' : ($sisaHari == 0 ? 'Hari ini!' : $sisaHari . ' hari lagi') }}
+                            </span>
+                        </td>
+                        
+                        <td class="p-4 text-gray-600 font-medium">{{ \Carbon\Carbon::parse($record->tgl_habis_stnk)->format('d M Y') }}</td>
+                        
+                        <td class="p-4 text-center">
+                            @if($record->status_aktif)
+                                <span class="px-3 py-1 bg-green-100 text-green-700 border border-green-200 text-xs font-bold rounded-full">Aktif</span>
+                            @else
+                                <span class="px-3 py-1 bg-gray-100 text-gray-500 border border-gray-200 text-xs font-bold rounded-full">Nonaktif</span>
+                            @endif
+                        </td>
+                        
+                        <td class="p-4 text-center">
+                            <form action="{{ route('stnk_records.destroy', $record->id) }}" method="POST" onsubmit="return confirm('Yakin ingin menghapus data STNK ini?');" class="inline">
+                                @csrf @method('DELETE')
+                                <button type="submit" class="text-red-500 hover:text-red-700 font-bold px-3 py-1 hover:bg-red-50 rounded transition-colors">Hapus</button>
+                            </form>
+                        </td>
+                    </tr>
+                    @empty
+                    <tr>
+                        <td colspan="6" class="p-10 text-center text-gray-500 text-base">Belum ada data STNK/Pajak yang tercatat.</td>
+                    </tr>
+                    @endforelse
+                </tbody>
+            </table>
+        </div>
     </div>
 @endsection

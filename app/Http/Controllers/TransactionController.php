@@ -8,10 +8,22 @@ use Illuminate\Http\Request;
 
 class TransactionController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        // ambil data transaksi beserta relasi kendaraan & pemiliknya
-        $transactions = Transaction::with('vehicle.client')->latest()->get();
+        $search = $request->search;
+
+        // Cari berdasarkan No Invoice, nopol, atau nama klien
+        $transactions = Transaction::with('vehicle.client')
+            ->when($search, function ($query, $search) {
+                return $query->where('invoice_no', 'like', "%{$search}%")
+                             ->orWhere('status_proses', 'like', "%{$search}%")
+                             ->orWhereHas('vehicle', function($q) use ($search) {
+                                 $q->where('nopol', 'like', "%{$search}%")
+                                   ->orWhereHas('client', function($q2) use ($search) {
+                                       $q2->where('nama_lengkap', 'like', "%{$search}%");
+                                   });
+                             });
+            })->latest()->get();
         return view('transactions.index', compact('transactions'));
     }
 

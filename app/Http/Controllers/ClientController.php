@@ -7,10 +7,15 @@ use App\Models\Client;
 
 class ClientController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        // ambil semua data client dari database
-        $clients = Client::latest()->get(); // urutkan berdasarkan created_at terbaru
+        $search = $request->search;
+        // cari berdasarkan nam, nik dan no whatsapp
+        $clients = Client::when($search, function($query, $search) {
+            return $query->where('nama_lengkap', 'like', "%{$search}%")
+                        ->orWhere('nik', 'like', "%{$search}%")
+                        ->orWhere('no_whatsapp', 'like', "%{$search}%");
+        })->latest()->get();
         return view('clients.index', compact('clients'));
     }
 
@@ -62,7 +67,7 @@ class ClientController extends Controller
         //Update data klien
         $client->update($request->all());
         //Redirect ke halaman index dengan pesan sukses
-        return redirect()->route('clients.index')->with('success', 'Data client berhasil diperbarui.');
+        return redirect()->route('clients.index')->with('success', 'Data client ' . $client->nama_lengkap .' berhasil diperbarui.');
     }
 
     public function destroy(string $id)

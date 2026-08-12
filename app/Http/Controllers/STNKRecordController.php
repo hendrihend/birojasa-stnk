@@ -9,10 +9,21 @@ use Illuminate\Http\Request;
 class STNKRecordController extends Controller
 {
 
-    public function index()
+    public function index(Request $request)
     {
-        // ambil data STNK beserta relasi kendaraan dan klien
-        $records = STNKRecord::with('vehicle.client')->orderBy('tgl_jatuh_tempo_pajak', 'asc')->get();
+        $search = $request->search;
+
+        // Cari berdasarkan No STNK atau Nopol
+        $records = STNKRecord::with('vehicle.client')
+            ->when($search, function ($query, $search) {
+                return $query->where('no_stnk', 'like', "%{$search}%")
+                             ->orWhereHas('vehicle', function($q) use ($search) {
+                                 $q->where('nopol', 'like', "%{$search}%")
+                                   ->orWhereHas('client', function($q2) use ($search) {
+                                       $q2->where('nama_lengkap', 'like', "%{$search}%");
+                                   });
+                             });
+            })->orderBy('tgl_jatuh_tempo_pajak', 'asc')->get();
         return view('stnk_records.index', compact('records'));
     }
 

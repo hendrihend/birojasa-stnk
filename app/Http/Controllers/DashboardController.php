@@ -10,13 +10,14 @@ use Carbon\Carbon;
 
 class DashboardController extends Controller
 {
-    public function index() 
+    public function index(Request $request) 
     {
         // ringkasan data top cards
         $totalKendaraan = Vehicle::count();
         $stnkAktif = STNKRecord::where('status_aktif', true)->count();
 
         $kendaraanDiproses = Transaction::whereNotIn('status_proses', ['Selesai', 'Belum Diproses'])->count();
+        $kendaraanSelesaiDiproses = Transaction::where('status_proses', ['Selesai'])->count();
         
         $totalPengeluaran = Transaction::sum('total_biaya');
 
@@ -66,13 +67,27 @@ class DashboardController extends Controller
             ];
         });
 
+        // fitur pencarian
+        $search = $request->input('search');
+        $searchResults = collect(); // default: data kosong
+
+        // cari jika ada input berdasarkan nopol atau nama klien
+        if ($search) {
+            $searchResults = Vehicle::with('client')
+            ->where('nopol', 'LIKE', "%{$search}%")
+            ->orWhereHas('client', function ($query) use ($search) {
+                $query->where('nama_lengkap', 'LIKE', "%{$search}%");
+            })->take(10)->get();
+        }
+
         // C. MENGIRIM DATA KE VIEW
         return view('dashboard', compact(
             'totalKendaraan',
             'stnkAktif',
             'kendaraanDiproses',
+            'kendaraanSelesaiDiproses',
             'totalPengeluaran',
-            'alerts'
+            'alerts', 'searchResults', 'search'
         ));
 
     }

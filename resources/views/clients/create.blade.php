@@ -1,45 +1,60 @@
-<!DOCTYPE html>
-<html lang="id">
-<head>
-    <title>Tambah Klien</title>
-</head>
-<body style="font-family: sans-serif; padding: 20px;">
-    <h2>Tambah Data Klien</h2>
+@extends('layouts.app')
 
-    @if($errors->any())
-        <div style="color: red; margin-bottom: 15px;">
-            <ul>
-                @foreach($errors->all() as $error)
-                    <li>{{ $error }}</li>
-                @endforeach
-            </ul>
-        </div>
-    @endif
+@section('title', 'Tambah Klien')
+@section('header_title', 'Tambah Data Klien Baru')
 
-    <form action="{{ route('clients.store') }}" method="POST">
-        @csrf
-        <div style="margin-bottom: 15px;">
-            <label>Nama Lengkap (Wajib)</label><br>
-            <input type="text" name="nama_lengkap" value="{{ old('nama_lengkap') }}" required style="width: 300px; padding: 8px;">
-        </div>
+@section('content')
+    <div class="max-w-2xl mx-auto bg-white p-8 rounded-xl shadow-sm border border-gray-100">
+        
+        <!-- Pesan Error -->
+        @if($errors->any())
+            <div class="mb-6 px-4 py-3 bg-red-50 border-l-4 border-red-500 text-red-700 rounded shadow-sm">
+                <ul class="list-disc list-inside text-sm font-medium">
+                    @foreach($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+        @endif
 
-        <div style="margin-bottom: 15px;">
-            <label>NIK KTP</label><br>
-            <input type="text" name="nik" value="{{ old('nik') }}" style="width: 300px; padding: 8px;">
-        </div>
+        <form action="{{ route('clients.store') }}" method="POST">
+            @csrf
+            
+            <div class="space-y-5">
+                <div>
+                    <label class="block text-sm font-bold text-gray-700 mb-1">Nama Lengkap <span class="text-red-500">*</span></label>
+                    <input type="text" name="nama_lengkap" value="{{ old('nama_lengkap') }}" required placeholder="Contoh: Budi Santoso" 
+                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-shadow bg-gray-50 focus:bg-white">
+                </div>
 
-        <div style="margin-bottom: 15px;">
-            <label>Nomor WhatsApp</label><br>
-            <input type="text" name="no_whatsapp" value="{{ old('no_whatsapp') }}" style="width: 300px; padding: 8px;">
-        </div>
+                <div>
+                    <label class="block text-sm font-bold text-gray-700 mb-1">NIK (Nomor Induk Kependudukan)</label>
+                    <input type="number" name="nik" value="{{ old('nik') }}" placeholder="16 Digit NIK KTP" 
+                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-shadow bg-gray-50 focus:bg-white">
+                </div>
 
-        <div style="margin-bottom: 15px;">
-            <label>Alamat Domisili</label><br>
-            <textarea name="alamat" rows="3" style="width: 300px; padding: 8px;">{{ old('alamat') }}</textarea>
-        </div>
+                <div>
+                    <label class="block text-sm font-bold text-gray-700 mb-1">Nomor WhatsApp <span class="text-red-500">*</span></label>
+                    <input type="text" name="no_whatsapp" value="{{ old('no_whatsapp') }}" required placeholder="Contoh: 08123456789" 
+                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-shadow bg-gray-50 focus:bg-white">
+                </div>
 
-        <button type="submit" style="padding: 10px 20px; background: #111; color: #fff; border: none; cursor: pointer;">Simpan Data</button>
-        <a href="{{ route('clients.index') }}" style="margin-left: 10px; color: #333;">Batal</a>
-    </form>
-</body>
-</html>
+                <div>
+                    <label class="block text-sm font-bold text-gray-700 mb-1">Alamat Lengkap</label>
+                    <textarea name="alamat" rows="3" placeholder="Alamat sesuai KTP atau domisili" 
+                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-shadow bg-gray-50 focus:bg-white resize-none">{{ old('alamat') }}</textarea>
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="mt-8 flex gap-3">
+                <button type="submit" class="px-6 py-2.5 bg-gray-900 hover:bg-gray-800 text-white font-bold rounded-lg shadow-sm transition-colors">
+                    Simpan Data
+                </button>
+                <a href="{{ route('clients.index') }}" class="px-6 py-2.5 bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold rounded-lg transition-colors">
+                    Batal
+                </a>
+            </div>
+        </form>
+    </div>
+@endsection

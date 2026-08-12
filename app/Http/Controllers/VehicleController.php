@@ -7,10 +7,20 @@ use Illuminate\Http\Request;
 
 class VehicleController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        // ambil semua data kendaraan beserta data klien terkait
-        $vehicles = Vehicle::with('client')->latest()->get();
+        $search = $request->search;
+
+        // Cari berdasarkan nopol, merk, atau nama klien pemiliknya
+        $vehicles = Vehicle::with('client')
+            ->when($search, function ($query, $search) {
+                return $query->where('nopol', 'like', "%{$search}%")
+                             ->orWhere('merk', 'like', "%{$search}%")
+                             ->orWhere('nama_pemilik', 'like', "%{$search}%")
+                             ->orWhereHas('client', function($q) use ($search) {
+                                 $q->where('nama_lengkap', 'like', "%{$search}%");
+                             });
+            })->latest()->get();
         return view('vehicles.index', compact('vehicles'));
     }
 
@@ -54,7 +64,11 @@ class VehicleController extends Controller
 
     public function show(string $id)
     {
-        //
+        $vehicle = Vehicle::with('client')->findOrFail($id);
+
+        // generate URL lengkap halaman ini untuk diubah menjadi QR
+        $url_kendaraan = route('vehicles.show', $vehicle->id);
+        return view('vehicles.show', compact('vehicle', 'url_kendaraan'));
     }
 
     public function edit(string $id)
