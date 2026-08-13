@@ -42,7 +42,10 @@
                         <th class="p-4 font-bold">Merk & Tipe</th>
                         <th class="p-4 font-bold">Nama di STNK</th>
                         <th class="p-4 font-bold">Klien (Pemilik)</th>
+                        <th class="p-4 font-bold text-center">Preview</th>
+                        @if(Auth::user()->role === 'super_admin')
                         <th class="p-4 font-bold text-center">Aksi</th>
+                        @endif
                     </tr>
                 </thead>
                 <tbody class="text-sm divide-y divide-gray-100">
@@ -59,19 +62,19 @@
                                 <i class="fa-solid fa-user-tag"></i> {{ $vehicle->client->nama_lengkap ?? 'Tanpa Pemilik' }}
                             </span>
                         </td>
-                        <td class="p-4 flex flex-wrap justify-center gap-3">
-                            <a href="{{ route('documents.index', $vehicle->id) }}" class="text-green-600 hover:text-green-800 font-bold px-2 py-1 hover:bg-green-50 rounded transition-colors flex items-center gap-1"><i class="fa-solid fa-folder-open"></i> Dokumen</a>
-                            <a href="{{ route('vehicles.show', $vehicle->id) }}" class="text-purple-600 hover:text-purple-800 font-bold px-2 py-1 hover:bg-purple-50 rounded transition-colors flex items-center gap-1"><i class="fa-solid fa-qrcode"></i> QR</a>
-                            
-                            @if(Auth::user()->role === 'super_admin')
-                                <span class="text-gray-300 py-1">|</span>
-                                <a href="{{ route('vehicles.edit', $vehicle->id) }}" class="text-blue-500 hover:text-blue-700 font-bold px-2 py-1 hover:bg-blue-50 rounded transition-colors"><i class="fa-solid fa-pen-to-square"></i></a>
-                                <form action="{{ route('vehicles.destroy', $vehicle->id) }}" method="POST" onsubmit="return confirm('Yakin ingin menghapus data kendaraan ini?');" class="inline">
-                                    @csrf @method('DELETE')
-                                    <button type="submit" class="text-red-500 hover:text-red-700 font-bold px-2 py-1 hover:bg-red-50 rounded transition-colors"><i class="fa-solid fa-trash-can"></i></button>
-                                </form>
-                            @endif
+                        <td class="p-4 text-center">
+                            <a href="{{ route('documents.index', $vehicle->id) }}" class="text-green-600 hover:text-green-800 font-bold px-2 py-1 hover:bg-green-50 rounded transition-colors items-center gap-1"><i class="fa-solid fa-folder-open"></i></a>
+                            <a href="{{ route('vehicles.show', $vehicle->id) }}" class="text-purple-600 hover:text-purple-800 font-bold px-2 py-1 hover:bg-purple-50 rounded transition-colors items-center gap-1"><i class="fa-solid fa-qrcode"></i></a>
                         </td>
+                        @if(Auth::user()->role === 'super_admin')
+                        <td class="p-4 text-center">
+                            <a href="{{ route('vehicles.edit', $vehicle->id) }}" class="text-blue-500 hover:text-blue-700 font-bold px-2 py-1 hover:bg-blue-50 rounded transition-colors"><i class="fa-solid fa-pen-to-square"></i></a>
+                            <form action="{{ route('vehicles.destroy', $vehicle->id) }}" method="POST" onsubmit="return confirm('Yakin ingin menghapus data kendaraan ini?');" class="inline">
+                                @csrf @method('DELETE')
+                                <button type="submit" class="text-red-500 hover:text-red-700 font-bold px-2 py-1 hover:bg-red-50 rounded transition-colors"><i class="fa-solid fa-trash-can"></i></button>
+                            </form>
+                        </td>
+                        @endif
                     </tr>
                     @empty
                     <tr>

@@ -7,7 +7,7 @@ class TransactionFactory extends Factory
 {
     public function definition(): array
     {
-        $status = ['Belum Diproses', 'Dokumen Lengkap', 'Menunggu Pembayaran', 'Sedang Diproses Samsat', 'Selesai'];
+        $status = ['Pending', 'Done', 'Cancel'];
         
         return [
             // vehicle_id akan diisi di Seeder

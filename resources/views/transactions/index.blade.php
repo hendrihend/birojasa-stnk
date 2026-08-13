@@ -57,9 +57,9 @@
                             @php
                                 // Logika Warna Status Tailwind
                                 $statusColor = 'bg-gray-100 text-gray-700'; // Default
-                                if($trx->status_proses == 'Selesai') $statusColor = 'bg-green-100 text-green-700 border-green-200';
-                                elseif($trx->status_proses == 'Sedang Diproses' || $trx->status_proses == 'Menunggu Pembayaran') $statusColor = 'bg-blue-100 text-blue-700 border-blue-200';
-                                elseif($trx->status_proses == 'Batal') $statusColor = 'bg-red-100 text-red-700 border-red-200';
+                                if($trx->status_proses == 'Done') $statusColor = 'bg-green-100 text-green-700 border-green-200';
+                                elseif($trx->status_proses == 'Pending' || $trx->status_proses == 'Menunggu Pembayaran') $statusColor = 'bg-blue-100 text-blue-700 border-blue-200';
+                                elseif($trx->status_proses == 'Cancel') $statusColor = 'bg-red-100 text-red-700 border-red-200';
                             @endphp
                             <span class="px-3 py-1 text-xs font-bold rounded-full border {{ $statusColor }}">
                                 {{ $trx->status_proses }}

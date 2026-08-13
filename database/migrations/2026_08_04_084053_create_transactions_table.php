@@ -18,10 +18,8 @@ return new class extends Migration
             $table->string('jenis_layanan', 50)->nullable();
             $table->decimal('total_biaya', 12, 2)->default(0);
             $table->enum('status_proses', [
-                'Belum Diproses', 'Dokumen Lengkap', 'Menunggu Pembayaran',
-                'Sedang Diproses Samsat', 'Proses Mutasi', 'STNK Sudah Jadi',
-                'Plat Nomor Sudah Jadi', 'Dokumen Sudah Diterima', 'Selesai'
-            ])->default('Belum Diproses');
+                'Pending', 'Done', 'Cancel'
+            ])->default('Pending');
             $table->date('tgl_masuk');
             $table->date('tgl_selesai')->nullable();
             $table->timestamps();

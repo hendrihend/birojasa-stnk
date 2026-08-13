@@ -105,7 +105,7 @@
                             <a href="{{ asset('storage/' . $doc->file_path) }}" target="_blank">Lihat File &nearr;</a>
                         </td>
                         <td class="p-4 text-gray-500">{{ $doc->created_at->setTimezone('Asia/Jakarta')->format('d M Y H:i:s') }}</td>
-                        @if(Auth::user()->role === 'super_admin' ? '4' : '3' )
+                        @if(Auth::user()->role === 'super_admin')
                         <td class="p-4 text-center">
                             <!-- Tombol Hapus -->
                             <form action="{{ route('documents.destroy', $doc->id) }}" method="POST" onsubmit="return confirm('Yakin ingin menghapus dokumen ini secara permanen?');" class="inline">
