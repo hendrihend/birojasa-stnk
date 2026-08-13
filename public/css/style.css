@@ -29,12 +29,19 @@
 
     /* Placeholder Logo */
     .logo-box {
-        width: 60px;
-        height: 60px;
-        border: 1px solid #333;
-        position: relative;
-        margin-bottom: 20px;
-    }
+    width: 60px;
+    height: 60px;
+    border: 1px solid #333;
+    position: relative;
+    margin-bottom: 20px;
+}
+
+img{
+    width: 60px;
+    height: 60px;
+    object-fit: cover;
+    margin-bottom: 20px;
+}
     .logo-box::before, .logo-box::after {
         content: '';
         position: absolute;

@@ -4,44 +4,124 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login - Sistem Biro Jasa</title>
-    <link rel="stylesheet" href="{{ asset('css/style.css') }}">
+    @vite('resources/css/app.css')
 </head>
 <body>
 
-    <div class="login-wrapper">
-        <!-- Placeholder Logo & Teks -->
-        <div class="logo-box">
-            <span class="cross-line"></span>
+    <div class="min-h-screen bg-gray-100 flex items-center justify-center px-4">
+
+    <div class="w-full max-w-md bg-white rounded-xl shadow-lg p-8">
+
+        <!-- Logo -->
+        <div class="flex justify-center">
+            <div class="w-20 h-20 flex items-center justify-center">
+                <img 
+                    src="{{ asset('images/logo.png') }}" 
+                    alt="Logo"
+                    class="w-20 h-20 object-contain"
+                >
+            </div>
         </div>
 
-        <!-- Judul -->
-        <h1 class="login-title">Login</h1>
+        <!-- Nama Aplikasi -->
+<div class="text-center mt-0 mb-4">
+    <h2 class="text-lg font-semibold text-gray-800">
+        Biro Jasa STNK
+    </h2>
 
-        <!-- Form Login -->
-        <form action="{{ route('login') }}" method="POST">
+    <p class="text-sm text-gray-500">
+        Management System
+    </p>
+</div>
+
+<!-- Judul Login -->
+<h2 class="text-2xl font-bold text-gray-900 text-center mt-6 mb-5">
+    Login
+</h2>
+
+        <!-- Form -->
+        <form action="{{ route('login') }}" method="POST" class="space-y-5">
             @csrf
-            <div class="input-group">
-                <label for="email">Email</label>
-                <input type="email" id="email" name="email" placeholder="Masukkan email" required>
+
+            <!-- Email -->
+            <div>
+                <label 
+                    for="email" 
+                    class="block text-sm font-semibold text-gray-700 mb-2"
+                >
+                    Email
+                </label>
+
+                <input
+                    type="email"
+                    id="email"
+                    name="email"
+                    placeholder="Masukkan email"
+                    class="w-full rounded-lg border border-gray-300 px-4 py-3
+                           text-gray-900
+                           focus:border-blue-500 focus:ring-2 focus:ring-blue-200
+                           outline-none transition"
+                >
             </div>
 
-            <div class="input-group">
-                <label for="password">Kata Sandi</label>
-                <input type="password" id="password" name="password" placeholder="Masukkan kata sandi" required>
+            <!-- Password -->
+            <div>
+                <label 
+                    for="password" 
+                    class="block text-sm font-semibold text-gray-700 mb-2"
+                >
+                    Kata Sandi
+                </label>
+
+                <input
+                    type="password"
+                    id="password"
+                    name="password"
+                    placeholder="Masukkan kata sandi"
+                    class="w-full rounded-lg border border-gray-300 px-4 py-3
+                           text-gray-900
+                           focus:border-blue-500 focus:ring-2 focus:ring-blue-200
+                           outline-none transition"
+                >
             </div>
 
-            <!-- Tautan Lupa Sandi (Sesuai kotak abu-abu di kanan bawah password) -->
-            <div class="forgot-password-container">
-                <a href="{{ route('password.request') }}" class="forgot-password-link">Lupa Kata Sandi?</a>
-            </div>
-
-            <button type="submit" class="btn-login">Login</button>
-            <button type="submit" class="btn-register">
-                <a href="{{ route('register') }}" >Daftar
+            <!-- Lupa Password -->
+            <div class="text-right">
+                <a 
+                    href="#"
+                    class="text-sm text-blue-600 hover:text-blue-800"
+                >
+                    Lupa Kata Sandi?
                 </a>
+            </div>
+
+            <!-- Button -->
+            <button
+                type="submit"
+                class="w-full rounded-lg bg-rose-500 py-3
+                       text-white font-semibold
+                       hover:bg-rose-800
+                       transition duration-200"
+            >
+                Login
             </button>
+
+            <!-- Daftar -->
+            <p class="text-sm text-center text-gray-600 mt-4">
+                Belum punya akun?
+                <a 
+                    href="{{ route('register') }}"
+                    class="text-blue-600 hover:text-blue-800 font-semibold"
+                >
+                    Daftar
+                </a>
+            </p>
+
         </form>
+
     </div>
+
+</div>
 
 </body>
 </html>
