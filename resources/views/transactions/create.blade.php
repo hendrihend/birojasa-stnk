@@ -1,8 +1,6 @@
     @extends('layouts.app')
-
     @section('title', 'Buat Transaksi')
     @section('header_title', 'Buat Transaksi Pengurusan Baru')
-
     @section('content')
 
     <div class="max-w-4xl mx-auto">

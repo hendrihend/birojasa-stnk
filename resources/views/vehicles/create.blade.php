@@ -1,5 +1,4 @@
 @extends('layouts.app')
-
 @section('title', 'Tambah Kendaraan')
 @section('header_title', 'Tambah Data Kendaraan')
 

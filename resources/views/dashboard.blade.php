@@ -1,42 +1,29 @@
 <!-- Master Layout -->
 @extends('layouts.app')
-
 @section('title', 'Dashboard')
 @section('header_title', 'Dashboard')
-
 @section('content')
 
 <div class="space-y-6">
 
-    {{-- ===================================================== --}}
     {{-- SUMMARY CARDS --}}
-    {{-- ===================================================== --}}
-
+    
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
-
+        
         {{-- Total Kendaraan --}}
         <div class="bg-white border border-gray-200 rounded-lg p-5 shadow-sm">
-            <p class="text-sm text-gray-500">
-                Total Kendaraan
-            </p>
-
-            <h3 class="mt-2 text-2xl font-bold text-gray-800">
-                {{ number_format($totalKendaraan, 0, ',', '.') }}
-            </h3>
+            <p class="text-sm text-gray-500">Total Kendaraan</p>
+            <h3 class="mt-2 text-2xl font-bold text-gray-800"> {{ number_format($totalKendaraan, 0, ',', '.') }}</h3>
         </div>
 
 
         {{-- STNK Aktif --}}
         <div class="bg-white border border-gray-200 rounded-lg p-5 shadow-sm">
-            <p class="text-sm text-gray-500">
-                STNK Aktif
-            </p>
-
+            <p class="text-sm text-gray-500">STNK Aktif</p>
             <h3 class="mt-2 text-2xl font-bold text-gray-800">
                 {{ number_format($stnkAktif, 0, ',', '.') }}
             </h3>
         </div>
-
 
         {{-- Jatuh Tempo --}}
         <div class="bg-white border border-gray-200 rounded-lg p-5 shadow-sm">
@@ -122,37 +109,28 @@
     </div>
 
     {{-- TABLE JATUH TEMPO --}}
-
     <section>
-
         <div class="bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden">
-
-    <div class="overflow-x-auto">
-
-        <table class="w-full text-sm text-left">
-
-            <thead class="bg-gray-50 border-b border-gray-200">
-                <tr>
-                    <th class="px-6 py-3 font-semibold text-gray-600">No</th>
-                    <th class="px-6 py-3 font-semibold text-gray-600">No. Polisi</th>
-                    <th class="px-6 py-3 font-semibold text-gray-600">Tipe Kendaraan</th>
-                    <th class="px-6 py-3 font-semibold text-gray-600">Layanan</th>
-                    <th class="px-6 py-3 font-semibold text-gray-600">Jatuh Tempo</th>
-                    <th class="px-6 py-3 font-semibold text-gray-600">Status</th>
-                    <th class="px-6 py-3 text-center font-semibold text-gray-600">Aksi</th>
-                </tr>
-            </thead>
-
-            <tbody id="alertTableBody" class="divide-y divide-gray-100">
-
-                @forelse($alerts as $index => $alert)
-
-                    <tr class="alert-row hover:bg-gray-50">
-
-                        <td class="px-6 py-4 text-gray-500">
+            <div class="overflow-x-auto">
+                <table class="w-full text-sm text-left">
+                    <thead class="bg-gray-50 border-b border-gray-200">
+                        <tr>
+                            <th class="px-6 py-3 font-semibold text-gray-600">No</th>
+                            <th class="px-6 py-3 font-semibold text-gray-600">No. Polisi</th>
+                            <th class="px-6 py-3 font-semibold text-gray-600">Tipe Kendaraan</th>
+                            <th class="px-6 py-3 font-semibold text-gray-600">Layanan</th>
+                            <th class="px-6 py-3 font-semibold text-gray-600">Jatuh Tempo</th>
+                            <th class="px-6 py-3 font-semibold text-gray-600">Status</th>
+                            <th class="px-6 py-3 text-center font-semibold text-gray-600">Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody id="alertTableBody" class="divide-y divide-gray-100">
+                        @forelse($alerts as $index => $alert)
+                        <tr class="alert-row hover:bg-gray-50">
+                            <td class="px-6 py-4 text-gray-500">
                             {{ $index + 1 }}
                         </td>
-
+                        
                         <td class="px-6 py-4 font-semibold text-gray-800">
                             {{ $alert->nopol }}
                         </td>
@@ -170,53 +148,42 @@
                         </td>
 
                         <td class="px-6 py-4">
-
+                            
                             @if($alert->kategori_warna == 'danger')
-
-                                <span class="px-3 py-1 rounded-full text-xs font-medium bg-red-100 text-red-700">
-                                    {{ $alert->status_teks }}
-                                </span>
-
-                            @elseif($alert->kategori_warna == 'warning')
-
+                            <span class="px-3 py-1 rounded-full text-xs font-medium bg-red-100 text-red-700">
+                                {{ $alert->status_teks }}</span>
+                                
+                                @elseif($alert->kategori_warna == 'warning')
                                 <span class="px-3 py-1 rounded-full text-xs font-medium bg-yellow-100 text-yellow-700">
                                     {{ $alert->status_teks }}
                                 </span>
-
-                            @else
-
+                                
+                                @else
                                 <span class="px-3 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-700">
                                     {{ $alert->status_teks }}
                                 </span>
-
-                            @endif
-
+                                
+                                @endif
+                            
                         </td>
-
+                        
                         <td class="px-6 py-4 text-center">
-
-                            <a
-                                href="{{ route('transactions.create', ['vehicle_id' => $alert->vehicle_id]) }}"
-                                class="inline-block px-3 py-2 bg-red-500 text-white text-xs font-medium rounded-lg hover:bg-red-600 transition"
-                            >
+                            <a href="{{ route('transactions.create', ['vehicle_id' => $alert->vehicle_id]) }}"
+                                class="inline-block px-3 py-2 bg-red-500 text-white text-xs font-medium rounded-lg hover:bg-red-600 transition">
                                 Urus Sekarang
                             </a>
-
                         </td>
-
                     </tr>
-
-                @empty
-
+                    
+                    @empty
+                    
                     <tr>
                         <td colspan="7" class="px-6 py-10 text-center text-gray-500">
                             Tidak ada STNK yang mendekati jatuh tempo.
                         </td>
                     </tr>
-
-                @endforelse
-
-            </tbody>
+                    @endforelse
+                </tbody>
 
         </table>
 
@@ -243,17 +210,13 @@
 </div>
 
 
-{{-- ===================================================== --}}
 {{-- CHART.JS --}}
-{{-- ===================================================== --}}
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <script>
 
-    /* =====================================================
-       LINE CHART
-       ===================================================== */
+    //LINE CHART
 
     const lineChart = document.getElementById('stnkLineChart');
 
@@ -261,76 +224,17 @@
 
         type: 'line',
 
-        data: {
+        data: {labels: ['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agu'],
 
-            labels: [
-                'Jan',
-                'Feb',
-                'Mar',
-                'Apr',
-                'Mei',
-                'Jun',
-                'Jul',
-                'Agu'
-            ],
-
-            datasets: [{
-
-                label: 'Pengurusan STNK',
-
-                data: [
-                    12,
-                    19,
-                    15,
-                    25,
-                    22,
-                    30,
-                    27,
-                    35
-                ],
-
-                borderWidth: 2,
-
-                tension: 0.4,
-
-                fill: false,
-
-                pointRadius: 4
-
-            }]
-
+            datasets: [{label: 'Pengurusan STNK',data: [12,19,15,25,22,30,27,35],
+            
+            borderWidth: 2,
+            tension: 0.4,
+            fill: false,
+            pointRadius: 4}]
         },
 
-        options: {
-
-            responsive: true,
-
-            maintainAspectRatio: false,
-
-            plugins: {
-
-                legend: {
-                    display: false
-                }
-
-            },
-
-            scales: {
-
-                y: {
-
-                    beginAtZero: true,
-
-                    ticks: {
-                        precision: 0
-                    }
-
-                }
-
-            }
-
-        }
-
+        options: {responsive: true,maintainAspectRatio: false,plugins: {legend: {display: false}},scales: {y: {beginAtZero: true,ticks: {precision: 0}}}}
     });
 
 
@@ -346,46 +250,11 @@
 
         data: {
 
-            labels: [
-                'Selesai',
-                'Diproses',
-                'Menunggu'
-            ],
-
-            datasets: [{
-
-                data: [
-                    60,
-                    25,
-                    15
-                ],
-
-                borderWidth: 2
-
-            }]
-
+            labels: ['Done','Cancel','Pending'],
+            datasets: [{data: [60,25,15],borderWidth: 2}]
         },
 
-        options: {
-
-            responsive: true,
-
-            maintainAspectRatio: false,
-
-            cutout: '60%',
-
-            plugins: {
-
-                legend: {
-
-                    position: 'bottom'
-
-                }
-
-            }
-
-        }
-
+        options: {responsive: true,maintainAspectRatio: false,cutout: '60%',plugins: {legend: {position: 'bottom'}}}
     });
 
 </script>
@@ -519,8 +388,6 @@ document.addEventListener('DOMContentLoaded', function () {
                 showPage(page);
 
             });
-
-
             paginationButtons.appendChild(pageButton);
 
         }
@@ -556,15 +423,9 @@ document.addEventListener('DOMContentLoaded', function () {
 
 
     // Jalankan halaman pertama
-    if (totalRows > 0) {
+    if (totalRows > 0) {showPage(1);
 
-        showPage(1);
-
-    } else {
-
-        paginationInfo.textContent = 'Tidak ada data';
-
-    }
+    } else {paginationInfo.textContent = 'Tidak ada data';}
 
 });
 </script>

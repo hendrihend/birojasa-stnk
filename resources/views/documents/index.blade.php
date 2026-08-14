@@ -1,32 +1,15 @@
 @extends('layouts.app')
-
 @section('title', 'Dokumen Kendaraan')
 @section('header_title', 'Arsip Dokumen: ' . $vehicle->nopol)
-
 @section('content')
 
 <div class="space-y-6">
-
     {{-- Tombol Kembali --}}
     <div>
-        <a
-            href="{{ route('vehicles.index') }}"
-            class="inline-flex items-center gap-2 rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-sm font-semibold text-gray-700 shadow-sm transition hover:bg-gray-50"
-        >
-            <svg
-                class="h-4 w-4"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-            >
-                <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d="M10 19l-7-7m0 0l7-7m-7 7h18"
-                />
+        <a href="{{ route('vehicles.index') }}" class="inline-flex items-center gap-2 rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-sm font-semibold text-gray-700 shadow-sm transition hover:bg-gray-50">
+            <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
             </svg>
-
             Kembali ke Daftar Kendaraan
         </a>
     </div>
@@ -34,40 +17,24 @@
 
     {{-- Pesan sukses --}}
     @if(session('success'))
-        <div class="flex items-center gap-3 rounded-lg border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-700">
-
-            <svg
-                class="h-5 w-5 shrink-0"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-            >
-                <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
-                />
-            </svg>
-
-            <span>{{ session('success') }}</span>
-
-        </div>
+    <div class="flex items-center gap-3 rounded-lg border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-700">
+        <svg class="h-5 w-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+        </svg>
+        
+        <span>{{ session('success') }}</span>
+    </div>
     @endif
 
 
     {{-- Pesan error --}}
     @if($errors->any())
-        <div class="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
-
-            <div class="mb-2 flex items-center gap-2 font-semibold">
+    <div class="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+        
+        <div class="mb-2 flex items-center gap-2 font-semibold">
 
                 <svg
-                    class="h-5 w-5"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                >
+                    class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path
                         stroke-linecap="round"
                         stroke-linejoin="round"
@@ -130,10 +97,7 @@
     {{-- Layout utama --}}
     <div class="grid grid-cols-1 gap-6 xl:grid-cols-3">
 
-
-        {{-- ========================================= --}}
         {{-- BAGIAN KIRI : FORM UPLOAD --}}
-        {{-- ========================================= --}}
         <div class="xl:col-span-1">
 
             <div class="rounded-xl border border-gray-200 bg-white shadow-sm">

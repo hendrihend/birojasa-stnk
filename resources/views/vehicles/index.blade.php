@@ -8,9 +8,7 @@
 
 <div class="space-y-6">
 
-    {{-- ================================================= --}}
     {{-- SUCCESS MESSAGE --}}
-    {{-- ================================================= --}}
 
     @if(session('success'))
         <div class="flex items-center gap-3 p-4 bg-green-50 border border-green-200 text-green-700 rounded-lg">
@@ -24,53 +22,19 @@
         </div>
     @endif
 
-
-    {{-- ================================================= --}}
     {{-- HEADER --}}
-    {{-- ================================================= --}}
 
     <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-
         <div>
-
-            <h2 class="text-xl font-semibold text-gray-800">
-                Data Kendaraan
-            </h2>
-
-            <p class="text-sm text-gray-500 mt-1">
-                Kelola data kendaraan dan dokumen STNK klien.
-            </p>
-
+            <h2 class="text-xl font-semibold text-gray-800">Data Kendaraan</h2>
+            
+            <p class="text-sm text-gray-500 mt-1">Kelola data kendaraan dan dokumen STNK klien.</p>
         </div>
-
-
-        {{-- Tambah Kendaraan --}}
-        <a
-            href="{{ route('vehicles.create') }}"
-            class="
-                inline-flex
-                items-center
-                justify-center
-                gap-2
-                px-4 py-2.5
-                bg-indigo-600
-                hover:bg-indigo-700
-                text-white
-                text-sm
-                font-medium
-                rounded-lg
-                transition
-            "
-        >
-
-            <span class="text-lg leading-none">
-                +
-            </span>
-
-            Tambah Kendaraan
-
-        </a>
-
+        
+    {{-- Tambah Kendaraan --}}
+        <a href="{{ route('vehicles.create') }}" class="inline-flex items-center justify-center gap-2 px-4 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium rounded-lg transition">
+        <span class="text-lg leading-none"> + </span>
+        Tambah Kendaraan</a>
     </div>
 
 
@@ -182,6 +146,10 @@
                             Tahun
                         </th>
 
+                        <th class="px-6 py-4 font-semibold text-gray-600">
+                            Dokumen
+                        </th>
+
                         <th class="px-6 py-4 text-center font-semibold text-gray-600">
                             Aksi
                         </th>
@@ -275,6 +243,14 @@
                                 {{ $vehicle->tahun_pembuatan ?? '-' }}
 
                             </td>
+                            
+                            {{-- Dokumen --}}
+                            <td class="px-6 py-4">
+                                <a href="{{ route('documents.index', $vehicle->id) }}" 
+                                    class="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-green-700 bg-green-50 hover:bg-green-100 rounded-lg transition">
+                                    Dokumen
+                                </a>
+                            </td>
 
 
                             {{-- Aksi --}}
@@ -282,22 +258,7 @@
 
                                 <div class="flex items-center justify-center gap-2">
 
-                                    {{-- Arsip Dokumen --}}
-                                    <a
-                                        href="{{ route('documents.index', $vehicle->id) }}"
-                                        class="
-                                            px-3 py-1.5
-                                            text-xs
-                                            font-medium
-                                            text-green-600
-                                            bg-green-50
-                                            hover:bg-green-100
-                                            rounded-lg
-                                            transition
-                                        "
-                                    >
-                                        Dokumen
-                                    </a>
+                                    
 
 
                                     {{-- Edit --}}
