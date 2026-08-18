@@ -23,11 +23,11 @@
         </div>
     @endif
 
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+    <div class="grid grid-cols-1 lg:grid-cols-4 gap-6 mb-8">
 
-        <div class="bg-gray-900 text-white rounded-xl shadow-sm p-6 border border-gray-800 h-fit">
+        <div class="lg:col-span-2 bg-gray-900 text-white rounded-xl shadow-sm p-6 border border-gray-800 h-fit">
             <h3 class="text-lg font-bold mb-4 text-blue-400 border-b border-gray-700 pb-2">Informasi Kendaraan</h3>
-            <div class="space-y-3 text-sm">
+            <div class="space-y-3 text-sm uppercase">
                 <div>
                     <p class="text-gray-400 text-xs">Nomor Polisi</p>
                     <p class="font-bold text-lg tracking-wider uppercase">{{ $vehicle->nopol }}</p>
@@ -37,8 +37,28 @@
                     <p class="font-medium">{{ $vehicle->merk }} {{ $vehicle->tipe }}</p>
                 </div>
                 <div>
-                    <p class="text-gray-400 text-xs">Nama Pemilik (Klien)</p>
+                    <p class="text-gray-400 text-xs">Nomor Rangka</p>
+                    <p class="font-medium">{{ $vehicle->no_rangka }}</p>
+                </div>
+                <div>
+                    <p class="text-gray-400 text-xs">Nomor Mesin</p>
+                    <p class="font-medium">{{ $vehicle->no_mesin }}</p>
+                </div>
+                <div>
+                    <p class="text-gray-400 text-xs">Nama Klien</p>
                     <p class="font-medium">{{ $vehicle->client->nama_lengkap ?? 'Tanpa Pemilik' }}</p>
+                </div>
+                <div>
+                    <p class="text-gray-400 text-xs">Nama Pemilik STNK</p>
+                    <p class="font-medium">{{ $vehicle->nama_pemilik ?? 'Tanpa Pemilik' }}</p>
+                </div>
+                <div>
+                    <p class="text-gray-400 text-xs">Tahun Pembuatan</p>
+                    <p class="font-medium">{{ $vehicle->tahun_pembuatan }}</p>
+                </div>
+                <div>
+                    <p class="text-gray-400 text-xs">Warna</p>
+                    <p class="font-medium">{{ $vehicle->warna }}</p>
                 </div>
             </div>
         </div>

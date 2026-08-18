@@ -33,6 +33,15 @@
             <h2 class="text-2xl font-bold text-gray-800 text-center mt-6 mb-5">
                 Login
             </h2>
+            @if(session('success'))
+                <div class="mb-5 px-4 py-3 bg-green-100 border-l-4 border-green-500 text-green-700 rounded shadow-sm flex items-center">
+                    <span class="mr-2">✅</span> {{ session('success') }}
+                </div>
+            @endif
+
+            @error('email')
+                <p class="text-sm text-red-600 mt-1">{{ $message }}</p>
+            @enderror
 
             <!-- Form Login -->
             <form action="{{ route('login') }}" method="POST" class="space-y-5">

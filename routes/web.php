@@ -24,14 +24,14 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
-    Route::resource('clients', ClientController::class)->middleware('can:super_admin');
+    Route::resource('clients', ClientController::class);
     Route::resource('vehicles', VehicleController::class);
     Route::resource('transactions', TransactionController::class);
 
     Route::get('/vehicles/{vehicle_id}/documents', [DocumentController::class, 'index'])->name('documents.index');
     Route::post('/vehicles/{vehicle_id}/documents', [DocumentController::class, 'store'])->name('documents.store');
     Route::delete('/documents/{id}', [DocumentController::class, 'destroy'])->name('documents.destroy');
-    Route::resource('stnk_records', STNKRecordController::class)->middleware('can:super_admin');
+    Route::resource('stnk_records', STNKRecordController::class);
     Route::get('/scan-qr', function() {
         return view('scan');
     })->name('scan.qr');

@@ -16,8 +16,8 @@ class DashboardController extends Controller
         $totalKendaraan = Vehicle::count();
         $stnkAktif = STNKRecord::where('status_aktif', true)->count();
 
-        $kendaraanDiproses = Transaction::whereNotIn('status_proses', ['Selesai', 'Belum Diproses'])->count();
-        $kendaraanSelesaiDiproses = Transaction::where('status_proses', ['Selesai'])->count();
+        $kendaraanDiproses = Transaction::whereNotIn('status_proses', ['Pending'])->count();
+        $kendaraanSelesaiDiproses = Transaction::where('status_proses', ['Done'])->count();
         
         $totalPengeluaran = Transaction::sum('total_biaya');
 

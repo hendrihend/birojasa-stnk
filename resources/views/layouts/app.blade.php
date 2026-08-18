@@ -26,22 +26,18 @@
                    <i class="fa-solid fa-chart-pie w-5 text-center text-lg"></i>
                    <span>Dashboard</span>
                 </a>
-                @if(Auth::user()->role === 'super_admin')
                 <a href="{{ route('clients.index') }}" class="flex items-center gap-3 px-6 py-3 border-l-4 transition-colors duration-200 {{ request()->routeIs('clients.*') ? 'bg-gray-800 text-blue-400 font-bold border-blue-500' : 'text-gray-400 border-transparent hover:bg-gray-800 hover:text-white' }}">
                     <i class="fa-solid fa-users w-5 text-center text-lg"></i>
                     <span>Data Client</span>
                 </a>
-                @endif
                 <a href="{{ route('vehicles.index') }}" class="flex items-center gap-3 px-6 py-3 border-l-4 transition-colors duration-200 {{ request()->routeIs('vehicles.*', 'documents.*') ? 'bg-gray-800 text-blue-400 font-bold border-blue-500' : 'text-gray-400 border-transparent hover:bg-gray-800 hover:text-white' }}">
                     <i class="fa-solid fa-car w-5 text-center text-lg"></i>
                     <span>Data Kendaraan</span>
                 </a>
-                @if(Auth::user()->role === 'super_admin')
                 <a href="{{ route('stnk_records.index') }}" class="flex items-center gap-3 px-6 py-3 border-l-4 transition-colors duration-200 {{ request()->routeIs('stnk_records.*') ? 'bg-gray-800 text-blue-400 font-bold border-blue-500' : 'text-gray-400 border-transparent hover:bg-gray-800 hover:text-white' }}">
                     <i class="fa-regular fa-calendar-check w-5 text-center text-lg"></i>
                     <span>Manajemen Pajak</span>
                 </a>
-                @endif
                 <a href="{{ route('transactions.index') }}" class="flex items-center gap-3 px-6 py-3 border-l-4 transition-colors duration-200 {{ request()->routeIs('transactions.*') ? 'bg-gray-800 text-blue-400 font-bold border-blue-500' : 'text-gray-400 border-transparent hover:bg-gray-800 hover:text-white' }}">
                     <i class="fa-solid fa-file-signature w-5 text-center text-lg"></i>
                     <span>Transaksi</span>

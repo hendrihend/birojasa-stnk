@@ -15,9 +15,6 @@ use Illuminate\View\View;
 
 class RegisteredUserController extends Controller
 {
-    /**
-     * Display the registration view.
-     */
     public function create(): View
     {
         return view('auth.register');
@@ -45,8 +42,6 @@ class RegisteredUserController extends Controller
 
         event(new Registered($user));
 
-        Auth::login($user);
-
-        return redirect()->route('login')->with('succes', 'Akun ' . Auth::user()->name. 'berhasil dibuat! Silahkan ogin dengan akun Anda.');
+        return redirect()->route('login')->with('success', 'Akun ' . $user->name . ' berhasil dibuat! Silahkan login dengan akun Anda.');
     }
 }

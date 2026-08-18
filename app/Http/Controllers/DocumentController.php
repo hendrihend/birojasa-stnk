@@ -39,17 +39,19 @@ class DocumentController extends Controller
         // proses simpan file
         if ($request->hasFile('file_dokumen')) {
             $file = $request->file('file_dokumen');
-            // buat nama file unik
-            $nopol_clean = str_replace(' ', '', $vehicle->nopol); //hilangkan spasi
-            $filename = $request->jenis_dokumen . '_' . $nopol_clean . '_' . time() . '.' . $file->getClientOriginalExtension();
-            // simpan file ke folder storage/app/public/dokumen_kendaraan
-            $path = $file->storeAs('dokumen_kendaraan', $filename, 'public');
+            // Buat nama file yang rapi: NOPOL_JENIS_TIMESTAMP.ext
+            $fileName = str_replace(' ', '', $vehicle->nopol) . '_' . 
+                        str_replace(' ', '', $request->jenis_dokumen) . '_' . 
+                        time() . '.' . $file->getClientOriginalExtension();
+            
+            // Simpan ke folder 'public/documents' di dalam Storage
+            $filePath = $file->storeAs('dokumen_kendaraan', $fileName, 'public');
 
             // simpan data path ke database
             Document::create([
                 'vehicle_id' => $vehicle_id,
                 'jenis_dokumen' => $request->jenis_dokumen,
-                'file_path' => $path,
+                'file_path' => $filePath,
             ]);
             return redirect()->back()->with('success', 'Dokumen ' . $request->jenis_dokumen . ' berhasil diunggah.');
         }

@@ -34,25 +34,25 @@
     
                 <div>
                     <label class="block text-sm font-bold text-gray-700 mb-1">Nomor Polisi (Nopol) *</label>
-                    <input type="text" name="nopol" value="{{ old('nopol', $vehicle->nopol) }}" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-shadow bg-gray-50 focus:bg-white">
+                    <input type="text" name="nopol" value="{{ old('nopol', $vehicle->nopol) }}" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-shadow bg-gray-50 focus:bg-white uppercase">
                 </div>
     
                 <div>
                     <label class="block text-sm font-bold text-gray-700 mb-1">No Rangka</label>
-                    <input type="text" name="no_rangka" value="{{ old('no_rangka', $vehicle->no_rangka) }}" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-shadow bg-gray-50 focus:bg-white">
+                    <input type="text" name="no_rangka" value="{{ old('no_rangka', $vehicle->no_rangka) }}" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-shadow bg-gray-50 focus:bg-white uppercase">
                 </div>
                 <div>
                     <label class="block text-sm font-bold text-gray-700 mb-1">No Mesin</label>
-                    <input type="text" name="no_mesin" value="{{ old('no_mesin', $vehicle->no_mesin) }}" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-shadow bg-gray-50 focus:bg-white">
+                    <input type="text" name="no_mesin" value="{{ old('no_mesin', $vehicle->no_mesin) }}" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-shadow bg-gray-50 focus:bg-white uppercase">
                 </div>
 
                 <div>
                     <label class="block text-sm font-bold text-gray-700 mb-1">Merk</label>
-                    <input type="text" name="merk" value="{{ old('merk', $vehicle->merk) }}" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-shadow bg-gray-50 focus:bg-white">
+                    <input type="text" name="merk" value="{{ old('merk', $vehicle->merk) }}" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-shadow bg-gray-50 focus:bg-white uppercase">
                 </div>
                 <div>
                     <label class="block text-sm font-bold text-gray-700 mb-1">Tipe</label>
-                    <input type="text" name="tipe" value="{{ old('tipe', $vehicle->tipe) }}" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-shadow bg-gray-50 focus:bg-white">
+                    <input type="text" name="tipe" value="{{ old('tipe', $vehicle->tipe) }}" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-shadow bg-gray-50 focus:bg-white uppercase">
                 </div>
 
                 <div>
@@ -61,12 +61,12 @@
                 </div>
                 <div>
                     <label class="block text-sm font-bold text-gray-700 mb-1">Warna</label>
-                    <input type="text" name="warna" value="{{ old('warna', $vehicle->warna) }}" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-shadow bg-gray-50 focus:bg-white">
+                    <input type="text" name="warna" value="{{ old('warna', $vehicle->warna) }}" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-shadow bg-gray-50 focus:bg-white uppercase">
                 </div>
     
                 <div>
                     <label class="block text-sm font-bold text-gray-700 mb-1">Nama Tercetak di STNK</label>
-                    <input type="text" name="nama_pemilik" value="{{ old('nama_pemilik', $vehicle->nama_pemilik) }}" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-shadow bg-gray-50 focus:bg-white">
+                    <input type="text" name="nama_pemilik" value="{{ old('nama_pemilik', $vehicle->nama_pemilik) }}" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-shadow bg-gray-50 focus:bg-white uppercase">
                 </div>
                 
             </div>

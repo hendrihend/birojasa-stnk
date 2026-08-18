@@ -87,7 +87,7 @@ class TransactionController extends Controller
         $transaction = Transaction::findOrFail($id);
         // jika status diubah ke Selesai, dan tgl selesai kosong, otomatis isi tgl hari ini
         $tglSelesai = $request->tgl_selesai;
-        if ($request->status_proses == 'selesai' && empty($tglSelesai)) {
+        if ($request->status_proses == 'Done' && empty($tglSelesai)) {
             $tglSelesai = date('Y-m-d');
         }
         $transaction->update([

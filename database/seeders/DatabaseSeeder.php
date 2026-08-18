@@ -17,7 +17,7 @@ class DatabaseSeeder extends Seeder
         // 1. Buat Akun Super Admin
         User::factory()->create([
             'name' => 'Super Admin',
-            'email' => 'admin@birojasa.com',
+            'email' => 'superadmin@birojasa.com',
             'password' => Hash::make('password123'), 
         ]);
 

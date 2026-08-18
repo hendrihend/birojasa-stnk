@@ -38,7 +38,9 @@
                         <th class="p-4 font-bold">Jatuh Tempo Pajak</th>
                         <th class="p-4 font-bold">Jatuh Tempo Kaleng</th>
                         <th class="p-4 font-bold text-center">Status</th>
+                        @if(Auth::user()->role === 'super_admin')
                         <th class="p-4 font-bold text-center">Aksi</th>
+                        @endif
                     </tr>
                 </thead>
                 <tbody class="text-sm divide-y divide-gray-100">
@@ -86,12 +88,14 @@
                             @endif
                         </td>
                         
+                        @if(Auth::user()->role === 'super_admin')
                         <td class="p-4 text-center">
                             <form action="{{ route('stnk_records.destroy', $record->id) }}" method="POST" onsubmit="return confirm('Yakin ingin menghapus data STNK ini?');" class="inline">
                                 @csrf @method('DELETE')
-                                <button type="submit" class="text-red-500 hover:text-red-700 font-bold px-3 py-1 hover:bg-red-50 rounded transition-colors">Hapus</button>
+                                <button type="submit" class="text-red-500 hover:text-red-700 font-bold"><i class="fa-solid fa-trash-can"></i></button>
                             </form>
                         </td>
+                        @endif
                     </tr>
                     @empty
                     <tr>

@@ -53,10 +53,12 @@
                         <td class="p-4 text-gray-500 truncate max-w-xs">{{ $client->alamat ?? '-' }}</td>
                         <td class="p-4 flex justify-center gap-4">
                             <a href="{{ route('clients.edit', $client->id) }}" class="text-blue-500 hover:text-blue-700 font-bold"><i class="fa-solid fa-pen-to-square"></i></a>
+                            @if (Auth::user()->role === 'super_admin')
                             <form action="{{ route('clients.destroy', $client->id) }}" method="POST" onsubmit="return confirm('Yakin ingin menghapus klien ini beserta seluruh kendaraan dan transaksinya?');" class="inline">
                                 @csrf @method('DELETE')
                                 <button type="submit" class="text-red-500 hover:text-red-700 font-bold"><i class="fa-solid fa-trash-can"></i></button>
                             </form>
+                            @endif
                         </td>
                     </tr>
                     @empty

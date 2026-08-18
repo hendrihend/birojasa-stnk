@@ -13,7 +13,7 @@
                 <h3 class="text-lg font-bold text-gray-800">Detail Informasi Kendaraan</h3>
             </div>
             <div class="p-6">
-                <dl class="divide-y divide-gray-600">
+                <dl class="divide-y divide-gray-600 uppercase">
                     <div class="py-4 grid grid-cols-1 sm:grid-cols-3 sm:gap-4">
                         <dt class="text-sm font-bold text-gray-500">Nomor Polisi</dt>
                         <dd class="mt-1 text-lg font-black text-gray-900 sm:col-span-2 sm:mt-0 tracking-wider">
@@ -58,7 +58,7 @@
                         </dd>
                     </div>
                     <div class="py-4 grid grid-cols-1 sm:grid-cols-3 sm:gap-4">
-                        <dt class="text-sm font-bold text-gray-500">Pemilik (Klien)</dt>
+                        <dt class="text-sm font-bold text-gray-500">Nama Klien</dt>
                         <dd class="mt-1 text-base sm:col-span-2 sm:mt-0">
                             <span class="font-bold text-blue-700 bg-blue-50 border border-blue-100 px-3 py-1 rounded-full text-sm inline-block">
                                 👤 {{ $vehicle->client->nama_lengkap ?? 'Tanpa Pemilik' }}
