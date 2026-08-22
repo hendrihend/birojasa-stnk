@@ -92,8 +92,12 @@
                             <div class="absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none">
                                 <span class="text-gray-500 font-bold">Rp</span>
                             </div>
-                            <input type="number" name="total_biaya" value="{{ old('total_biaya', $transaction->total_biaya) }}" required min="0"
+                            <!-- 1. Input Tampil (Yang dilihat user, bisa format titik) -->
+                            <input type="text" id="biaya_tampil" required placeholder="Contoh: 1.500.000"
                                 class="w-full pl-12 pr-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-shadow bg-white text-lg font-bold text-gray-800">
+                            <!-- 2. Input Asli (Tersembunyi, angka murni untuk dikirim ke database) -->
+                            <!-- Catatan: Untuk di create.blade.php hapus $transaction->total_biaya -->
+                            <input type="hidden" name="total_biaya" id="biaya_asli" value="{{ old('total_biaya', $transaction->total_biaya ?? '') }}">
                         </div>
                     </div>
 
@@ -130,4 +134,39 @@
             </div>
         </form>
     </div>
+
+    <!-- SCRIPT UNTUK FORMAT RUPIAH OTOMATIS -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const inputTampil = document.getElementById('biaya_tampil');
+            const inputAsli = document.getElementById('biaya_asli');
+
+            // Fungsi format titik menggunakan bawaan Javascript (Intl)
+            const formatRupiah = (angka) => {
+                return new Intl.NumberFormat('id-ID').format(angka);
+            }
+
+            // 1. Jalankan saat halaman pertama kali dimuat (Berguna untuk mode Edit / Old input)
+            if (inputAsli.value) {
+                inputTampil.value = formatRupiah(inputAsli.value);
+            }
+
+            // 2. Jalankan setiap kali user mengetik
+            inputTampil.addEventListener('input', function(e) {
+                // Hapus semua karakter selain angka 0-9
+                let angkaMurni = this.value.replace(/[^0-9]/g, '');
+                
+                // Simpan angka murni ke input yang tersembunyi untuk dikirim ke database
+                inputAsli.value = angkaMurni;
+                
+                // Tampilkan kembali angka yang sudah diformat dengan titik ke layar
+                if(angkaMurni) {
+                    this.value = formatRupiah(angkaMurni);
+                } else {
+                    this.value = '';
+                }
+            });
+        });
+    </script>
+
 @endsection
