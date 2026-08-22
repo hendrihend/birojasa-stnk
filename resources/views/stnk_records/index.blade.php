@@ -4,12 +4,6 @@
 @section('header_title', 'Jadwal Jatuh Tempo Pajak')
 
 @section('content')
-    <!-- Pesan Sukses -->
-    @if(session('success'))
-        <div class="mb-5 px-4 py-3 bg-green-100 border-l-4 border-green-500 text-green-700 rounded shadow-sm flex items-center">
-            <span class="mr-2">✅</span> {{ session('success') }}
-        </div>
-    @endif
 
     <!-- Action Bar -->
     <div class="flex flex-col md:flex-row justify-between items-center gap-4 mb-6">

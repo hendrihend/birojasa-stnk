@@ -4,12 +4,6 @@
 @section('header_title', 'Manajemen Data Kendaraan')
 
 @section('content')
-    <!-- Pesan Sukses -->
-    @if(session('success'))
-        <div class="mb-5 px-4 py-3 bg-green-100 border-l-4 border-green-500 text-green-700 rounded shadow-sm flex items-center gap-2">
-            <i class="fa-solid fa-circle-check"></i> {{ session('success') }}
-        </div>
-    @endif
 
     <!-- Action Bar (Tombol Tambah & Search) -->
     <div class="flex flex-col md:flex-row justify-between items-center gap-4 mb-6">

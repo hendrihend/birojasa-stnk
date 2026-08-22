@@ -4,49 +4,52 @@
 @section('header_title', 'Kelola Pengguna Sistem')
 
 @section('content')
-    <div style="background: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.05);">
-        
-        @if(session('success'))
-            <div style="background: #d4edda; color: #155724; padding: 10px; margin-bottom: 15px; border-radius: 4px;">{{ session('success') }}</div>
-        @endif
-        @if($errors->any())
-            <div style="background: #f8d7da; color: #721c24; padding: 10px; margin-bottom: 15px; border-radius: 4px;">{{ $errors->first() }}</div>
-        @endif
 
-        <a href="{{ route('users.create') }}" style="display: inline-block; margin-bottom: 20px; padding: 10px 15px; background: #111; color: #fff; text-decoration: none; border-radius: 4px;">+ Tambah User Baru</a>
-
-        <table style="width: 100%; border-collapse: collapse; text-align: left;">
-            <thead>
-                <tr style="border-bottom: 2px solid #eee;">
-                    <th style="padding: 12px 0;">Nama</th>
-                    <th>Email</th>
-                    <th>Hak Akses (Role)</th>
-                    <th>Aksi</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach($users as $user)
-                <tr style="border-bottom: 1px solid #eee;">
-                    <td style="padding: 12px 0; font-weight: bold;">{{ $user->name }}</td>
-                    <td>{{ $user->email }}</td>
-                    <td>
-                        <span style="padding: 4px 8px; border-radius: 4px; font-size: 12px; background: {{ $user->role === 'superadmin' ? '#e8f4f8' : '#f9f9f9' }}; color: {{ $user->role === 'superadmin' ? '#2980b9' : '#555' }}; font-weight: bold;">
-                            {{ strtoupper($user->role) }}
-                        </span>
-                    </td>
-                    <td>
-                        @if(auth()->id() != $user->id)
-                            <form action="{{ route('users.destroy', $user->id) }}" method="POST" onsubmit="return confirm('Yakin ingin menghapus user ini?');">
-                                @csrf @method('DELETE')
-                                <button type="submit" style="color: #e74c3c; background: none; border: none; cursor: pointer;">Hapus</button>
-                            </form>
-                        @else
-                            <span style="color: #999; font-size: 12px;">Akun Anda</span>
-                        @endif
-                    </td>
-                </tr>
-                @endforeach
-            </tbody>
-        </table>
+    <!-- Action Bar (Tombol Tambah & Search) -->
+    <div class="flex flex-col md:flex-row justify-between items-center gap-4 mb-6">
+        <a href="{{ route('users.create') }}" class="px-5 py-2.5 bg-gray-900 hover:bg-gray-800 text-white font-bold rounded-lg shadow-sm transition-colors w-full md:w-auto text-center flex items-center justify-center gap-2">
+            <i class="fa-solid fa-plus"></i> Tambah User Baru
+        </a>
     </div>
+
+    <!-- Tabel Data Users -->
+     <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+        <div class="overflow-x-auto">
+            <table class="w-full text-left border-collapse">
+                <thead>
+                    <tr class="bg-gray-50 border-b border-gray-200 text-sm text-gray-600 uppercase tracking-wider">
+                        <th class="p-4 font-bold">Nama</th>
+                        <th class="p-4 font-bold">Email</th>
+                        <th class="p-4 font-bold">Hak Akses (Role)</th>
+                        <th class="p-4 font-bold text-center">Aksi</th>
+                    </tr>
+                </thead>
+                <tbody class="text-sm divide-y divide-gray-100">
+                    @foreach($users as $user)
+                    <tr class="hover:bg-gray-50/80 transition-colors">
+                        <td class="p-4 font-bold text-gray-800">{{ $user->name }}</td>
+                        <td class="p-4 text-gray-600">{{ $user->email ?? '-' }}</td>
+                        <td class="p-4">
+                            <span class="px-2 py-1 text-xs font-bold rounded {{ $user->role === 'super_admin' ? 'bg-[#e8f4f8] text-[#2980b9]' : 'bg-[#f9f9f9] text-[#555]' }}">
+                                {{ strtoupper($user->role) }}
+                            </span>
+                        </td>
+                        <td class="p-4 flex justify-center gap-4">
+                            @if (auth()->id() != $user->id)
+                            <form action="{{ route('users.destroy', $user->id) }}" method="POST" onsubmit="return confirm('Yakin ingin menghapus user ini?');" class="inline">
+                                @csrf @method('DELETE')
+                                <button type="submit" class="text-red-500 hover:text-red-700 font-bold"><i class="fa-solid fa-trash-can"></i></button>
+                            </form>
+                            @else
+                            <span class="text-gray-400">Akun Anda</span>
+                            @endif
+                        </td>
+                    </tr>
+                    @endforeach
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+   
 @endsection

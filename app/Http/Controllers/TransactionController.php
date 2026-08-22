@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Transaction;
 use App\Models\Vehicle;
+use App\Models\STNKRecord;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 
 class TransactionController extends Controller
@@ -80,22 +82,61 @@ class TransactionController extends Controller
     public function update(Request $request, string $id)
     {
         $request->validate([
+            'jenis_layanan' => 'required|string',
             'status_proses' => 'required|string',
             'tgl_selesai' => 'nullable|date|after_or_equal:tgl_masuk',
             'total_biaya' => 'required|numeric|min:0',
         ]);
         $transaction = Transaction::findOrFail($id);
-        // jika status diubah ke Selesai, dan tgl selesai kosong, otomatis isi tgl hari ini
+
+        // 1. Simpan status lama sebelum diupdate untuk perbandingan
+        $statusLama = $transaction->status_proses;
+        $statusBaru = $request->status_proses;
+
+        // jika status diubah ke Done, dan tgl selesai kosong, otomatis isi tgl hari ini
         $tglSelesai = $request->tgl_selesai;
         if ($request->status_proses == 'Done' && empty($tglSelesai)) {
             $tglSelesai = date('Y-m-d');
         }
+
+        // 2. Update data transaksi
         $transaction->update([
-            'status_proses' => $request->status_proses,
+            'jenis_layanan' => $request->jenis_layanan,
+            'status_proses' => $statusBaru,
             'tgl_selesai' => $tglSelesai,
             'total_biaya' => $request->total_biaya,
         ]);
-        return redirect()->route('transactions.index')->with('success', 'Status pengurusan dan data transaksi berhasil diperbarui.');
+
+        // 3. FITUR OTOMATISASI PERPANJANGAN PAJAK (AUTO-RENEW)
+        // =========================================================
+        // Sistem hanya akan menambah tahun JIKA statusnya BARU SAJA berubah menjadi 'Done'
+        // (Ini mencegah penambahan tahun berkali-kali jika mengedit transaksi yang sudah Done)
+        if ($statusLama != 'Done' && $statusBaru == 'Done') {
+            // Cari data STNK milik kendaraan ini
+            $stnk = STNKRecord::where('vehicle_id', $transaction->vehicle_id)->first();
+
+            if ($stnk) {
+                // A. Pajak Tahunan
+                if ($transaction->jenis_layanan == 'Pajak Tahunan' && $stnk->tgl_jatuh_tempo_pajak) {
+                    // Tambah 1 tahun
+                    $stnk->tgl_jatuh_tempo_pajak = Carbon::parse($stnk->tgl_jatuh_tempo_pajak)->addYear();
+                } 
+                elseif ($transaction->jenis_layanan == 'Pajak 5 Tahunan') { //B. Ganti Kaleng 5 Tahunan
+                    if ($stnk->tgl_jatuh_tempo_pajak) {
+                        // Maju 1 tahun untuk pajak tahunan
+                        $stnk->tgl_jatuh_tempo_pajak = Carbon::parse($stnk->tgl_jatuh_tempo_pajak)->addYear();
+                    }
+                    if ($stnk->tgl_habis_stnk) {
+                        // Plat nomor maju 5 tahun
+                        $stnk->tgl_habis_stnk = Carbon::parse($stnk->tgl_habis_stnk)->addYear(5);
+                    }
+                }
+                
+                $stnk->save();
+            }
+        }
+
+        return redirect()->route('transactions.index')->with('success', 'Transaksi berhasil diperbarui! Jika status Selesai (Done), masa aktif STNK telah diperpanjang otomatis.');
     }
 
     public function destroy(string $id)

@@ -7,12 +7,6 @@
     <!-- Tombol Kembali -->
     <a href="{{ route('vehicles.index') }}" class="inline-flex items-center gap-2 px-4 py-2 bg-white border border-gray-300 rounded-lg text-gray-700 font-bold hover:bg-gray-50 transition-colors mb-6 shadow-sm"><span>&larr;</span> Kembali ke Daftar Kendaraan</a>
 
-    <!-- Menampilkan pesan sukses/error -->
-    @if(session('success'))
-        <div class="mb-6 px-4 py-3 bg-green-100 border-l-4 border-green-500 text-green-700 rounded shadow-sm flex items-center">
-            <span class="mr-2">{{ session('success') }}</span>
-        </div>
-    @endif
     @if($errors->any())
         <div class="mb-6 px-4 py-3 bg-red-50 border-l-4 border-red-500 text-red-700 rounded shadow-sm">
             <ul class="list-disc list-inside text-sm font-medium">

@@ -170,7 +170,7 @@
 
             <!-- TOMBOL ACTION -->
             <div class="p-8 pt-4 flex gap-3">
-                <button type="submit" class="px-6 py-2.5 bg-gray-900 hover:bg-gray-800 text-white font-bold rounded-lg shadow-sm transition-colors flex items-center gap-2">
+                <button type="submit" class="px-6 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-lg shadow-sm transition-colors flex items-center gap-2">
                     <i class="fa-solid fa-floppy-disk"></i> Simpan Data Lengkap
                 </button>
                 <a href="{{ route('vehicles.index') }}" class="px-6 py-2.5 bg-white border border-gray-300 hover:bg-gray-50 text-gray-700 font-bold rounded-lg transition-colors">

@@ -86,7 +86,47 @@
     </div>
 
 
+    <!-- CDN SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+
+
+
+
+
     <script>
+        // <!-- Logika Popup Otomatis -->
+        // Konfigurasi default Toast (Popup kecil di pojok kanan atas)
+        const Toast = Swal.mixin({
+            toast: true,
+            position: 'top',
+            showConfirmButton: false,
+            timer: 3000,
+            timerProgressBar: true,
+            didOpen: (toast) => {
+                toast.addEventListener('mouseenter', Swal.stopTimer)
+                toast.addEventListener('mouseleave', Swal.resumeTimer)
+            }
+        });
+
+        // Tangkap session('success') dari laravel
+        @if(session('success'))
+            Toast.fire({
+                icon: 'success',
+                title: "{{ session('success') }}"
+            });
+        @endif
+
+        // Tangkap session('error') jika gagal
+        @if(session('error'))
+            Swal.fire({
+                icon: 'error',
+                title: 'Oops...',
+                text: "{{ session('error') }}",
+                confirmButtonColor: '#3085d6',
+            });
+        @endif
+
         document.addEventListener('DOMContentLoaded', function () {
             // Cari kotak input pencarian di halaman
             const searchInput = document.querySelector('input[name="search"]');

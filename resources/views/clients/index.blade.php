@@ -4,13 +4,6 @@
 @section('header_title', 'Manajemen Data Klien')
 
 @section('content')
-    <!-- Pesan Sukses -->
-    @if(session('success'))
-        <div class="mb-5 px-4 py-3 bg-green-100 border-l-4 border-green-500 text-green-700 rounded shadow-sm flex items-center gap-2">
-            <i class="fa-solid fa-circle-check"></i> {{ session('success') }}
-        </div>
-    @endif
-
     <!-- Action Bar (Tombol Tambah & Search) -->
     <div class="flex flex-col md:flex-row justify-between items-center gap-4 mb-6">
         <a href="{{ route('clients.create') }}" class="px-5 py-2.5 bg-gray-900 hover:bg-gray-800 text-white font-bold rounded-lg shadow-sm transition-colors w-full md:w-auto text-center flex items-center justify-center gap-2">

@@ -25,4 +25,10 @@ class Vehicle extends Model
     {
         return $this->belongsTo(Client::class, 'client_id');
     }
+
+    // relasi ke model Transaction
+    public function transactions()
+    {
+        return $this->HasMany(Transaction::class);
+    }
 }

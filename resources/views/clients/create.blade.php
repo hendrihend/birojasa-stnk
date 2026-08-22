@@ -48,8 +48,8 @@
 
             <!-- Action Buttons -->
             <div class="mt-8 flex gap-3">
-                <button type="submit" class="px-6 py-2.5 bg-gray-900 hover:bg-gray-800 text-white font-bold rounded-lg shadow-sm transition-colors">
-                    Simpan Data
+                <button type="submit" class="px-6 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-lg shadow-sm transition-colors flex items-center gap-2">
+                    <i class="fa-solid fa-floppy-disk"></i> Simpan Data
                 </button>
                 <a href="{{ route('clients.index') }}" class="px-6 py-2.5 bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold rounded-lg transition-colors">
                     Batal

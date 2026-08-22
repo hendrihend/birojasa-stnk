@@ -80,7 +80,7 @@
     @endif
     
     <!-- Bagian Top Cards -->
-    <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 mb-8">
+    <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 mb-8">
         <!-- Card 1: Kendaraan -->
         <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100 flex items-center gap-5 hover:shadow-md transition-shadow">
             <div class="w-14 h-14 rounded-full bg-blue-50 flex items-center justify-center text-blue-500 text-2xl">
@@ -103,29 +103,7 @@
             </div>
         </div>
 
-        <!-- Card 3: Kendaraan Diproses -->
-        <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100 flex items-center gap-5 hover:shadow-md transition-shadow">
-            <div class="w-14 h-14 rounded-full bg-blue-50 flex items-center justify-center text-blue-500 text-2xl">
-                <i class="fa-solid fa-hourglass-half"></i>
-            </div>
-            <div>
-                <p class="text-sm font-medium text-gray-500 mb-1">Kendaraan Diproses</p>
-                <h3 class="text-2xl font-black text-gray-800">{{ $kendaraanDiproses ?? 0 }}</h3>
-            </div>
-        </div>
-        
-        <!-- Card 4: Kendaraan Selesai Diproses -->
-        <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100 flex items-center gap-5 hover:shadow-md transition-shadow">
-            <div class="w-14 h-14 rounded-full bg-blue-50 flex items-center justify-center text-blue-500 text-2xl">
-                <div class="fa-solid fa-hourglass-end"></div>
-            </div>
-            <div>
-                <p class="text-sm font-medium text-gray-500 mb-1">Kendaraan Selesai Diproses</p>
-                <h3 class="text-2xl font-black text-gray-800">{{ $kendaraanSelesaiDiproses ?? 0 }}</h3>
-            </div>
-        </div>
-
-        <!-- Card 4: Total Pengeluaran -->
+        <!-- Card 3: Total Pengeluaran -->
         <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100 flex items-center gap-5 hover:shadow-md transition-shadow">
             <div class="w-14 h-14 rounded-full bg-blue-50 flex items-center justify-center text-blue-500 text-2xl">
                 <i class="fa-solid fa-wallet"></i>
@@ -135,6 +113,40 @@
                 <h3 class="text-2xl font-black text-gray-800 number">Rp {{ number_format($totalPengeluaran, 0, ',', '.' ?? 0) }}</h3>
             </div>
         </div>
+
+        <!-- Card 4: Kendaraan Diproses -->
+        <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100 flex items-center gap-5 hover:shadow-md transition-shadow">
+            <div class="w-14 h-14 rounded-full bg-blue-50 flex items-center justify-center text-blue-500 text-2xl">
+                <i class="fa-solid fa-hourglass-half"></i>
+                </div>
+                <div>
+                    <p class="text-sm font-medium text-gray-500 mb-1">Kendaraan Diproses</p>
+                    <h3 class="text-2xl font-black text-gray-800">{{ $kendaraanDiproses ?? 0 }}</h3>
+                </div>
+                </div>
+        
+        <!-- Card 5: Kendaraan Selesai Diproses -->
+        <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100 flex items-center gap-5 hover:shadow-md transition-shadow">
+            <div class="w-14 h-14 rounded-full bg-green-50 flex items-center justify-center text-green-500 text-2xl">
+                <div class="fa-solid fa-hourglass-end"></div>
+            </div>
+            <div>
+                <p class="text-sm font-medium text-gray-500 mb-1">Kendaraan Selesai Diproses</p>
+                <h3 class="text-2xl font-black text-gray-800">{{ $kendaraanSelesaiDiproses ?? 0 }}</h3>
+            </div>
+        </div>
+
+        <!-- Card 6: Kendaraan Cancel -->
+        <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100 flex items-center gap-5 hover:shadow-md transition-shadow">
+            <div class="w-14 h-14 rounded-full bg-red-50 flex items-center justify-center text-red-500 text-2xl">
+                <div class="fa-solid fa-circle-xmark"></div>
+            </div>
+            <div>
+                <p class="text-sm font-medium text-gray-500 mb-1">Kendaraan Cancel</p>
+                <h3 class="text-2xl font-black text-gray-800">{{ $kendaraanCancel ?? 0 }}</h3>
+            </div>
+        </div>
+
 
     </div>
 
@@ -158,15 +170,26 @@
                         $bgClass = 'bg-gray-50 border-gray-200';
                         $textClass = 'text-gray-800';
                         $badgeClass = 'bg-gray-200 text-gray-700';
+                        $btnClass = 'bg-gray-800 hover:bg-gray-900 text-white'; // Tombol default
+                        $btnText = 'Urus Sekarang';
                         
                         if($alert->kategori_warna == 'danger' || $alert->kategori_warna == 'merah') {
                             $bgClass = 'bg-red-50 border-red-200';
                             $textClass = 'text-red-800';
                             $badgeClass = 'bg-red-200 text-red-800';
+                            $btnClass = 'bg-red-500 hover:bg-red-600 text-white';
                         } elseif($alert->kategori_warna == 'warning' || $alert->kategori_warna == 'kuning') {
                             $bgClass = 'bg-yellow-50 border-yellow-200';
                             $textClass = 'text-yellow-900';
                             $badgeClass = 'bg-yellow-200 text-yellow-900';
+                            $btnClass = 'bg-yellow-500 hover:bg-yellow-600 text-white';
+                        } elseif($alert->kategori_warna == 'info') {
+                            // Warna biru khusus untuk kendaraan "SEDANG DIURUS"
+                             $bgClass = 'bg-blue-50 border-blue-200';
+                             $textClass = 'text-blue-800';
+                             $badgeClass = 'bg-blue-200 text-blue-800';
+                             $btnClass = 'bg-blue-600 hover:bg-blue-700 text-white';
+                             $btnText = 'Cek Transaksi'; // ubah teks tombolnya
                         }
                     @endphp
 
@@ -184,10 +207,14 @@
                         </div>
                         
                         <!-- Tombol Action -->
-                        <a href="{{ route('transactions.create', ['vehicle_id' => $alert->vehicle_id]) }}" 
+                         <a href="{{ route('transactions.index', ['search' => $alert->nopol]) }}" 
+                           class="shrink-0 px-5 py-2.5 {{ $btnClass }} text-sm font-bold rounded-lg shadow-sm hover:shadow transition-all duration-200 flex items-center gap-2">
+                            <i class="fa-solid fa-bolt"></i> <span>{{ $btnText }}</span>
+                        </a>
+                        <!-- <a href="{{ route('transactions.create', ['vehicle_id' => $alert->vehicle_id]) }}" 
                            class="shrink-0 px-5 py-2.5 bg-red-500 hover:bg-red-600 text-white text-sm font-bold rounded-lg shadow-sm hover:shadow transition-all duration-200 flex items-center gap-2">
                             <i class="fa-solid fa-bolt"></i> <span>Urus Sekarang</span>
-                        </a>
+                        </a> -->
                     </div>
 
                 @empty
