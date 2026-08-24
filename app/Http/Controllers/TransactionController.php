@@ -145,4 +145,14 @@ class TransactionController extends Controller
         $transaction->delete();
         return redirect()->route('transactions.index')->with('success', 'Transaksi berhasil dihapus.');
     }
+
+    public function print($id) {
+        // Ambil data transaksi beserta relasi kendaraan dan klien
+        $transaction = Transaction::with(['vehicle.client'])->findOrFail($id);
+        return view('transactions.print', compact('transaction'));
+    }
+
+
+
+
 }

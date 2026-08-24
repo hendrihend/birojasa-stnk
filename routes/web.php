@@ -27,7 +27,8 @@ Route::middleware('auth')->group(function () {
     Route::resource('clients', ClientController::class);
     Route::resource('vehicles', VehicleController::class);
     Route::resource('transactions', TransactionController::class);
-
+    Route::get('/transactions/{id}/print', [TransactionController::class, 'print'])->name('transactions.print');
+    
     Route::get('/vehicles/{vehicle_id}/documents', [DocumentController::class, 'index'])->name('documents.index');
     Route::post('/vehicles/{vehicle_id}/documents', [DocumentController::class, 'store'])->name('documents.store');
     Route::delete('/documents/{id}', [DocumentController::class, 'destroy'])->name('documents.destroy');

@@ -63,7 +63,11 @@
                             Rp {{ number_format($trx->total_biaya, 0, ',', '.') }}
                         </td>
                         <td class="p-4 flex justify-center gap-3">
-                            <a href="#" class="text-indigo-600 hover:text-indigo-800 font-bold px-2 py-1 hover:bg-indigo-50 rounded transition-colors flex items-center gap-1">
+                            <!-- <a href="#" class="text-indigo-600 hover:text-indigo-800 font-bold px-2 py-1 hover:bg-indigo-50 rounded transition-colors flex items-center gap-1">
+                                <i class="fa-solid fa-print"></i>
+                            </a> -->
+                            <a href="{{ route('transactions.print', $trx->id) }}" target="_blank" 
+                            class="inline-flex items-center justify-center w-8 h-8 rounded bg-gray-100 hover:bg-gray-200 text-gray-700 transition-colors" title="Cetak Tanda Terima">
                                 <i class="fa-solid fa-print"></i>
                             </a>
                             
