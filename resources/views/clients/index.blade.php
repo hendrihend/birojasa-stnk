@@ -1,491 +1,218 @@
-@extends('layouts.app')
-@section('header_title', 'Daftar Klien')
-@section('content')
+@extends ('layouts.app')
+@section ('header_title', 'Daftar Klien')
+@section ('content')
+    <div class="space-y-6">
 
-<div class="space-y-6">
-
-    {{-- ================================================= --}}
-    {{-- SUCCESS MESSAGE --}}
-    {{-- ================================================= --}}
-
-    @if(session('success'))
-        <div class="flex items-center gap-3 p-4 bg-green-50 border border-green-200 text-green-700 rounded-lg">
-            <span class="text-lg">✓</span>
-
-            <p class="text-sm font-medium">
-                {{ session('success') }}
-            </p>
-        </div>
-    @endif
-
-
-    {{-- ================================================= --}}
-    {{-- HEADER --}}
-    {{-- ================================================= --}}
-
-    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-
-        <div>
-            <h2 class="text-xl font-semibold text-gray-800">
-                Data Klien
-            </h2>
-
-            <p class="text-sm text-gray-500 mt-1">
-                Kelola data klien biro jasa STNK
-            </p>
-        </div>
-
-
-        {{-- Tambah Klien --}}
-        <a
-            href="{{ route('clients.create') }}"
-            class="
-                inline-flex items-center justify-center gap-2
-                px-4 py-2.5
-                bg-indigo-600
-                hover:bg-indigo-700
-                text-white
-                text-sm font-medium
-                rounded-lg
-                transition
-            "
-        >
-            <span class="text-lg leading-none">+</span>
-            Tambah Klien
-        </a>
-
-    </div>
-
-
-    {{-- ================================================= --}}
-    {{-- TABLE CARD --}}
-    {{-- ================================================= --}}
-
-    <div class="bg-white border border-gray-200 rounded-xl shadow-sm overflow-hidden">
-
-
-        {{-- ================================================= --}}
-        {{-- FILTER --}}
-        {{-- ================================================= --}}
-
-        <div
-            class="
-                p-5
-                border-b border-gray-200
-                flex flex-col lg:flex-row
-                lg:items-center
-                lg:justify-between
-                gap-4
-            "
-        >
-
-            {{-- Search --}}
-            <div class="relative w-full lg:w-96">
-
-                <div
-                    class="
-                        absolute inset-y-0 left-0
-                        flex items-center
-                        pl-3
-                        pointer-events-none
-                    "
-                >
-
-                    <svg
-                        class="w-5 h-5 text-gray-400"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                    >
-                        <path
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                            stroke-width="2"
-                            d="m21 21-4.35-4.35m2.35-5.65a8 8 0 1 1-16 0 8 8 0 0 1 16 0Z"
-                        />
-                    </svg>
-
-                </div>
-
-                <input
-                    type="text"
-                    id="clientSearch"
-                    placeholder="Cari nama, NIK, atau WhatsApp..."
-                    class="
-                        w-full
-                        pl-10 pr-4 py-2.5
-                        text-sm
-                        border border-gray-300
-                        rounded-lg
-                        focus:outline-none
-                        focus:ring-2
-                        focus:ring-indigo-500
-                        focus:border-indigo-500
-                    "
-                >
-
+        {{-- HEADER --}}
+        <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+            <div>
+                <h2 class="text-xl font-semibold text-gray-800">Data Klien</h2>
+                <p class="mt-1 text-sm text-gray-500">Kelola data klien biro jasa STNK</p>
             </div>
 
+            {{-- Tambah Klien --}}
+            <a href="{{ route('clients.create') }}" class="inline-flex items-center justify-center gap-2 rounded-lg bg-indigo-600 px-4 py-2.5 text-sm font-medium text-white transition hover:bg-indigo-700">
+                <span class="text-lg leading-none">+</span>
+                Tambah Klien
+            </a>
         </div>
 
+        {{-- TABLE CARD --}}
+        <div class="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm">
+    
+            {{-- FILTER --}}
+            <div class="flex flex-col gap-4 border-b border-gray-200 p-5 lg:flex-row lg:items-center lg:justify-between">
+                {{-- Search --}}
+                <div class="relative w-full lg:w-96">
+                    <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+                        <svg class="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m21 21-4.35-4.35m2.35-5.65a8 8 0 1 1-16 0 8 8 0 0 1 16 0Z"/>
+                        </svg>
+                    </div>
+                    <input type="text" id="clientSearch" placeholder="Cari nama, NIK, atau WhatsApp..." class="w-full rounded-lg border border-gray-300 py-2.5 pl-10 pr-4 text-sm focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"/>
+                </div>
+            </div>
 
-        {{-- ================================================= --}}
-        {{-- TABLE --}}
-        {{-- ================================================= --}}
+            {{-- TABLE --}}
 
-        <div class="overflow-x-auto">
+            <div class="overflow-x-auto">
+                <table class="w-full text-left text-sm">
+                    <thead class="border-b border-gray-200 bg-gray-50">
+                        <tr>
+                            <th class="px-6 py-4 font-semibold text-gray-600">No</th>
+                            <th class="px-6 py-4 font-semibold text-gray-600">Nama Lengkap</th>
+                            <th class="px-6 py-4 font-semibold text-gray-600">NIK</th>
+                            <th class="px-6 py-4 font-semibold text-gray-600">No WhatsApp</th>
+                            <th class="px-6 py-4 font-semibold text-gray-600">Alamat</th>
+                            <th class="px-6 py-4 text-center font-semibold text-gray-600">Aksi</th>
+                        </tr>
+                    </thead>
 
-            <table class="w-full text-sm text-left">
-
-                <thead class="bg-gray-50 border-b border-gray-200">
-
-                    <tr>
-
-                        <th class="px-6 py-4 font-semibold text-gray-600">
-                            No
-                        </th>
-
-                        <th class="px-6 py-4 font-semibold text-gray-600">
-                            Nama Lengkap
-                        </th>
-
-                        <th class="px-6 py-4 font-semibold text-gray-600">
-                            NIK
-
-                        <th class="px-6 py-4 font-semibold text-gray-600">
-                            No WhatsApp
-                        </th>
-
-                        <th class="px-6 py-4 font-semibold text-gray-600">
-                            Alamat
-                        </th>
-
-                        <th class="px-6 py-4 text-center font-semibold text-gray-600">
-                            Aksi
-                        </th>
-
-                    </tr>
-
-                </thead>
-
-
-                <tbody
-                    id="clientTableBody"
-                    class="divide-y divide-gray-100"
-                >
-
-                    @forelse($clients as $index => $client)
-
-                        <tr
-                            class="client-row hover:bg-gray-50 transition"
-                            data-search="{{ strtolower(
+                    <tbody id="clientTableBody" class="divide-y divide-gray-100">
+                        @forelse ($clients as $index => $client)
+                            <tr class="client-row transition hover:bg-gray-50" data-search="{{ strtolower(
                                 $client->nama_lengkap . ' ' .
                                 ($client->nik ?? '') . ' ' .
-                                ($client->no_whatsapp ?? '')
-                            ) }}"
-                        >
+                                ($client->no_whatsapp ?? '')) }}">
 
-                            {{-- No --}}
-                            <td class="px-6 py-4 text-gray-500">
-                                {{ $index + 1 }}
-                            </td>
+                                {{-- No --}}
+                                <td class="px-6 py-4 text-gray-500">{{ $index + 1 }}</td>
 
+                                {{-- Nama --}}
+                                <td class="px-6 py-4">
+                                    <div class="font-semibold uppercase text-gray-800">
+                                        {{ $client->nama_lengkap }}
+                                    </div>
+                                </td>
 
-                            {{-- Nama --}}
-                            <td class="px-6 py-4">
+                                {{-- NIK --}}
+                                <td class="px-6 py-4 text-gray-600">{{ $client->nik ?? '-' }}</td>
 
-                                <div class="font-semibold text-gray-800 uppercase">
-                                    {{ $client->nama_lengkap }}
-                                </div>
+                                {{-- WhatsApp --}}
+                                <td class="px-6 py-4 text-gray-600">
+                                    {{ $client->no_whatsapp ?? '-' }}
+                                </td>
 
-                            </td>
+                                {{-- Alamat --}}
+                                <td class="max-w-xs px-6 py-4 text-gray-600">
+                                    <div class="truncate">{{ $client->alamat ?? '-' }}</div>
+                                </td>
 
+                                {{-- Aksi --}}
+                                <td class="px-6 py-4">
+                                    <div class="flex items-center justify-center gap-2">
+                                        {{-- Edit --}}
+                                        <a href="{{ route('clients.edit', $client->id) }}" class="rounded-lg bg-indigo-50 px-3 py-1.5 text-xs font-medium text-indigo-600 transition hover:bg-indigo-100">
+                                            Edit
+                                        </a>
 
-                            {{-- NIK --}}
-                            <td class="px-6 py-4 text-gray-600">
-                                {{ $client->nik ?? '-' }}
-                            </td>
+                                        {{-- Hapus --}}
+                                        <form action="{{ route('clients.destroy', $client->id) }}" method="POST" onsubmit="
+                                                return confirm('Apakah Anda yakin ingin menghapus data klien ini?');">
+                                            @csrf
+                                            @method ('DELETE')
 
+                                            <button type="submit" class="rounded-lg bg-red-50 px-3 py-1.5 text-xs font-medium text-red-600 transition hover:bg-red-100">
+                                                Hapus
+                                            </button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
 
-                            {{-- WhatsApp --}}
-                            <td class="px-6 py-4 text-gray-600">
-                                {{ $client->no_whatsapp ?? '-' }}
-                            </td>
+                        @empty
+                            <tr>
+                                <td colspan="6" class="px-6 py-12 text-center text-gray-500">
+                                    Belum ada data klien.
+                                </td>
+                            </tr>
+                        @endforelse
+                    </tbody>
+                </table>
+            </div>
 
+    
+            {{-- PAGINATION --}}
+    
 
-                            {{-- Alamat --}}
-                            <td class="px-6 py-4 text-gray-600 max-w-xs">
-
-                                <div class="truncate">
-                                    {{ $client->alamat ?? '-' }}
-                                </div>
-
-                            </td>
-
-
-                            {{-- Aksi --}}
-                            <td class="px-6 py-4">
-
-                                <div class="flex items-center justify-center gap-2">
-
-                                    {{-- Edit --}}
-                                    <a
-                                        href="{{ route('clients.edit', $client->id) }}"
-                                        class="
-                                            px-3 py-1.5
-                                            text-xs font-medium
-                                            text-indigo-600
-                                            bg-indigo-50
-                                            hover:bg-indigo-100
-                                            rounded-lg
-                                            transition
-                                        "
-                                    >
-                                        Edit
-                                    </a>
-
-
-                                    {{-- Hapus --}}
-                                    <form
-                                        action="{{ route('clients.destroy', $client->id) }}"
-                                        method="POST"
-                                        onsubmit="return confirm('Apakah Anda yakin ingin menghapus data klien ini?');"
-                                    >
-
-                                        @csrf
-                                        @method('DELETE')
-
-                                        <button
-                                            type="submit"
-                                            class="
-                                                px-3 py-1.5
-                                                text-xs font-medium
-                                                text-red-600
-                                                bg-red-50
-                                                hover:bg-red-100
-                                                rounded-lg
-                                                transition
-                                            "
-                                        >
-                                            Hapus
-                                        </button>
-
-                                    </form>
-
-                                </div>
-
-                            </td>
-
-                        </tr>
-
-                    @empty
-
-                        <tr>
-
-                            <td
-                                colspan="7"
-                                class="px-6 py-12 text-center text-gray-500"
-                            >
-                                Belum ada data klien.
-                            </td>
-
-                        </tr>
-
-                    @endforelse
-
-                </tbody>
-
-            </table>
-
-        </div>
-
-
-        {{-- ================================================= --}}
-        {{-- PAGINATION --}}
-        {{-- ================================================= --}}
-
-        <div
-            id="paginationContainer"
-            class="
-                flex flex-col sm:flex-row
-                items-center
-                justify-between
-                gap-4
-                px-6 py-4
-                border-t border-gray-200
-            "
-        >
-
-            {{-- Informasi pagination --}}
-            <p
-                id="paginationInfo"
-                class="text-sm text-gray-500"
-            ></p>
-
-
-            {{-- Tombol pagination --}}
             <div
-                id="paginationButtons"
-                class="flex items-center gap-1"
-            ></div>
+                id="paginationContainer"
+                class="flex flex-col items-center justify-between gap-4 border-t border-gray-200 px-6 py-4 sm:flex-row"
+            >
+                {{-- Informasi pagination --}}
+                <p id="paginationInfo" class="text-sm text-gray-500"></p>
 
+                {{-- Tombol pagination --}}
+                <div id="paginationButtons" class="flex items-center gap-1"></div>
+            </div>
         </div>
-
     </div>
 
-</div>
+    {{-- SEARCH + PAGINATION --}}
 
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Ambil semua baris data
+            const rows = Array.from(document.querySelectorAll('.client-row'));
 
-{{-- ================================================= --}}
-{{-- SEARCH + PAGINATION --}}
-{{-- ================================================= --}}
+            // Search input
+            const searchInput = document.getElementById('clientSearch');
 
-<script>
+            // Pagination info
+            const paginationInfo = document.getElementById('paginationInfo');
 
-document.addEventListener('DOMContentLoaded', function () {
+            // Container tombol pagination
+            const paginationButtons = document.getElementById('paginationButtons');
 
-    // Ambil semua baris data
-    const rows = Array.from(
-        document.querySelectorAll('.client-row')
-    );
+            // Jumlah data per halaman
+            const rowsPerPage = 10;
 
-    // Search input
-    const searchInput =
-        document.getElementById('clientSearch');
+            // Halaman saat ini
+            let currentPage = 1;
 
-    // Pagination info
-    const paginationInfo =
-        document.getElementById('paginationInfo');
+            // Semua data awal
+            let filteredRows = [...rows];
 
-    // Container tombol pagination
-    const paginationButtons =
-        document.getElementById('paginationButtons');
+            // MENAMPILKAN DATA
 
+            function displayRows() {
+                const start = (currentPage - 1) * rowsPerPage;
 
-    // Jumlah data per halaman
-    const rowsPerPage = 10;
+                const end = start + rowsPerPage;
 
-    // Halaman saat ini
-    let currentPage = 1;
+                // Sembunyikan semua data
+                rows.forEach(function (row) {
+                    row.classList.add('hidden');});
 
-    // Semua data awal
-    let filteredRows = [...rows];
+                // Tampilkan data sesuai halaman
+                filteredRows.slice(start, end).forEach(function (row) {
+                    row.classList.remove('hidden');});
 
+                // Update nomor
+                updateNumber();
 
-    // =================================================
-    // MENAMPILKAN DATA
-    // =================================================
+                // Update pagination
+                updatePagination();
+            }
 
-    function displayRows() {
+            // UPDATE NOMOR DATA
 
-        const start =
-            (currentPage - 1) * rowsPerPage;
+            function updateNumber() {
+                const start = (currentPage - 1) * rowsPerPage;
 
-        const end =
-            start + rowsPerPage;
+                filteredRows.slice(start, start + rowsPerPage).forEach(function (row, index) {
+                    const numberCell = row.querySelector('td:first-child');
 
+                    numberCell.textContent = start + index + 1;});
+            }
 
-        // Sembunyikan semua data
-        rows.forEach(function (row) {
+            // UPDATE PAGINATION
 
-            row.classList.add('hidden');
+            function updatePagination() {
+                // Bersihkan tombol sebelumnya
+                paginationButtons.innerHTML = '';
 
-        });
+                // Jumlah data setelah pencarian
+                const totalRows = filteredRows.length;
 
+                // Hitung jumlah halaman
+                const totalPages = Math.ceil(totalRows / rowsPerPage);
 
-        // Tampilkan data sesuai halaman
-        filteredRows
-            .slice(start, end)
-            .forEach(function (row) {
+                // TIDAK ADA DATA
 
-                row.classList.remove('hidden');
+                if (totalRows === 0) {
+                    paginationInfo.textContent = 'Tidak ada data yang ditemukan';
 
-            });
+                    return;
+                }
 
+                // INFORMASI DATA
 
-        // Update nomor
-        updateNumber();
+                const start = (currentPage - 1) * rowsPerPage + 1;
 
-        // Update pagination
-        updatePagination();
+                const end = Math.min(currentPage * rowsPerPage, totalRows);
 
-    }
-
-
-    // =================================================
-    // UPDATE NOMOR DATA
-    // =================================================
-
-    function updateNumber() {
-
-        const start =
-            (currentPage - 1) * rowsPerPage;
-
-
-        filteredRows
-            .slice(start, start + rowsPerPage)
-            .forEach(function (row, index) {
-
-                const numberCell =
-                    row.querySelector('td:first-child');
-
-                numberCell.textContent =
-                    start + index + 1;
-
-            });
-
-    }
-
-
-    // =================================================
-    // UPDATE PAGINATION
-    // =================================================
-
-    function updatePagination() {
-
-        // Bersihkan tombol sebelumnya
-        paginationButtons.innerHTML = '';
-
-
-        // Jumlah data setelah pencarian
-        const totalRows =
-            filteredRows.length;
-
-
-        // Hitung jumlah halaman
-        const totalPages =
-            Math.ceil(totalRows / rowsPerPage);
-
-
-        // =================================================
-        // TIDAK ADA DATA
-        // =================================================
-
-        if (totalRows === 0) {
-
-            paginationInfo.textContent =
-                'Tidak ada data yang ditemukan';
-
-            return;
-
-        }
-
-
-        // =================================================
-        // INFORMASI DATA
-        // =================================================
-
-        const start =
-            (currentPage - 1) * rowsPerPage + 1;
-
-        const end =
-            Math.min(
-                currentPage * rowsPerPage,
-                totalRows
-            );
-
-
-        paginationInfo.innerHTML = `
+                paginationInfo.innerHTML = `
             Menampilkan
             <span class="font-medium text-gray-700">
                 ${start}
@@ -498,76 +225,48 @@ document.addEventListener('DOMContentLoaded', function () {
             <span class="font-medium text-gray-700">
                 ${totalRows}
             </span>
-            data
-        `;
+            data`;
 
+                // PREVIOUS
 
-        // =================================================
-        // PREVIOUS
-        // =================================================
+                const previousButton = document.createElement('button');
 
-        const previousButton =
-            document.createElement('button');
+                previousButton.innerHTML = '‹';
 
-        previousButton.innerHTML = '‹';
-
-        previousButton.className = `
+                previousButton.className = `
             px-3 py-2
             text-sm
             rounded-lg
             border
             ${
                 currentPage === 1
-                ? 'text-gray-400 bg-gray-100 border-gray-200 cursor-not-allowed'
-                : 'text-gray-600 bg-white border-gray-200 hover:bg-gray-50'
+                    ? 'text-gray-400 bg-gray-100 border-gray-200 cursor-not-allowed'
+                    : 'text-gray-600 bg-white border-gray-200 hover:bg-gray-50'
             }
         `;
 
-        previousButton.disabled =
-            currentPage === 1;
+                previousButton.disabled = currentPage === 1;
 
+                previousButton.addEventListener('click', function () {
+                    if (currentPage > 1) {
+                        currentPage--;
 
-        previousButton.addEventListener(
-            'click',
-            function () {
+                        displayRows();
+                    }
+                });
 
-                if (currentPage > 1) {
+                paginationButtons.appendChild(previousButton);
 
-                    currentPage--;
+                // NOMOR HALAMAN
 
-                    displayRows();
+                for (let page = 1; page <= totalPages; page++) {
+                    const button = document.createElement('button');
 
-                }
+                    button.textContent = page;
 
-            }
-        );
-
-
-        paginationButtons.appendChild(
-            previousButton
-        );
-
-
-        // =================================================
-        // NOMOR HALAMAN
-        // =================================================
-
-        for (
-            let page = 1;
-            page <= totalPages;
-            page++
-        ) {
-
-            const button =
-                document.createElement('button');
-
-            button.textContent = page;
-
-
-            // Halaman aktif
-            if (page === currentPage) {
-
-                button.className = `
+                    // Halaman aktif
+                    if (page === currentPage) {
+                        button.className = `
                     px-3 py-2
                     text-sm font-medium
                     text-white
@@ -575,13 +274,11 @@ document.addEventListener('DOMContentLoaded', function () {
                     border border-indigo-600
                     rounded-lg
                 `;
+                    }
 
-            }
-
-            // Halaman tidak aktif
-            else {
-
-                button.className = `
+                    // Halaman tidak aktif
+                    else {
+                        button.className = `
                     px-3 py-2
                     text-sm
                     text-gray-600
@@ -590,122 +287,71 @@ document.addEventListener('DOMContentLoaded', function () {
                     rounded-lg
                     hover:bg-gray-50
                 `;
+                    }
 
-            }
+                    button.addEventListener('click', function () {
+                        currentPage = page;
 
+                        displayRows();
+                    });
 
-            button.addEventListener(
-                'click',
-                function () {
-
-                    currentPage = page;
-
-                    displayRows();
-
+                    paginationButtons.appendChild(button);
                 }
-            );
 
+                // NEXT
 
-            paginationButtons.appendChild(
-                button
-            );
+                const nextButton = document.createElement('button');
 
-        }
+                nextButton.innerHTML = '›';
 
-
-        // =================================================
-        // NEXT
-        // =================================================
-
-        const nextButton =
-            document.createElement('button');
-
-        nextButton.innerHTML = '›';
-
-        nextButton.className = `
+                nextButton.className = `
             px-3 py-2
             text-sm
             rounded-lg
             border
             ${
                 currentPage === totalPages
-                ? 'text-gray-400 bg-gray-100 border-gray-200 cursor-not-allowed'
-                : 'text-gray-600 bg-white border-gray-200 hover:bg-gray-50'
+                    ? 'text-gray-400 bg-gray-100 border-gray-200 cursor-not-allowed'
+                    : 'text-gray-600 bg-white border-gray-200 hover:bg-gray-50'
             }
         `;
 
-        nextButton.disabled =
-            currentPage === totalPages;
+                nextButton.disabled = currentPage === totalPages;
 
+                nextButton.addEventListener('click', function () {
+                    if (currentPage < totalPages) {
+                        currentPage++;
 
-        nextButton.addEventListener(
-            'click',
-            function () {
-
-                if (currentPage < totalPages) {
-
-                    currentPage++;
-
-                    displayRows();
-
-                }
-
-            }
-        );
-
-
-        paginationButtons.appendChild(
-            nextButton
-        );
-
-    }
-
-
-    // =================================================
-    // SEARCH
-    // =================================================
-
-    searchInput.addEventListener(
-        'input',
-        function () {
-
-            const keyword =
-                this.value
-                    .toLowerCase()
-                    .trim();
-
-
-            // Filter data
-            filteredRows =
-                rows.filter(function (row) {
-
-                    const searchData =
-                        row.dataset.search || '';
-
-                    return searchData.includes(keyword);
-
+                        displayRows();
+                    }
                 });
 
+                paginationButtons.appendChild(nextButton);
+            }
 
-            // Setelah search, kembali ke halaman pertama
-            currentPage = 1;
+            // SEARCH
 
+            searchInput.addEventListener('input', function () {
+                const keyword = this.value.toLowerCase().trim();
 
-            // Refresh tampilan
+                // Filter data
+                filteredRows = rows.filter(function (row) {
+                    const searchData = row.dataset.search || '';
+
+                    return searchData.includes(keyword);
+                });
+
+                // Setelah search, kembali ke halaman pertama
+                currentPage = 1;
+
+                // Refresh tampilan
+                displayRows();
+            });
+
+            // INITIAL LOAD
+
             displayRows();
-
-        }
-    );
-
-
-    // =================================================
-    // INITIAL LOAD
-    // =================================================
-
-    displayRows();
-
-});
-
-</script>
+        });
+    </script>
 
 @endsection

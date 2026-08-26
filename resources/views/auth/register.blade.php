@@ -2,68 +2,37 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Login - Sistem Biro Jasa</title>
-    @vite('resources/css/app.css')
+    @vite ('resources/css/app.css')
 </head>
-<body class="min-h-screen bg-gray-100 flex items-center justify-center">
-
-    <div class="w-[500px] bg-white rounded-lg shadow-sm px-10 py-8">
-          <!-- Logo -->
+<body class="flex min-h-screen items-center justify-center bg-gray-100">
+    <div class="w-[500px] rounded-lg bg-white px-10 py-8 shadow-sm">
+        <!-- Logo -->
         <div class="flex justify-center">
-            <div class="w-20 h-20 flex items-center justify-center">
-                <img 
-                    src="{{ asset('images/logo.png') }}" 
-                    alt="Logo"
-                    class="w-20 h-20 object-contain"
-                >
+            <div class="flex h-20 w-20 items-center justify-center">
+                <img src="{{ asset('images/logo.png') }}" alt="Logo" class="h-20 w-20 object-contain"/>
             </div>
         </div>
 
         <!-- Nama Aplikasi -->
-<div class="text-center mt-0 mb-4">
-    <h2 class="text-lg font-semibold text-gray-800">
-        Biro Jasa STNK
-    </h2>
+        <div class="mb-4 mt-0 text-center">
+            <h2 class="text-lg font-semibold text-gray-800">Biro Jasa STNK</h2>
 
-    <p class="text-sm text-gray-500">
-        Management System
-    </p>
-</div>
+            <p class="text-sm text-gray-500">Management System</p>
+        </div>
 
         <!-- Title -->
-        <h1 class="text-3xl font-bold text-center text-black mb-7">
-            Register
-        </h1>
+        <h1 class="mb-7 text-center text-3xl font-bold text-black">Register</h1>
 
         <form method="POST" action="{{ route('register') }}">
             @csrf
 
             <!-- Name -->
             <div>
-                <label
-                    for="name"
-                    class="block text-sm font-semibold text-gray-700"
-                >
-                    Name
-                </label>
-
-                <input
-                    id="name"
-                    type="text"
-                    name="name"
-                    value="{{ old('name') }}"
-                    required
-                    autofocus
-                    autocomplete="name"
-                    class="block mt-2 w-full h-[48px]
-                           rounded-lg border border-gray-300
-                           px-4
-                           focus:border-indigo-500
-                           focus:ring-1 focus:ring-indigo-500
-                           focus:outline-none"
-                >
+                <label for="name" class="block text-sm font-semibold text-gray-700"> Name </label>
+                <input id="name" type="text" name="name" value="{{ old('name') }}" required autofocus autocomplete="name" class="mt-2 block h-[48px] w-full rounded-lg border border-gray-300 px-4 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"/>
 
                 @if ($errors->get('name'))
                     <div class="mt-2 text-sm text-red-600">
@@ -76,12 +45,7 @@
 
             <!-- Email -->
             <div class="mt-4">
-                <label
-                    for="email"
-                    class="block text-sm font-semibold text-gray-700"
-                >
-                    Email
-                </label>
+                <label for="email" class="block text-sm font-semibold text-gray-700"> Email </label>
 
                 <input
                     id="email"
@@ -90,13 +54,8 @@
                     value="{{ old('email') }}"
                     required
                     autocomplete="username"
-                    class="block mt-2 w-full h-[48px]
-                           rounded-lg border border-gray-300
-                           px-4
-                           focus:border-indigo-500
-                           focus:ring-1 focus:ring-indigo-500
-                           focus:outline-none"
-                >
+                    class="mt-2 block h-[48px] w-full rounded-lg border border-gray-300 px-4 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                />
 
                 @if ($errors->get('email'))
                     <div class="mt-2 text-sm text-red-600">
@@ -109,10 +68,7 @@
 
             <!-- Password -->
             <div class="mt-4">
-                <label
-                    for="password"
-                    class="block text-sm font-semibold text-gray-700"
-                >
+                <label for="password" class="block text-sm font-semibold text-gray-700">
                     Password
                 </label>
 
@@ -122,13 +78,8 @@
                     name="password"
                     required
                     autocomplete="new-password"
-                    class="block mt-2 w-full h-[48px]
-                           rounded-lg border border-gray-300
-                           px-4
-                           focus:border-indigo-500
-                           focus:ring-1 focus:ring-indigo-500
-                           focus:outline-none"
-                >
+                    class="mt-2 block h-[48px] w-full rounded-lg border border-gray-300 px-4 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                />
 
                 @if ($errors->get('password'))
                     <div class="mt-2 text-sm text-red-600">
@@ -154,13 +105,8 @@
                     name="password_confirmation"
                     required
                     autocomplete="new-password"
-                    class="block mt-2 w-full h-[48px]
-                           rounded-lg border border-gray-300
-                           px-4
-                           focus:border-indigo-500
-                           focus:ring-1 focus:ring-indigo-500
-                           focus:outline-none"
-                >
+                    class="mt-2 block h-[48px] w-full rounded-lg border border-gray-300 px-4 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                />
 
                 @if ($errors->get('password_confirmation'))
                     <div class="mt-2 text-sm text-red-600">
@@ -172,37 +118,22 @@
             </div>
 
             <!-- Bottom -->
-            <div class="flex items-center justify-between mt-6">
-
+            <div class="mt-6 flex items-center justify-between">
                 <a
                     href="{{ route('login') }}"
-                    class="text-sm text-gray-600 underline
-                           hover:text-gray-900"
+                    class="text-sm text-gray-600 underline hover:text-gray-900"
                 >
                     Already registered?
                 </a>
 
                 <button
                     type="submit"
-                    class="px-6 py-2.5
-                           bg-indigo-600
-                           text-white
-                           text-sm font-semibold
-                           rounded-lg
-                           hover:bg-indigo-700
-                           focus:outline-none
-                           focus:ring-2
-                           focus:ring-indigo-500
-                           focus:ring-offset-2
-                           transition"
+                    class="rounded-lg bg-indigo-600 px-6 py-2.5 text-sm font-semibold text-white transition hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
                 >
                     REGISTER
                 </button>
-
             </div>
-
         </form>
-
     </div>
 </body>
 </html>

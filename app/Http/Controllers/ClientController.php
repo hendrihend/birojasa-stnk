@@ -23,10 +23,10 @@ class ClientController extends Controller
     {
         // validasi input
         $request->validate([
-            'nik' => 'nullable|unique:clients,nik|max:16',
+            'nik' => 'required|unique:clients,nik|max:16',
             'nama_lengkap' => 'required|string|max:255',
-            'no_whatsapp' => 'nullable|string|max:20',
-            'alamat' => 'nullable|string|max:500',
+            'no_whatsapp' => 'required|string|max:20',
+            'alamat' => 'required|string|max:500',
         ]);
 
         // simpan data client baru ke database menggunakan mass assignment
@@ -51,10 +51,10 @@ class ClientController extends Controller
     {
         //Validasi input
         $request->validate([
-            'nik' => 'nullable|unique:clients,nik,' . $id . '|max:16',
+            'nik' => 'required|unique:clients,nik,' . $id . '|max:16',
             'nama_lengkap' => 'required|string|max:255',
-            'no_whatsapp' => 'nullable|string|max:20',
-            'alamat' => 'nullable|string|max:500',
+            'no_whatsapp' => 'required|string|max:20',
+            'alamat' => 'required|string|max:500',
         ]);
 
         //Cari data klien berdasarkan id, jika tidak ditemukan maka akan menampilkan halaman 404

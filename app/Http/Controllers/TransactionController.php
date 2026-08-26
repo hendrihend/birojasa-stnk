@@ -40,7 +40,7 @@ class TransactionController extends Controller
                 'vehicle_id' => $request->vehicle_id,
                 'jenis_layanan' => $request->jenis_layanan,
                 'total_biaya' => $request->total_biaya,
-                'status_proses' => 'Belum Diproses', // default status proses
+                'status_proses' => 'Pending', // default status proses
                 'tgl_masuk' => $request->tgl_masuk,
                 'tgl_selesai' => $request->tgl_selesai,
             ]);

@@ -1,174 +1,112 @@
-@extends('layouts.app')
+@extends ('layouts.app')
 
-@section('title', 'Data Kendaraan')
+@section ('title', 'Data Kendaraan')
 
-@section('header_title', 'Manajemen Data Kendaraan')
+@section ('header_title', 'Manajemen Data Kendaraan')
 
-@section('content')
+@section ('content')
+    <div class="space-y-6">
+        {{-- SUCCESS MESSAGE --}}
 
-<div class="space-y-6">
+        @if (session('success'))
+            <div
+                class="flex items-center gap-3 rounded-lg border border-green-200 bg-green-50 p-4 text-green-700"
+            >
+                <span class="text-lg">✓</span>
 
-    {{-- SUCCESS MESSAGE --}}
+                <p class="text-sm font-medium">{{ session('success') }}</p>
+            </div>
+        @endif
 
-    @if(session('success'))
-        <div class="flex items-center gap-3 p-4 bg-green-50 border border-green-200 text-green-700 rounded-lg">
+        {{-- HEADER --}}
 
-            <span class="text-lg">✓</span>
+        <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+            <div>
+                <h2 class="text-xl font-semibold text-gray-800">Data Kendaraan</h2>
 
-            <p class="text-sm font-medium">
-                {{ session('success') }}
-            </p>
-
-        </div>
-    @endif
-
-    {{-- HEADER --}}
-
-    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-        <div>
-            <h2 class="text-xl font-semibold text-gray-800">Data Kendaraan</h2>
-            
-            <p class="text-sm text-gray-500 mt-1">Kelola data kendaraan dan dokumen STNK klien.</p>
-        </div>
-        
-    {{-- Tambah Kendaraan --}}
-        <a href="{{ route('vehicles.create') }}" class="inline-flex items-center justify-center gap-2 px-4 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium rounded-lg transition">
-        <span class="text-lg leading-none"> + </span>
-        Tambah Kendaraan</a>
-    </div>
-
-
-    {{-- ================================================= --}}
-    {{-- TABLE CARD --}}
-    {{-- ================================================= --}}
-
-    <div class="bg-white border border-gray-200 rounded-xl shadow-sm overflow-hidden">
-
-
-        {{-- ================================================= --}}
-        {{-- SEARCH --}}
-        {{-- ================================================= --}}
-
-        <div class="p-5 border-b border-gray-200">
-
-            <div class="relative w-full lg:w-96">
-
-                {{-- Search Icon --}}
-                <div
-                    class="
-                        absolute
-                        inset-y-0
-                        left-0
-                        flex
-                        items-center
-                        pl-3
-                        pointer-events-none
-                    "
-                >
-
-                    <svg
-                        class="w-5 h-5 text-gray-400"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                    >
-
-                        <path
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                            stroke-width="2"
-                            d="m21 21-4.35-4.35m2.35-5.65a8 8 0 1 1-16 0 8 8 0 0 1 16 0Z"
-                        />
-
-                    </svg>
-
-                </div>
-
-
-                <input
-                    type="text"
-                    id="vehicleSearch"
-                    placeholder="Cari nomor polisi, klien, merk..."
-                    class="
-                        w-full
-                        pl-10
-                        pr-4
-                        py-2.5
-                        text-sm
-                        border
-                        border-gray-300
-                        rounded-lg
-                        focus:outline-none
-                        focus:ring-2
-                        focus:ring-indigo-500
-                        focus:border-indigo-500
-                    "
-                >
-
+                <p class="mt-1 text-sm text-gray-500">Kelola data kendaraan dan dokumen STNK klien.</p>
             </div>
 
+            {{-- Tambah Kendaraan --}}
+            <a
+                href="{{ route('vehicles.create') }}"
+                class="inline-flex items-center justify-center gap-2 rounded-lg bg-indigo-600 px-4 py-2.5 text-sm font-medium text-white transition hover:bg-indigo-700"
+            >
+                <span class="text-lg leading-none"> + </span>
+                Tambah Kendaraan</a
+            >
         </div>
 
-
         {{-- ================================================= --}}
-        {{-- TABLE --}}
+        {{-- TABLE CARD --}}
         {{-- ================================================= --}}
 
-        <div class="overflow-x-auto">
+        <div class="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm">
+            {{-- ================================================= --}}
+            {{-- SEARCH --}}
+            {{-- ================================================= --}}
 
-            <table class="w-full text-sm text-left">
+            <div class="border-b border-gray-200 p-5">
+                <div class="relative w-full lg:w-96">
+                    {{-- Search Icon --}}
+                    <div
+                        class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3"
+                    >
+                        <svg
+                            class="h-5 w-5 text-gray-400"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                        >
+                            <path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                stroke-width="2"
+                                d="m21 21-4.35-4.35m2.35-5.65a8 8 0 1 1-16 0 8 8 0 0 1 16 0Z"
+                            />
+                        </svg>
+                    </div>
 
-                <thead class="bg-gray-50 border-b border-gray-200">
+                    <input
+                        type="text"
+                        id="vehicleSearch"
+                        placeholder="Cari nomor polisi, klien, merk..."
+                        class="w-full rounded-lg border border-gray-300 py-2.5 pl-10 pr-4 text-sm focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                    />
+                </div>
+            </div>
 
-                    <tr>
+            {{-- ================================================= --}}
+            {{-- TABLE --}}
+            {{-- ================================================= --}}
 
-                        <th class="px-6 py-4 font-semibold text-gray-600">
-                            No
-                        </th>
+            <div class="overflow-x-auto">
+                <table class="w-full text-left text-sm">
+                    <thead class="border-b border-gray-200 bg-gray-50">
+                        <tr>
+                            <th class="px-6 py-4 font-semibold text-gray-600">No</th>
 
-                        <th class="px-6 py-4 font-semibold text-gray-600">
-                            Nomor Polisi
-                        </th>
+                            <th class="px-6 py-4 font-semibold text-gray-600">Nomor Polisi</th>
 
-                        <th class="px-6 py-4 font-semibold text-gray-600">
-                            Nama Klien
-                        </th>
+                            <th class="px-6 py-4 font-semibold text-gray-600">Nama Klien</th>
 
-                        <th class="px-6 py-4 font-semibold text-gray-600">
-                            Nama Pemilik
-                        </th>
+                            <th class="px-6 py-4 font-semibold text-gray-600">Nama Pemilik</th>
 
-                        <th class="px-6 py-4 font-semibold text-gray-600">
-                            Merk & Tipe
-                        </th>
+                            <th class="px-6 py-4 font-semibold text-gray-600">Merk & Tipe</th>
 
-                        <th class="px-6 py-4 font-semibold text-gray-600">
-                            Tahun
-                        </th>
+                            <th class="px-6 py-4 font-semibold text-gray-600">Tahun</th>
 
-                        <th class="px-6 py-4 font-semibold text-gray-600">
-                            Dokumen
-                        </th>
+                            <th class="px-6 py-4 font-semibold text-gray-600">Dokumen</th>
 
-                        <th class="px-6 py-4 text-center font-semibold text-gray-600">
-                            Aksi
-                        </th>
+                            <th class="px-6 py-4 text-center font-semibold text-gray-600">Aksi</th>
+                        </tr>
+                    </thead>
 
-                    </tr>
-
-                </thead>
-
-
-                <tbody
-                    id="vehicleTableBody"
-                    class="divide-y divide-gray-100"
-                >
-
-                    @forelse($vehicles as $index => $vehicle)
-
-                        <tr
-                            class="vehicle-row hover:bg-gray-50 transition"
-                            data-search="{{ strtolower(
+                    <tbody id="vehicleTableBody" class="divide-y divide-gray-100">
+                        @forelse ($vehicles as $index => $vehicle)
+                            <tr
+                                class="vehicle-row transition hover:bg-gray-50"
+                                data-search="{{ strtolower(
                                 $vehicle->nopol . ' ' .
                                 ($vehicle->client->nama_lengkap ?? '') . ' ' .
                                 ($vehicle->nama_pemilik ?? '') . ' ' .
@@ -176,364 +114,221 @@
                                 ($vehicle->tipe ?? '') . ' ' .
                                 ($vehicle->tahun_pembuatan ?? '')
                             ) }}"
-                        >
+                            >
+                                {{-- No --}}
+                                <td class="px-6 py-4 text-gray-500">{{ $index + 1 }}</td>
 
-                            {{-- No --}}
-                            <td class="px-6 py-4 text-gray-500">
-                                {{ $index + 1 }}
-                            </td>
+                                {{-- Nomor Polisi --}}
+                                <td class="px-6 py-4">
+                                    <span
+                                        class="inline-flex items-center rounded-md bg-gray-100 px-2.5 py-1 font-semibold uppercase text-gray-800"
+                                    >
+                                        {{ $vehicle->nopol }}
+                                    </span>
+                                </td>
 
+                                {{-- Nama Klien --}}
+                                <td class="px-6 py-4">
+                                    <span class="font-medium text-gray-800">
+                                        {{ $vehicle->client->nama_lengkap ?? 'Data Tidak Ditemukan' }}
+                                    </span>
+                                </td>
 
-                            {{-- Nomor Polisi --}}
-                            <td class="px-6 py-4">
+                                {{-- Nama Pemilik --}}
+                                <td class="px-6 py-4 text-gray-600">
+                                    {{ $vehicle->nama_pemilik ?? 'Data Tidak Ditemukan' }}
+                                </td>
 
-                                <span
-                                    class="
-                                        inline-flex
-                                        items-center
-                                        px-2.5 py-1
-                                        rounded-md
-                                        bg-gray-100
-                                        text-gray-800
-                                        font-semibold
-                                        uppercase
-                                    "
-                                >
-                                    {{ $vehicle->nopol }}
-                                </span>
+                                {{-- Merk & Tipe --}}
+                                <td class="px-6 py-4">
+                                    <div class="font-medium text-gray-800">
+                                        {{ $vehicle->merk ?? '-' }}
+                                    </div>
 
-                            </td>
+                                    <div class="mt-0.5 text-xs text-gray-500">
+                                        {{ $vehicle->tipe ?? '-' }}
+                                    </div>
+                                </td>
 
+                                {{-- Tahun --}}
+                                <td class="px-6 py-4 text-gray-600">
+                                    {{ $vehicle->tahun_pembuatan ?? '-' }}
+                                </td>
 
-                            {{-- Nama Klien --}}
-                            <td class="px-6 py-4">
-
-                                <span class="font-medium text-gray-800">
-                                    {{ $vehicle->client->nama_lengkap ?? 'Data Tidak Ditemukan' }}
-                                </span>
-
-                            </td>
-
-
-                            {{-- Nama Pemilik --}}
-                            <td class="px-6 py-4 text-gray-600">
-
-                                {{ $vehicle->nama_pemilik ?? 'Data Tidak Ditemukan' }}
-
-                            </td>
-
-
-                            {{-- Merk & Tipe --}}
-                            <td class="px-6 py-4">
-
-                                <div class="text-gray-800 font-medium">
-                                    {{ $vehicle->merk ?? '-' }}
-                                </div>
-
-                                <div class="text-xs text-gray-500 mt-0.5">
-                                    {{ $vehicle->tipe ?? '-' }}
-                                </div>
-
-                            </td>
-
-
-                            {{-- Tahun --}}
-                            <td class="px-6 py-4 text-gray-600">
-
-                                {{ $vehicle->tahun_pembuatan ?? '-' }}
-
-                            </td>
-                            
-                            {{-- Dokumen --}}
-                            <td class="px-6 py-4">
-                                <a href="{{ route('documents.index', $vehicle->id) }}" 
-                                    class="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-green-700 bg-green-50 hover:bg-green-100 rounded-lg transition">
-                                    Dokumen
-                                </a>
-                            </td>
-
-
-                            {{-- Aksi --}}
-                            <td class="px-6 py-4">
-
-                                <div class="flex items-center justify-center gap-2">
-
-                                    
-
-
-                                    {{-- Edit --}}
+                                {{-- Dokumen --}}
+                                <td class="px-6 py-4">
                                     <a
-                                        href="{{ route('vehicles.edit', $vehicle->id) }}"
-                                        class="
-                                            px-3 py-1.5
-                                            text-xs
-                                            font-medium
-                                            text-indigo-600
-                                            bg-indigo-50
-                                            hover:bg-indigo-100
-                                            rounded-lg
-                                            transition
-                                        "
+                                        href="{{ route('documents.index', $vehicle->id) }}"
+                                        class="inline-flex items-center gap-1.5 rounded-lg bg-green-50 px-3 py-1.5 text-xs font-medium text-green-700 transition hover:bg-green-100"
                                     >
-                                        Edit
+                                        Dokumen
                                     </a>
+                                </td>
 
+                                {{-- Aksi --}}
+                                <td class="px-6 py-4">
+                                    <div class="flex items-center justify-center gap-2">
+                                        {{-- Edit --}}
+                                        <a
+                                            href="{{ route('vehicles.edit', $vehicle->id) }}"
+                                            class="rounded-lg bg-indigo-50 px-3 py-1.5 text-xs font-medium text-indigo-600 transition hover:bg-indigo-100"
+                                        >
+                                            Edit
+                                        </a>
 
-                                    {{-- Hapus --}}
-                                    <form
-                                        action="{{ route('vehicles.destroy', $vehicle->id) }}"
-                                        method="POST"
-                                        onsubmit="return confirm('Apakah Anda yakin ingin menghapus data kendaraan ini?');"
-                                    >
-
-                                        @csrf
-
-                                        @method('DELETE')
-
-                                        <button
-                                            type="submit"
-                                            class="
-                                                px-3 py-1.5
-                                                text-xs
-                                                font-medium
-                                                text-red-600
-                                                bg-red-50
-                                                hover:bg-red-100
-                                                rounded-lg
-                                                transition
+                                        {{-- Hapus --}}
+                                        <form
+                                            action="{{ route('vehicles.destroy', $vehicle->id) }}"
+                                            method="POST"
+                                            onsubmit="
+                                                return confirm(
+                                                    'Apakah Anda yakin ingin menghapus data kendaraan ini?'
+                                                );
                                             "
                                         >
-                                            Hapus
-                                        </button>
+                                            @csrf
 
-                                    </form>
+                                            @method ('DELETE')
 
-                                </div>
+                                            <button
+                                                type="submit"
+                                                class="rounded-lg bg-red-50 px-3 py-1.5 text-xs font-medium text-red-600 transition hover:bg-red-100"
+                                            >
+                                                Hapus
+                                            </button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
 
-                            </td>
+                        @empty
+                            <tr>
+                                <td colspan="7" class="px-6 py-12 text-center text-gray-500">
+                                    <div class="flex flex-col items-center">
+                                        <svg
+                                            class="mb-3 h-12 w-12 text-gray-300"
+                                            fill="none"
+                                            stroke="currentColor"
+                                            viewBox="0 0 24 24"
+                                        >
+                                            <path
+                                                stroke-linecap="round"
+                                                stroke-linejoin="round"
+                                                stroke-width="1.5"
+                                                d="M3 13h2l1-5h12l1 5h2M5 13v5m14-5v5M7 18h10M7 8l1-3h8l1 3"
+                                            />
+                                        </svg>
 
-                        </tr>
+                                        <p class="font-medium text-gray-500">Belum ada data kendaraan.</p>
 
-                    @empty
+                                        <p class="mt-1 text-sm text-gray-400">Silakan tambahkan kendaraan baru.</p>
+                                    </div>
+                                </td>
+                            </tr>
 
-                        <tr>
+                        @endforelse
+                    </tbody>
+                </table>
+            </div>
 
-                            <td
-                                colspan="7"
-                                class="px-6 py-12 text-center text-gray-500"
-                            >
+            {{-- ================================================= --}}
+            {{-- PAGINATION --}}
+            {{-- ================================================= --}}
 
-                                <div class="flex flex-col items-center">
-
-                                    <svg
-                                        class="w-12 h-12 text-gray-300 mb-3"
-                                        fill="none"
-                                        stroke="currentColor"
-                                        viewBox="0 0 24 24"
-                                    >
-
-                                        <path
-                                            stroke-linecap="round"
-                                            stroke-linejoin="round"
-                                            stroke-width="1.5"
-                                            d="M3 13h2l1-5h12l1 5h2M5 13v5m14-5v5M7 18h10M7 8l1-3h8l1 3"
-                                        />
-
-                                    </svg>
-
-                                    <p class="font-medium text-gray-500">
-                                        Belum ada data kendaraan.
-                                    </p>
-
-                                    <p class="text-sm text-gray-400 mt-1">
-                                        Silakan tambahkan kendaraan baru.
-                                    </p>
-
-                                </div>
-
-                            </td>
-
-                        </tr>
-
-                    @endforelse
-
-                </tbody>
-
-            </table>
-
-        </div>
-
-
-        {{-- ================================================= --}}
-        {{-- PAGINATION --}}
-        {{-- ================================================= --}}
-
-        <div
-            id="paginationContainer"
-            class="
-                flex
-                flex-col
-                sm:flex-row
-                items-center
-                justify-between
-                gap-4
-                px-6 py-4
-                border-t
-                border-gray-200
-            "
-        >
-
-            {{-- Informasi --}}
-            <p
-                id="paginationInfo"
-                class="text-sm text-gray-500"
-            ></p>
-
-
-            {{-- Tombol --}}
             <div
-                id="paginationButtons"
-                class="flex items-center gap-1"
-            ></div>
+                id="paginationContainer"
+                class="flex flex-col items-center justify-between gap-4 border-t border-gray-200 px-6 py-4 sm:flex-row"
+            >
+                {{-- Informasi --}}
+                <p id="paginationInfo" class="text-sm text-gray-500"></p>
 
+                {{-- Tombol --}}
+                <div id="paginationButtons" class="flex items-center gap-1"></div>
+            </div>
         </div>
-
     </div>
 
-</div>
+    {{-- ================================================= --}}
+    {{-- SEARCH + PAGINATION --}}
+    {{-- ================================================= --}}
 
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const rows = Array.from(document.querySelectorAll('.vehicle-row'));
 
-{{-- ================================================= --}}
-{{-- SEARCH + PAGINATION --}}
-{{-- ================================================= --}}
+            const searchInput = document.getElementById('vehicleSearch');
 
-<script>
+            const paginationInfo = document.getElementById('paginationInfo');
 
-document.addEventListener('DOMContentLoaded', function () {
+            const paginationButtons = document.getElementById('paginationButtons');
 
-    const rows = Array.from(
-        document.querySelectorAll('.vehicle-row')
-    );
+            const rowsPerPage = 10;
 
-    const searchInput =
-        document.getElementById('vehicleSearch');
+            let currentPage = 1;
 
-    const paginationInfo =
-        document.getElementById('paginationInfo');
+            let filteredRows = [...rows];
 
-    const paginationButtons =
-        document.getElementById('paginationButtons');
+            // =================================================
+            // DISPLAY DATA
+            // =================================================
 
-    const rowsPerPage = 10;
+            function displayRows() {
+                const start = (currentPage - 1) * rowsPerPage;
 
-    let currentPage = 1;
+                const end = start + rowsPerPage;
 
-    let filteredRows = [...rows];
+                // Sembunyikan semua row
+                rows.forEach(function (row) {
+                    row.classList.add('hidden');
+                });
 
+                // Tampilkan row sesuai halaman
+                filteredRows.slice(start, end).forEach(function (row) {
+                    row.classList.remove('hidden');
+                });
 
-    // =================================================
-    // DISPLAY DATA
-    // =================================================
+                updateNumber();
 
-    function displayRows() {
+                updatePagination();
+            }
 
-        const start =
-            (currentPage - 1) * rowsPerPage;
+            // =================================================
+            // UPDATE NOMOR
+            // =================================================
 
-        const end =
-            start + rowsPerPage;
+            function updateNumber() {
+                const start = (currentPage - 1) * rowsPerPage;
 
+                filteredRows.slice(start, start + rowsPerPage).forEach(function (row, index) {
+                    const numberCell = row.querySelector('td:first-child');
 
-        // Sembunyikan semua row
-        rows.forEach(function (row) {
+                    numberCell.textContent = start + index + 1;
+                });
+            }
 
-            row.classList.add('hidden');
+            // =================================================
+            // PAGINATION
+            // =================================================
 
-        });
+            function updatePagination() {
+                paginationButtons.innerHTML = '';
 
+                const totalRows = filteredRows.length;
 
-        // Tampilkan row sesuai halaman
-        filteredRows
-            .slice(start, end)
-            .forEach(function (row) {
+                const totalPages = Math.ceil(totalRows / rowsPerPage);
 
-                row.classList.remove('hidden');
+                // Tidak ada data
+                if (totalRows === 0) {
+                    paginationInfo.textContent = 'Tidak ada data yang ditemukan';
 
-            });
+                    return;
+                }
 
+                const start = (currentPage - 1) * rowsPerPage + 1;
 
-        updateNumber();
+                const end = Math.min(currentPage * rowsPerPage, totalRows);
 
-        updatePagination();
-
-    }
-
-
-    // =================================================
-    // UPDATE NOMOR
-    // =================================================
-
-    function updateNumber() {
-
-        const start =
-            (currentPage - 1) * rowsPerPage;
-
-
-        filteredRows
-            .slice(start, start + rowsPerPage)
-            .forEach(function (row, index) {
-
-                const numberCell =
-                    row.querySelector('td:first-child');
-
-                numberCell.textContent =
-                    start + index + 1;
-
-            });
-
-    }
-
-
-    // =================================================
-    // PAGINATION
-    // =================================================
-
-    function updatePagination() {
-
-        paginationButtons.innerHTML = '';
-
-
-        const totalRows =
-            filteredRows.length;
-
-
-        const totalPages =
-            Math.ceil(totalRows / rowsPerPage);
-
-
-        // Tidak ada data
-        if (totalRows === 0) {
-
-            paginationInfo.textContent =
-                'Tidak ada data yang ditemukan';
-
-            return;
-
-        }
-
-
-        const start =
-            (currentPage - 1) * rowsPerPage + 1;
-
-
-        const end =
-            Math.min(
-                currentPage * rowsPerPage,
-                totalRows
-            );
-
-
-        paginationInfo.innerHTML = `
+                paginationInfo.innerHTML = `
             Menampilkan
             <span class="font-medium text-gray-700">
                 ${start}
@@ -549,70 +344,47 @@ document.addEventListener('DOMContentLoaded', function () {
             data
         `;
 
+                // =================================================
+                // PREVIOUS
+                // =================================================
 
-        // =================================================
-        // PREVIOUS
-        // =================================================
+                const previousButton = document.createElement('button');
 
-        const previousButton =
-            document.createElement('button');
+                previousButton.innerHTML = '‹';
 
-        previousButton.innerHTML = '‹';
-
-        previousButton.className = `
+                previousButton.className = `
             px-3 py-2
             text-sm
             rounded-lg
             border
             ${
                 currentPage === 1
-                ? 'text-gray-400 bg-gray-100 border-gray-200 cursor-not-allowed'
-                : 'text-gray-600 bg-white border-gray-200 hover:bg-gray-50'
+                    ? 'text-gray-400 bg-gray-100 border-gray-200 cursor-not-allowed'
+                    : 'text-gray-600 bg-white border-gray-200 hover:bg-gray-50'
             }
         `;
 
-        previousButton.disabled =
-            currentPage === 1;
+                previousButton.disabled = currentPage === 1;
 
+                previousButton.addEventListener('click', function () {
+                    if (currentPage > 1) {
+                        currentPage--;
 
-        previousButton.addEventListener(
-            'click',
-            function () {
+                        displayRows();
+                    }
+                });
 
-                if (currentPage > 1) {
+                paginationButtons.appendChild(previousButton);
 
-                    currentPage--;
+                // PAGE NUMBER
 
-                    displayRows();
+                for (let page = 1; page <= totalPages; page++) {
+                    const button = document.createElement('button');
 
-                }
+                    button.textContent = page;
 
-            }
-        );
-
-
-        paginationButtons.appendChild(
-            previousButton
-        );
-
-
-        // PAGE NUMBER
-
-        for (
-            let page = 1;
-            page <= totalPages;
-            page++
-        ) {
-
-            const button =
-                document.createElement('button');
-
-            button.textContent = page;
-
-
-            if (page === currentPage) {
-
-                button.className = `
+                    if (page === currentPage) {
+                        button.className = `
                     px-3 py-2
                     text-sm
                     font-medium
@@ -622,10 +394,8 @@ document.addEventListener('DOMContentLoaded', function () {
                     border-indigo-600
                     rounded-lg
                 `;
-
-            } else {
-
-                button.className = `
+                    } else {
+                        button.className = `
                     px-3 py-2
                     text-sm
                     text-gray-600
@@ -635,118 +405,74 @@ document.addEventListener('DOMContentLoaded', function () {
                     rounded-lg
                     hover:bg-gray-50
                 `;
+                    }
 
-            }
+                    button.addEventListener('click', function () {
+                        currentPage = page;
 
+                        displayRows();
+                    });
 
-            button.addEventListener(
-                'click',
-                function () {
-
-                    currentPage = page;
-
-                    displayRows();
-
+                    paginationButtons.appendChild(button);
                 }
-            );
 
+                // =================================================
+                // NEXT
+                // =================================================
 
-            paginationButtons.appendChild(
-                button
-            );
+                const nextButton = document.createElement('button');
 
-        }
+                nextButton.innerHTML = '›';
 
-
-        // =================================================
-        // NEXT
-        // =================================================
-
-        const nextButton =
-            document.createElement('button');
-
-        nextButton.innerHTML = '›';
-
-        nextButton.className = `
+                nextButton.className = `
             px-3 py-2
             text-sm
             rounded-lg
             border
             ${
                 currentPage === totalPages
-                ? 'text-gray-400 bg-gray-100 border-gray-200 cursor-not-allowed'
-                : 'text-gray-600 bg-white border-gray-200 hover:bg-gray-50'
+                    ? 'text-gray-400 bg-gray-100 border-gray-200 cursor-not-allowed'
+                    : 'text-gray-600 bg-white border-gray-200 hover:bg-gray-50'
             }
         `;
 
-        nextButton.disabled =
-            currentPage === totalPages;
+                nextButton.disabled = currentPage === totalPages;
 
+                nextButton.addEventListener('click', function () {
+                    if (currentPage < totalPages) {
+                        currentPage++;
 
-        nextButton.addEventListener(
-            'click',
-            function () {
-
-                if (currentPage < totalPages) {
-
-                    currentPage++;
-
-                    displayRows();
-
-                }
-
-            }
-        );
-
-
-        paginationButtons.appendChild(
-            nextButton
-        );
-
-    }
-
-
-    // =================================================
-    // SEARCH
-    // =================================================
-
-    searchInput.addEventListener(
-        'input',
-        function () {
-
-            const keyword =
-                this.value
-                    .toLowerCase()
-                    .trim();
-
-
-            filteredRows =
-                rows.filter(function (row) {
-
-                    const searchData =
-                        row.dataset.search || '';
-
-                    return searchData.includes(keyword);
-
+                        displayRows();
+                    }
                 });
 
+                paginationButtons.appendChild(nextButton);
+            }
 
-            currentPage = 1;
+            // =================================================
+            // SEARCH
+            // =================================================
+
+            searchInput.addEventListener('input', function () {
+                const keyword = this.value.toLowerCase().trim();
+
+                filteredRows = rows.filter(function (row) {
+                    const searchData = row.dataset.search || '';
+
+                    return searchData.includes(keyword);
+                });
+
+                currentPage = 1;
+
+                displayRows();
+            });
+
+            // =================================================
+            // INITIAL LOAD
+            // =================================================
 
             displayRows();
-
-        }
-    );
-
-
-    // =================================================
-    // INITIAL LOAD
-    // =================================================
-
-    displayRows();
-
-});
-
-</script>
+        });
+    </script>
 
 @endsection

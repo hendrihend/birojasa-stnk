@@ -7,6 +7,7 @@ use App\Http\Controllers\VehicleController;
 use App\Http\Controllers\TransactionController;
 use App\Http\Controllers\DocumentController;
 use App\Http\Controllers\STNKRecordController;
+use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -26,6 +27,7 @@ Route::middleware('auth')->group(function () {
     Route::resource('vehicles', VehicleController::class);
     Route::resource('transactions', TransactionController::class);
     Route::resource('stnk_records', STNKRecordController::class);
+    Route::resource('users', UserController::class)->middleware('can:super_admin');
 
     Route::get('/vehicles/{vehicle_id}/documents', [DocumentController::class, 'index'])->name('documents.index');
     Route::post('/vehicles/{vehicle_id}/documents', [DocumentController::class, 'store'])->name('documents.store');
