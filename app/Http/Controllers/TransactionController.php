@@ -45,14 +45,33 @@ class TransactionController extends Controller
             'status_proses' => 'required|string',
             'biaya_pajak' => 'required|numeric',
             'biaya_jasa' => 'required|numeric',
-            'biaya_lain' => 'required|numeric',
+            'loket_pendaftaran' => 'nullable|numeric',
+            'loket_cek_fisik' => 'nullable|numeric',
+            'acc_tidak_hadir' => 'nullable|numeric',
+            'acc_domisili' => 'nullable|numeric',
+            'loket_penetapan' => 'nullable|numeric',
+            'loket_pengesahan_1' => 'nullable|numeric',
+            'loket_pengesahan_2' => 'nullable|numeric',
+            'bea_materai' => 'nullable|numeric',
             'tgl_masuk' => 'required|date',
             'tgl_selesai' => 'nullable|date|after_or_equal:tgl_masuk',
             ]);
 
             $invoiceNo = 'INV-' . date('Ymd') . '-' . rand(1000, 9999);
-            // Hitung total biaya otomatis di sistem
-            $total = $request->biaya_pajak + $request->biaya_jasa + $request->biaya_lain;
+            // Hitung grand total biaya lain
+            $loketPendaftaran = (int) $request->loket_pendaftaran;
+            $loketCekFisik = (int) $request->loket_cek_fisik;
+            $accTidakHadir = (int) $request->acc_tidak_hadir;
+            $accDomisili = (int) $request->acc_domisili;
+            $loketPenetapan = (int) $request->loket_penetapan;
+            $loketPengesahan1 = (int) $request->loket_pengesahan_1;
+            $loketPengesahan2 = (int) $request->loket_pengesahan_2;
+            $beaMaterai = (int) $request->bea_materai;
+            $grandTotalBiayaLain = $loketPendaftaran + $loketCekFisik + $accTidakHadir + $accDomisili +
+                                    $loketPenetapan + $loketPengesahan1 + $loketPengesahan2 + $beaMaterai;
+
+            // Hitung grand total biaya otomatis di sistem
+            $grandTotal = $request->biaya_pajak + $request->biaya_jasa + $request->grandTotalBiayaLain;
             Transaction::create([
                 'invoice_no' =>$invoiceNo,
                 'vehicle_id' => $request->vehicle_id,
@@ -60,8 +79,18 @@ class TransactionController extends Controller
                 'status_proses' => $request->status_proses,
                 'biaya_pajak' => $request->biaya_pajak,
                 'biaya_jasa' => $request->biaya_jasa,
-                'biaya_lain' => $request->biaya_lain,
-                'total_biaya' => $total,
+                // 8 rincian biaya lain
+                'loket_pendaftaran' => $loketPendaftaran,
+                'loket_cek_fisik' => $loketCekFisik,
+                'acc_tidak_hadir' => $accTidakHadir,
+                'acc_domisili' => $accDomisili,
+                'loket_penetapan' => $loketPenetapan,
+                'loket_pengesahan_1' => $loketPengesahan1,
+                'loket_pengesahan_2' => $loketPengesahan2,
+                'bea_materai' => $beaMaterai,
+                // grand total
+                'biaya_lain' => $grandTotalBiayaLain,
+                'total_biaya' => $grandTotal,
                 'tgl_masuk' => $request->tgl_masuk,
                 'tgl_selesai' => $request->tgl_selesai,
             ]);
@@ -93,6 +122,14 @@ class TransactionController extends Controller
             'status_proses' => 'required|string',
             'biaya_pajak' => 'required|numeric',
             'biaya_jasa' => 'nullable|numeric',
+            'loket_pendaftaran' => 'nullable|numeric',
+            'loket_cek_fisik' => 'nullable|numeric',
+            'acc_tidak_hadir' => 'nullable|numeric',
+            'acc_domisili' => 'nullable|numeric',
+            'loket_penetapan' => 'nullable|numeric',
+            'loket_pengesahan_1' => 'nullable|numeric',
+            'loket_pengesahan_2' => 'nullable|numeric',
+            'bea_materai' => 'nullable|numeric',
             'biaya_lain' => 'nullable|numeric',
             'tgl_selesai' => 'nullable|date|after_or_equal:tgl_masuk',
         ]);
@@ -108,11 +145,22 @@ class TransactionController extends Controller
             $tglSelesai = date('Y-m-d');
         }
 
-        // Hitung total biaya otomatis (int) supaya aman jika dikosongkan
+        // Hitung grand total biaya lain
+        $loketPendaftaran = (int) $request->loket_pendaftaran;
+        $loketCekFisik = (int) $request->loket_cek_fisik;
+        $accTidakHadir = (int) $request->acc_tidak_hadir;
+        $accDomisili = (int) $request->acc_domisili;
+        $loketPenetapan = (int) $request->loket_penetapan;
+        $loketPengesahan1 = (int) $request->loket_pengesahan_1;
+        $loketPengesahan2 = (int) $request->loket_pengesahan_2;
+        $beaMaterai = (int) $request->bea_materai;
+        $grandTotalBiayaLain = $loketPendaftaran + $loketCekFisik + $accTidakHadir + $accDomisili +
+                                $loketPenetapan + $loketPengesahan1 + $loketPengesahan2 + $beaMaterai;
+
+        // Hitung grand total biaya otomatis (int) supaya aman jika dikosongkan
         $pajak = (int) $request->biaya_pajak;
         $jasa = (int) $request->biaya_jasa;
-        $lain = (int) $request->biaya_lain;
-        $total = $pajak + $jasa + $lain;
+        $grandTotal = $pajak + $jasa + $grandTotalBiayaLain;
 
         // 2. Update data transaksi
         $transaction->update([
@@ -120,8 +168,18 @@ class TransactionController extends Controller
             'status_proses' => $statusBaru,
             'biaya_pajak' => $pajak,
             'biaya_jasa' => $jasa,
-            'biaya_lain' => $lain,
-            'total_biaya' => $total, // Hasil penjumlahan
+            // 8 rincian biaya lain
+            'loket_pendaftaran' => $loketPendaftaran,
+            'loket_cek_fisik' => $loketCekFisik,
+            'acc_tidak_hadir' => $accTidakHadir,
+            'acc_domisili' => $accDomisili,
+            'loket_penetapan' => $loketPenetapan,
+            'loket_pengesahan_1' => $loketPengesahan1,
+            'loket_pengesahan_2' => $loketPengesahan2,
+            'bea_materai' => $beaMaterai,
+            // grand total
+            'biaya_lain' => $grandTotalBiayaLain,
+            'total_biaya' => $grandTotal, // Hasil penjumlahan
             'tgl_selesai' => $tglSelesai,
         ]);
 

@@ -3,20 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Invoice - {{ $transaction->vehicle->nopol }}</title>
-    <!-- Gunakan Tailwind CDN khusus untuk halaman cetak agar ringan -->
+    <title>Invoice - {{ $transaction->invoice_no ?? 'TRX-'.$transaction->id }}</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         @media print {
             @page { margin: 1cm; size: A4 portrait; }
             body { -webkit-print-color-adjust: exact; print-color-adjust: exact; background-color: white !important; }
             .print\:hidden { display: none !important; }
-            /* Memaksa background tabel tetap muncul saat di-print */
             .bg-gray-100 { background-color: #f3f4f6 !important; }
         }
     </style>
 </head>
-<body class="bg-gray-200 text-gray-800 font-sans p-8 print:p-0 print:bg-white">
+<body class="bg-gray-200 text-gray-800 font-sans p-8 print:p-0 print:bg-white relative">
 
     <?php
         // FUNGSI UNTUK MENGUBAH ANGKA MENJADI TEKS (TERBILANG)
@@ -35,7 +33,8 @@
             return $temp;
         }
         function terbilang($nilai) {
-            if($nilai<0) { $hasil = "Minus ". trim(penyebut($nilai)); } 
+            if($nilai == 0) return "Nol Rupiah";
+            if($nilai < 0) { $hasil = "Minus ". trim(penyebut($nilai)); } 
             else { $hasil = trim(penyebut($nilai)); }
             return $hasil . " Rupiah";
         }
@@ -59,17 +58,17 @@
         <!-- HEADER KOP SURAT -->
         <div class="flex justify-between items-start mb-8">
             <div class="w-1/2">
-                <!-- Ganti dengan tag <img> jika sudah punya logo beneran -->
                 <div class="flex items-center gap-2 mb-2">
-                    <div class="w-10 h-10 bg-blue-900 flex items-center justify-center text-white font-bold text-xl rounded-sm">
+                    <!-- Ganti kotak ini dengan <img> logo biro jasa Anda nanti -->
+                    <div class="w-12 h-12 bg-blue-900 flex items-center justify-center text-white font-black text-2xl rounded-sm shadow-sm">
                         BJ
                     </div>
                     <div>
                         <h1 class="text-2xl font-black text-gray-900 tracking-tight leading-none">BIRO JASA STNK</h1>
-                        <p class="text-[10px] text-gray-500 italic">Committed to Service, Excellence in Every Process</p>
+                        <p class="text-[10px] text-gray-500 italic mt-0.5">Committed to Service, Excellence in Every Process</p>
                     </div>
                 </div>
-                <p class="text-xs text-gray-700 mt-2">Alamat: Jl. Contoh Kemerdekaan No. 45, Kota Anda, 12345</p>
+                <p class="text-xs text-gray-700 mt-3">Alamat: Jl. Contoh Kemerdekaan No. 45, Kota Anda, 12345</p>
                 <p class="text-xs text-gray-700">No.Telp : +62 812-3456-7890</p>
             </div>
             
@@ -78,7 +77,7 @@
                 <table class="w-full text-xs text-left ml-auto" style="max-width: 250px;">
                     <tr>
                         <td class="py-1 text-gray-600">No Invoice</td>
-                        <td class="py-1 font-bold">: {{ $transaction->invoice_no ?? ('TRX-'.str_pad($transaction->id, 5, '0', STR_PAD_LEFT)) }}</td>
+                        <td class="py-1 font-bold">: {{ $transaction->invoice_no }}</td>
                     </tr>
                     <tr>
                         <td class="py-1 text-gray-600">Tgl. Pembuatan</td>
@@ -104,13 +103,14 @@
             Dengan ini, kami menyampaikan pengajuan atas <strong>{{ $transaction->jenis_layanan }}</strong> <span class="float-right underline text-xs">Kendaraan Terlampir:</span>
         </p>
 
-        <!-- TABEL RINCIAN BIAYA -->
-        <table class="w-full text-sm border-collapse border border-gray-900 mb-4">
+        <!-- TABEL UTAMA (RINCIAN GLOBAL) -->
+        <table class="w-full text-sm border-collapse border border-gray-900 mb-6">
             <thead>
                 <tr class="bg-gray-100">
                     <th class="border border-gray-900 py-2 px-3 text-center w-10">No</th>
                     <th class="border border-gray-900 py-2 px-3 text-center">No Polisi</th>
                     <th class="border border-gray-900 py-2 px-3 text-center">Merk Type</th>
+                    <th class="border border-gray-900 py-2 px-3 text-center">Tahun</th>
                     <th class="border border-gray-900 py-2 px-3 text-center">Pajak</th>
                     <th class="border border-gray-900 py-2 px-3 text-center">Jasa</th>
                     <th class="border border-gray-900 py-2 px-3 text-center">Biaya Lain</th>
@@ -122,6 +122,7 @@
                     <td class="border border-gray-900 py-3 px-3 text-center">1</td>
                     <td class="border border-gray-900 py-3 px-3 text-center font-bold">{{ $transaction->vehicle->nopol }}</td>
                     <td class="border border-gray-900 py-3 px-3 text-center text-xs">{{ $transaction->vehicle->merk }} {{ $transaction->vehicle->tipe }}</td>
+                    <td class="border border-gray-900 py-3 px-3 text-center">{{ $transaction->vehicle->tahun_pembuatan ?? '-' }}</td>
                     <td class="border border-gray-900 py-3 px-3 text-right">{{ number_format($transaction->biaya_pajak, 0, ',', '.') }}</td>
                     <td class="border border-gray-900 py-3 px-3 text-right">{{ number_format($transaction->biaya_jasa, 0, ',', '.') }}</td>
                     <td class="border border-gray-900 py-3 px-3 text-right">{{ number_format($transaction->biaya_lain, 0, ',', '.') }}</td>
@@ -131,7 +132,7 @@
                 </tr>
                 <!-- Baris Total -->
                 <tr class="bg-gray-100 font-bold">
-                    <td colspan="6" class="border border-gray-900 py-3 px-3 text-center tracking-widest">TOTAL</td>
+                    <td colspan="7" class="border border-gray-900 py-3 px-3 text-center tracking-widest text-base">TOTAL</td>
                     <td class="border border-gray-900 py-3 px-3 text-right flex justify-between text-base">
                         <span>Rp</span> <span>{{ number_format($transaction->total_biaya, 0, ',', '.') }}</span>
                     </td>
@@ -142,24 +143,82 @@
         <!-- TERBILANG & CATATAN -->
         <div class="mb-10 text-sm">
             <div class="flex mb-2">
-                <div class="w-32 text-gray-700">TERBILANG:</div>
-                <div class="font-bold italic flex-1 capitalize">{{ terbilang($transaction->total_biaya) }}</div>
+                <div class="w-32 text-gray-700 uppercase font-bold">TERBILANG:</div>
+                <div class="font-bold italic flex-1 capitalize">** {{ terbilang($transaction->total_biaya) }} **</div>
             </div>
             @if($transaction->catatan)
-            <div class="flex">
+            <div class="flex items-start mt-4">
                 <div class="w-32 text-gray-700">Catatan:</div>
-                <div class="flex-1 bg-gray-100 px-3 py-1 text-xs inline-block">{{ $transaction->catatan }}</div>
+                <div class="flex-1 bg-gray-100 px-3 py-2 text-xs text-gray-700">{{ $transaction->catatan }}</div>
             </div>
             @endif
         </div>
 
+        <!-- TABEL RINCIAN BIAYA LAIN -->
+        <div class="flex justify-between items-start mb-16 text-sm">
+            <div class="w-1/2">
+                <p class="font-bold text-gray-700 uppercase">Rincian Biaya Lainnya:</p>
+            </div>
+            <div class="w-1/2 flex justify-end">
+                <table class="w-[85%] border-collapse border border-gray-900 text-xs">
+                    <tbody>
+                        <tr>
+                            <td class="border border-gray-900 px-3 py-1.5 text-gray-700">Loket Pendaftaran</td>
+                            <td class="border border-gray-900 px-3 py-1.5 w-8">Rp</td>
+                            <td class="border border-gray-900 px-3 py-1.5 text-right">{{ $transaction->loket_pendaftaran > 0 ? number_format($transaction->loket_pendaftaran, 0, ',', '.') : '-' }}</td>
+                        </tr>
+                        <tr>
+                            <td class="border border-gray-900 px-3 py-1.5 text-gray-700">Loket Cek Fisik</td>
+                            <td class="border border-gray-900 px-3 py-1.5">Rp</td>
+                            <td class="border border-gray-900 px-3 py-1.5 text-right">{{ $transaction->loket_cek_fisik > 0 ? number_format($transaction->loket_cek_fisik, 0, ',', '.') : '-' }}</td>
+                        </tr>
+                        <tr>
+                            <td class="border border-gray-900 px-3 py-1.5 text-gray-700">Acc tidak hadir STNK</td>
+                            <td class="border border-gray-900 px-3 py-1.5">Rp</td>
+                            <td class="border border-gray-900 px-3 py-1.5 text-right">{{ $transaction->acc_tidak_hadir > 0 ? number_format($transaction->acc_tidak_hadir, 0, ',', '.') : '-' }}</td>
+                        </tr>
+                        <tr>
+                            <td class="border border-gray-900 px-3 py-1.5 text-gray-700">Acc Domisili (Beda Alamat)</td>
+                            <td class="border border-gray-900 px-3 py-1.5">Rp</td>
+                            <td class="border border-gray-900 px-3 py-1.5 text-right">{{ $transaction->acc_domisili > 0 ? number_format($transaction->acc_domisili, 0, ',', '.') : '-' }}</td>
+                        </tr>
+                        <tr>
+                            <td class="border border-gray-900 px-3 py-1.5 text-gray-700">Loket Penetapan</td>
+                            <td class="border border-gray-900 px-3 py-1.5">Rp</td>
+                            <td class="border border-gray-900 px-3 py-1.5 text-right">{{ $transaction->loket_penetapan > 0 ? number_format($transaction->loket_penetapan, 0, ',', '.') : '-' }}</td>
+                        </tr>
+                        <tr>
+                            <td class="border border-gray-900 px-3 py-1.5 text-gray-700">Loket Pengesahan Pertama</td>
+                            <td class="border border-gray-900 px-3 py-1.5">Rp</td>
+                            <td class="border border-gray-900 px-3 py-1.5 text-right">{{ $transaction->loket_pengesahan_1 > 0 ? number_format($transaction->loket_pengesahan_1, 0, ',', '.') : '-' }}</td>
+                        </tr>
+                        <tr>
+                            <td class="border border-gray-900 px-3 py-1.5 text-gray-700">Loket Pengesahan Kedua</td>
+                            <td class="border border-gray-900 px-3 py-1.5">Rp</td>
+                            <td class="border border-gray-900 px-3 py-1.5 text-right">{{ $transaction->loket_pengesahan_2 > 0 ? number_format($transaction->loket_pengesahan_2, 0, ',', '.') : '-' }}</td>
+                        </tr>
+                        <tr>
+                            <td class="border border-gray-900 px-3 py-1.5 text-gray-700">Bea Materai</td>
+                            <td class="border border-gray-900 px-3 py-1.5">Rp</td>
+                            <td class="border border-gray-900 px-3 py-1.5 text-right">{{ $transaction->bea_materai > 0 ? number_format($transaction->bea_materai, 0, ',', '.') : '-' }}</td>
+                        </tr>
+                        <tr class="font-bold bg-gray-100">
+                            <td class="border border-gray-900 px-3 py-2">Total</td>
+                            <td class="border border-gray-900 px-3 py-2">Rp</td>
+                            <td class="border border-gray-900 px-3 py-2 text-right">{{ number_format($transaction->biaya_lain, 0, ',', '.') }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
         <!-- FOOTER & TANDA TANGAN -->
-        <div class="flex justify-between items-end mt-20 pt-8 absolute bottom-10 left-10 right-10">
+        <div class="flex justify-between items-end mt-10 pt-8 border-t border-dashed border-gray-300">
             <!-- Tanda Tangan Kiri -->
             <div class="text-left w-64">
-                <p class="text-sm text-gray-800 mb-16">{{ \Carbon\Carbon::now()->format('d/m/Y') }}<br>Dibuat Oleh,</p>
+                <p class="text-sm text-gray-800 mb-20">{{ \Carbon\Carbon::now()->format('d/m/Y') }}<br>Dibuat Oleh,</p>
                 <!-- Space untuk stempel/ttd asli -->
-                <p class="font-bold text-gray-900 underline uppercase mt-20">ADMIN BIRO JASA</p>
+                <p class="font-bold text-gray-900 uppercase">ADMIN BIRO JASA</p>
             </div>
             
             <!-- Rekening Bank Kanan -->
@@ -171,13 +230,6 @@
         </div>
 
     </div>
-    <!-- Script untuk memicu dialog print otomatis saat halaman dimuat -->
-    <script>
-        window.onload = function() {
-            setTimeout(function() {
-                window.print();
-            }, 500); // Jeda setengah detik agar CSS Tailwind termuat sempurna
-        };
-    </script>
+
 </body>
 </html>

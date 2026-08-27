@@ -119,15 +119,42 @@
                             </div>
 
                             <!-- 3. Biaya Lainnya -->
-                            <div>
-                                <label class="block text-xs font-bold text-gray-700 mb-1">Biaya Lain / Materai <span class="text-red-500">*</span></label>
-                                <div class="relative">
-                                    <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-                                        <span class="text-gray-500 font-bold text-sm">Rp</span>
+                            <div class="col-span-1 md:col-span-3 mt-4 border-t border-blue-100 pt-4">
+                                <label class="block text-sm font-bold text-gray-700 mb-3">Rincian Biaya Lainnya</label>
+                                <div class="grid grid-cols-1 md:grid-cols-4 gap-4 bg-white p-4 rounded-lg border border-gray-200">
+                                    
+                                    <!-- Daftar 8 Input -->
+                                    @php
+                                        $rincianLain = [
+                                            ['id' => 'loket_pendaftaran', 'label' => 'Loket Pendaftaran'],
+                                            ['id' => 'loket_cek_fisik', 'label' => 'Loket Cek Fisik'],
+                                            ['id' => 'acc_tidak_hadir', 'label' => 'Acc Tidak Hadir STNK'],
+                                            ['id' => 'acc_domisili', 'label' => 'Acc Domisili (Beda Alamat)'],
+                                            ['id' => 'loket_penetapan', 'label' => 'Loket Penetapan'],
+                                            ['id' => 'loket_pengesahan_1', 'label' => 'Loket Pengesahan Pertama'],
+                                            ['id' => 'loket_pengesahan_2', 'label' => 'Loket Pengesahan Kedua'],
+                                            ['id' => 'bea_materai', 'label' => 'Bea Materai'],
+                                        ];
+                                    @endphp
+
+                                    @foreach($rincianLain as $item)
+                                    <div>
+                                        <label class="block text-[11px] font-bold text-gray-600 mb-1">{{ $item['label'] }}</label>
+                                        <div class="relative">
+                                            <div class="absolute inset-y-0 left-0 flex items-center pl-2 pointer-events-none">
+                                                <span class="text-gray-400 font-bold text-xs">Rp</span>
+                                            </div>
+                                            <!-- Hapus $transaction pada create.blade.php -->
+                                            <input type="text" id="tampil_{{ $item['id'] }}" placeholder="0" class="input-detail-lain w-full pl-8 pr-2 py-1.5 border border-gray-300 rounded focus:ring-1 focus:ring-blue-500 outline-none font-bold text-gray-700 text-sm transition-colors">
+                                            <input type="hidden" name="{{ $item['id'] }}" id="asli_{{ $item['id'] }}" value="{{ old($item['id'], $transaction->{$item['id']} ?? 0) }}">
+                                        </div>
                                     </div>
-                                    <input type="text" id="lain_tampil" placeholder="0" class="input-biaya w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none font-bold text-gray-800 transition-colors">
-                                    <!-- Hapus variabel $transaction pada create.blade.php -->
-                                    <input type="hidden" name="biaya_lain" id="lain_asli" value="{{ old('biaya_lain', $transaction->biaya_lain ?? 0) }}">
+                                    @endforeach
+
+                                </div>
+                                <div class="text-right mt-2">
+                                    <span class="text-xs text-gray-500 font-bold">Subtotal Biaya Lain: </span>
+                                    <span class="text-sm font-black text-blue-600" id="subtotal_lain">Rp 0</span>
                                 </div>
                             </div>
                         </div>
@@ -166,40 +193,64 @@
     <!-- SCRIPT UNTUK FORMAT RUPIAH OTOMATIS -->
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // Fungsi format Rupiah (menggunakan titik)
             const formatRupiah = (angka) => new Intl.NumberFormat('id-ID').format(angka || 0);
 
-            // Definisi elemen input
-            const inputs = [
-                { tampil: document.getElementById('pajak_tampil'), asli: document.getElementById('pajak_asli') },
-                { tampil: document.getElementById('jasa_tampil'), asli: document.getElementById('jasa_asli') },
-                { tampil: document.getElementById('lain_tampil'), asli: document.getElementById('lain_asli') }
-            ];
+            // Input Utama
+            const pajakTampil = document.getElementById('pajak_tampil');
+            const pajakAsli = document.getElementById('pajak_asli');
+            const jasaTampil = document.getElementById('jasa_tampil');
+            const jasaAsli = document.getElementById('jasa_asli');
+            
+            // Input Detail Biaya Lain
+            const detailLainInputs = document.querySelectorAll('.input-detail-lain');
+            
+            // Label Total
+            const labelSubtotalLain = document.getElementById('subtotal_lain');
             const labelTotal = document.getElementById('total_kalkulasi');
 
-            // Fungsi Kalkulasi & Tampilan
             const hitungTotal = () => {
-                let total = 0;
-                inputs.forEach(item => {
-                    let nilai = parseInt(item.asli.value) || 0;
-                    total += nilai;
-                    // Update tampilan format rupiah saat pertama kali diload (mode edit)
-                    if(item.asli.value > 0) item.tampil.value = formatRupiah(nilai); 
+                let totalPajak = parseInt(pajakAsli.value) || 0;
+                let totalJasa = parseInt(jasaAsli.value) || 0;
+                let subtotalLain = 0;
+
+                // Hitung 8 rincian
+                detailLainInputs.forEach(inputTampil => {
+                    let idAsli = inputTampil.id.replace('tampil_', 'asli_');
+                    let inputAsli = document.getElementById(idAsli);
+                    let nilai = parseInt(inputAsli.value) || 0;
+                    subtotalLain += nilai;
+                    
+                    if(inputAsli.value > 0 && document.activeElement !== inputTampil) {
+                        inputTampil.value = formatRupiah(nilai);
+                    }
                 });
-                labelTotal.innerText = 'Rp ' + formatRupiah(total);
+
+                // Set tampilan
+                if(pajakAsli.value > 0 && document.activeElement !== pajakTampil) pajakTampil.value = formatRupiah(totalPajak);
+                if(jasaAsli.value > 0 && document.activeElement !== jasaTampil) jasaTampil.value = formatRupiah(totalJasa);
+                
+                labelSubtotalLain.innerText = 'Rp ' + formatRupiah(subtotalLain);
+                labelTotal.innerText = 'Rp ' + formatRupiah(totalPajak + totalJasa + subtotalLain);
             };
 
-            // Pasang Event Listener saat user mengetik
-            inputs.forEach(item => {
-                item.tampil.addEventListener('input', function(e) {
-                    let angkaMurni = this.value.replace(/[^0-9]/g, ''); // Hapus selain angka
-                    item.asli.value = angkaMurni; // Simpan ke input hidden
-                    this.value = angkaMurni ? formatRupiah(angkaMurni) : ''; // Tampilkan dengan titik
-                    hitungTotal(); // Panggil fungsi hitung ulang
+            // Event Listener untuk semua input text yang format uang
+            const attachListener = (tampil, asli) => {
+                tampil.addEventListener('input', function(e) {
+                    let angkaMurni = this.value.replace(/[^0-9]/g, '');
+                    asli.value = angkaMurni;
+                    this.value = angkaMurni ? formatRupiah(angkaMurni) : '';
+                    hitungTotal();
                 });
+            };
+
+            attachListener(pajakTampil, pajakAsli);
+            attachListener(jasaTampil, jasaAsli);
+            
+            detailLainInputs.forEach(inputTampil => {
+                let idAsli = inputTampil.id.replace('tampil_', 'asli_');
+                attachListener(inputTampil, document.getElementById(idAsli));
             });
 
-            // Jalankan sekali saat halaman dimuat (untuk memunculkan nilai dari database jika ada)
             hitungTotal();
         });
     </script>
