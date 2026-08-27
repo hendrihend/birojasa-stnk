@@ -12,8 +12,11 @@ class Transaction extends Model
         'invoice_no',
         'vehicle_id',
         'jenis_layanan',
-        'total_biaya',
         'status_proses',
+        'biaya_pajak',
+        'biaya_jasa',
+        'biaya_lain',
+        'total_biaya',
         'tgl_masuk',
         'tgl_selesai',
     ];

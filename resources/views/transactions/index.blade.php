@@ -63,22 +63,19 @@
                             Rp {{ number_format($trx->total_biaya, 0, ',', '.') }}
                         </td>
                         <td class="p-4 flex justify-center gap-3">
-                            <!-- <a href="#" class="text-indigo-600 hover:text-indigo-800 font-bold px-2 py-1 hover:bg-indigo-50 rounded transition-colors flex items-center gap-1">
-                                <i class="fa-solid fa-print"></i>
-                            </a> -->
                             <a href="{{ route('transactions.print', $trx->id) }}" target="_blank" 
-                            class="inline-flex items-center justify-center w-8 h-8 rounded bg-gray-100 hover:bg-gray-200 text-gray-700 transition-colors" title="Cetak Tanda Terima">
+                            class="inline-flex items-center justify-center w-8 h-8 hover:bg-gray-200 text-gray-700 transition-colors" title="Cetak Tanda Terima">
                                 <i class="fa-solid fa-print"></i>
                             </a>
                             
-                            <a href="{{ route('transactions.edit', $trx->id) }}" class="text-blue-500 hover:text-blue-700 font-bold px-2 py-1 hover:bg-blue-50 rounded transition-colors flex items-center gap-1">
+                            <a href="{{ route('transactions.edit', $trx->id) }}" class="text-blue-700 hover:text-blue-700 font-bold px-2 py-1 hover:bg-blue-200 rounded transition-colors flex items-center gap-1">
                                 <i class="fa-solid fa-pen-to-square"></i>
                             </a>
                             
                             @if(Auth::user()->role === 'super_admin')
-                                <form action="{{ route('transactions.destroy', $trx->id) }}" method="POST" onsubmit="return confirm('Yakin ingin menghapus transaksi ini?');" class="inline">
+                                <form action="{{ route('transactions.destroy', $trx->id) }}" method="POST" onsubmit="return confirm('Yakin ingin menghapus transaksi ini?');" class="inline-flex items-center justify-center w-8 h-8">
                                     @csrf @method('DELETE')
-                                    <button type="submit" class="text-red-500 hover:text-red-700 font-bold px-2 py-1 hover:bg-red-50 rounded transition-colors flex items-center gap-1">
+                                    <button type="submit" class="text-red-700 hover:text-red-700 font-bold px-2 py-1 hover:bg-red-200 rounded transition-colors flex items-center gap-1">
                                         <i class="fa-solid fa-trash-can"></i>
                                     </button>
                                 </form>

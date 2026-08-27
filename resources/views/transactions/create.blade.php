@@ -74,21 +74,58 @@
                         </select>
                     </div>
 
-                    <!-- Total Biaya -->
-                    <div>
-                        <label class="block text-sm font-bold text-gray-700 mb-1">Total Biaya (Pajak + Jasa) <span class="text-red-500">*</span></label>
-                        <div class="relative">
-                            <div class="absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none">
-                                <span class="text-gray-500 font-bold">Rp</span>
+                    <!-- Rincian Biaya (Pajak, Jasa, Lainnya) -->
+                    <div class="col-span-1 md:col-span-2 bg-blue-50/30 p-6 rounded-xl border border-blue-100">
+                        <h3 class="text-sm font-black text-gray-800 mb-4 border-b border-blue-200 pb-2">
+                            <i class="fa-solid fa-file-invoice-dollar text-blue-500 mr-2"></i> Rincian Tagihan
+                        </h3>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+                            <!-- 1. Biaya Pajak -->
+                            <div>
+                                <label class="block text-xs font-bold text-gray-700 mb-1">Biaya Pajak <span class="text-red-500">*</span></label>
+                                <div class="relative">
+                                    <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                                        <span class="text-gray-500 font-bold text-sm">Rp</span>
+                                    </div>
+                                    <input type="text" id="pajak_tampil" required placeholder="0" class="input-biaya w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none font-bold text-gray-800 transition-colors">
+                                    <!-- Hapus variabel $transaction pada create.blade.php -->
+                                    <input type="hidden" name="biaya_pajak" id="pajak_asli" value="{{ old('biaya_pajak' ?? 0) }}">
+                                </div>
                             </div>
-                            <!-- 1. Input Tampil (Yang dilihat user, bisa format titik) -->
-                            <input type="text" id="biaya_tampil" required placeholder="Contoh: 1.500.000"
-                                class="w-full pl-12 pr-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-shadow bg-white text-lg font-bold text-gray-800">
-                            <!-- 2. Input Asli (Tersembunyi, angka murni untuk dikirim ke database) -->
-                            <!-- Catatan: Untuk di create.blade.php hapus $transaction->total_biaya -->
-                            <input type="hidden" name="total_biaya" id="biaya_asli" value="{{ old('total_biaya', $transaction->total_biaya ?? '') }}">
+
+                            <!-- 2. Biaya Jasa -->
+                            <div>
+                                <label class="block text-xs font-bold text-gray-700 mb-1">Biaya Jasa <span class="text-red-500">*</span></label>
+                                <div class="relative">
+                                    <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                                        <span class="text-gray-500 font-bold text-sm">Rp</span>
+                                    </div>
+                                    <input type="text" id="jasa_tampil" required placeholder="0" class="input-biaya w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none font-bold text-gray-800 transition-colors">
+                                    <!-- Hapus variabel $transaction pada create.blade.php -->
+                                    <input type="hidden" name="biaya_jasa" id="jasa_asli" value="{{ old('biaya_jasa' ?? 0) }}">
+                                </div>
+                            </div>
+
+                            <!-- 3. Biaya Lainnya -->
+                            <div>
+                                <label class="block text-xs font-bold text-gray-700 mb-1">Biaya Lain</label>
+                                <div class="relative">
+                                    <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                                        <span class="text-gray-500 font-bold text-sm">Rp</span>
+                                    </div>
+                                    <input type="text" id="lain_tampil" placeholder="0" class="input-biaya w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none font-bold text-gray-800 transition-colors">
+                                    <!-- Hapus variabel $transaction pada create.blade.php -->
+                                    <input type="hidden" name="biaya_lain" id="lain_asli" value="{{ old('biaya_lain' ?? 0) }}">
+                                </div>
+                            </div>
                         </div>
-                        <p class="text-[11px] text-gray-500 mt-1">Angka akan otomatis diberi pemisah ribuan (titik).</p>
+                        
+                        <!-- Kalkulasi Total -->
+                        <div class="mt-5 pt-4 border-t border-blue-200 flex items-center justify-between">
+                            <span class="font-bold text-gray-700 uppercase tracking-wider text-sm">Total Keseluruhan</span>
+                            <span class="text-2xl font-black text-blue-700" id="total_kalkulasi">Rp 0</span>
+                        </div>
                     </div>
 
                     <!-- Tanggal Masuk -->
@@ -115,35 +152,42 @@
     <!-- SCRIPT UNTUK FORMAT RUPIAH OTOMATIS -->
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            const inputTampil = document.getElementById('biaya_tampil');
-            const inputAsli = document.getElementById('biaya_asli');
+        // Fungsi format Rupiah (menggunakan titik)
+        const formatRupiah = (angka) => new Intl.NumberFormat('id-ID').format(angka || 0);
 
-            // Fungsi format titik menggunakan bawaan Javascript (Intl)
-            const formatRupiah = (angka) => {
-                return new Intl.NumberFormat('id-ID').format(angka);
-            }
+        // Definisi elemen input
+        const inputs = [
+            { tampil: document.getElementById('pajak_tampil'), asli: document.getElementById('pajak_asli') },
+            { tampil: document.getElementById('jasa_tampil'), asli: document.getElementById('jasa_asli') },
+            { tampil: document.getElementById('lain_tampil'), asli: document.getElementById('lain_asli') }
+        ];
+        const labelTotal = document.getElementById('total_kalkulasi');
 
-            // 1. Jalankan saat halaman pertama kali dimuat (Berguna untuk mode Edit / Old input)
-            if (inputAsli.value) {
-                inputTampil.value = formatRupiah(inputAsli.value);
-            }
+        // Fungsi Kalkulasi & Tampilan
+        const hitungTotal = () => {
+            let total = 0;
+            inputs.forEach(item => {
+                let nilai = parseInt(item.asli.value) || 0;
+                total += nilai;
+                // Update tampilan format rupiah saat pertama kali diload (mode edit)
+                if(item.asli.value > 0) item.tampil.value = formatRupiah(nilai); 
+            });
+            labelTotal.innerText = 'Rp ' + formatRupiah(total);
+        };
 
-            // 2. Jalankan setiap kali user mengetik
-            inputTampil.addEventListener('input', function(e) {
-                // Hapus semua karakter selain angka 0-9
-                let angkaMurni = this.value.replace(/[^0-9]/g, '');
-                
-                // Simpan angka murni ke input yang tersembunyi untuk dikirim ke database
-                inputAsli.value = angkaMurni;
-                
-                // Tampilkan kembali angka yang sudah diformat dengan titik ke layar
-                if(angkaMurni) {
-                    this.value = formatRupiah(angkaMurni);
-                } else {
-                    this.value = '';
-                }
+        // Pasang Event Listener saat user mengetik
+        inputs.forEach(item => {
+            item.tampil.addEventListener('input', function(e) {
+                let angkaMurni = this.value.replace(/[^0-9]/g, ''); // Hapus selain angka
+                item.asli.value = angkaMurni; // Simpan ke input hidden
+                this.value = angkaMurni ? formatRupiah(angkaMurni) : ''; // Tampilkan dengan titik
+                hitungTotal(); // Panggil fungsi hitung ulang
             });
         });
+
+        // Jalankan sekali saat halaman dimuat (untuk memunculkan nilai dari database jika ada)
+        hitungTotal();
+    });
     </script>
 
 @endsection

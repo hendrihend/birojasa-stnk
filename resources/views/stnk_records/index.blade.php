@@ -60,7 +60,7 @@
 
                     <tr class="{{ $rowBg }} transition-colors">
                         <td class="p-4">
-                            <strong class="text-gray-800 text-base block">{{ $record->vehicle->nopol ?? '-' }}</strong>
+                            <strong class="text-gray-800 text-base block">{{ preg_replace('/([A-Z]+)(\d+)([A-Z]+)/', '$1 $2 $3', strtoupper($record->vehicle->nopol)) ?? '-' }}</strong>
                             <span class="text-xs text-gray-500">{{ $record->vehicle->client->nama_lengkap ?? '-' }}</span>
                         </td>
                         <td class="p-4 text-gray-700 font-medium tracking-wide">{{ $record->no_stnk }}</td>

@@ -26,7 +26,7 @@
                         <option value="">-- Pilih Kendaraan --</option>
                         @foreach($vehicles as $vehicle)
                             <option value="{{ $vehicle->id }}" {{ old('vehicle_id') == $vehicle->id ? 'selected' : '' }}>
-                                {{ $vehicle->nopol }} - {{ $vehicle->client->nama_lengkap ?? 'Tanpa Pemilik' }}
+                                {{ preg_replace('/([A-Z]+)(\d+)([A-Z]+)/', '$1 $2 $3', strtoupper($vehicle->nopol)) }} - {{ $vehicle->client->nama_lengkap ?? 'Tanpa Pemilik' }}
                             </option>
                         @endforeach
                     </select>

@@ -45,7 +45,7 @@
                 @if(Auth::user()->role === 'super_admin')
                 <a href="{{ route('users.index') }}" class="flex items-center gap-3 px-6 py-3 border-l-4 transition-colors duration-200 {{ request()->routeIs('users.*') ? 'bg-gray-800 text-blue-400 font-bold border-blue-500' : 'text-gray-400 border-transparent hover:bg-gray-800 hover:text-white' }}">
                     <i class="fa-solid fa-user-shield w-5 text-center text-lg"></i>
-                   <span>Kelola User</span>
+                    <span>Kelola User</span>
                 </a>
                 @endif
                 <a href="{{ route('scan.qr') }}" class="flex items-center gap-3 px-6 py-3 border-l-4 transition-colors duration-200 {{ request()->routeIs('scan.qr') ? 'bg-gray-800 text-blue-400 font-bold border-blue-500' : 'text-gray-400 border-transparent hover:bg-gray-800 hover:text-white' }}">
@@ -88,11 +88,6 @@
 
     <!-- CDN SweetAlert2 -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
-
-
-
-
 
     <script>
         // <!-- Logika Popup Otomatis -->

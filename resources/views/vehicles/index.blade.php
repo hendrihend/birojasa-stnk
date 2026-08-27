@@ -38,7 +38,7 @@
                 <tbody class="text-sm divide-y divide-gray-100">
                     @forelse($vehicles as $vehicle)
                     <tr class="hover:bg-gray-50/80 transition-colors">
-                        <td class="p-4 font-black text-gray-800 tracking-wider uppercase">{{ $vehicle->nopol }}</td>
+                        <td class="p-4 font-black text-gray-800 tracking-wider uppercase">{{ preg_replace('/([A-Z]+)(\d+)([A-Z]+)/', '$1 $2 $3', strtoupper($vehicle->nopol)) }}</td>
                         <td class="p-4 text-gray-700">
                             {{ $vehicle->merk }} 
                             <span class="text-xs font-bold bg-gray-200 text-gray-600 px-2 py-1 rounded ml-1">{{ $vehicle->tipe ?? '-' }}</span>

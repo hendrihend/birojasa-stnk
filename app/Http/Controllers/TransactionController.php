@@ -42,24 +42,31 @@ class TransactionController extends Controller
         $request->validate([
             'vehicle_id' => 'required|exists:vehicles,id',
             'jenis_layanan' => 'required|string|max:50',
-            'total_biaya' => 'required|numeric|min:0',
+            'status_proses' => 'required|string',
+            'biaya_pajak' => 'required|numeric',
+            'biaya_jasa' => 'required|numeric',
+            'biaya_lain' => 'required|numeric',
             'tgl_masuk' => 'required|date',
             'tgl_selesai' => 'nullable|date|after_or_equal:tgl_masuk',
             ]);
 
-            // generate invoice number otomatis dengan format INV-YYYYMMDD-XXXX
             $invoiceNo = 'INV-' . date('Ymd') . '-' . rand(1000, 9999);
+            // Hitung total biaya otomatis di sistem
+            $total = $request->biaya_pajak + $request->biaya_jasa + $request->biaya_lain;
             Transaction::create([
-                'invoice_no' => $invoiceNo,
+                'invoice_no' =>$invoiceNo,
                 'vehicle_id' => $request->vehicle_id,
                 'jenis_layanan' => $request->jenis_layanan,
-                'total_biaya' => $request->total_biaya,
-                'status_proses' => 'Pending', // default status proses
+                'status_proses' => $request->status_proses,
+                'biaya_pajak' => $request->biaya_pajak,
+                'biaya_jasa' => $request->biaya_jasa,
+                'biaya_lain' => $request->biaya_lain,
+                'total_biaya' => $total,
                 'tgl_masuk' => $request->tgl_masuk,
                 'tgl_selesai' => $request->tgl_selesai,
             ]);
 
-            return redirect()->route('transactions.index')->with('success', 'Transaksi berhasil dibuat dengan nomor invoice: ' . $invoiceNo);
+            return redirect()->route('transactions.index')->with('success', 'Transaksi baru berhasil ditambahkan dengan Nomor: ' . $invoiceNo);
 
     }
 
@@ -84,8 +91,10 @@ class TransactionController extends Controller
         $request->validate([
             'jenis_layanan' => 'required|string',
             'status_proses' => 'required|string',
+            'biaya_pajak' => 'required|numeric',
+            'biaya_jasa' => 'nullable|numeric',
+            'biaya_lain' => 'nullable|numeric',
             'tgl_selesai' => 'nullable|date|after_or_equal:tgl_masuk',
-            'total_biaya' => 'required|numeric|min:0',
         ]);
         $transaction = Transaction::findOrFail($id);
 
@@ -99,12 +108,21 @@ class TransactionController extends Controller
             $tglSelesai = date('Y-m-d');
         }
 
+        // Hitung total biaya otomatis (int) supaya aman jika dikosongkan
+        $pajak = (int) $request->biaya_pajak;
+        $jasa = (int) $request->biaya_jasa;
+        $lain = (int) $request->biaya_lain;
+        $total = $pajak + $jasa + $lain;
+
         // 2. Update data transaksi
         $transaction->update([
             'jenis_layanan' => $request->jenis_layanan,
             'status_proses' => $statusBaru,
+            'biaya_pajak' => $pajak,
+            'biaya_jasa' => $jasa,
+            'biaya_lain' => $lain,
+            'total_biaya' => $total, // Hasil penjumlahan
             'tgl_selesai' => $tglSelesai,
-            'total_biaya' => $request->total_biaya,
         ]);
 
         // 3. FITUR OTOMATISASI PERPANJANGAN PAJAK (AUTO-RENEW)
