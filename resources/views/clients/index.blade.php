@@ -1,63 +1,87 @@
 @extends('layouts.app')
 
 @section('title', 'Data Klien')
-@section('header_title', 'Manajemen Data Klien')
 
 @section('content')
-    <!-- Action Bar (Tombol Tambah & Search) -->
-    <div class="flex flex-col md:flex-row justify-between items-center gap-4 mb-6">
-        <a href="{{ route('clients.create') }}" class="px-5 py-2.5 bg-gray-900 hover:bg-gray-800 text-white font-bold rounded-lg shadow-sm transition-colors w-full md:w-auto text-center flex items-center justify-center gap-2">
-            <i class="fa-solid fa-plus"></i> Tambah Klien Baru
+    <div class="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <div>
+            <h2 class="text-xl font-semibold text-gray-900">Data Klien</h2>
+            <p class="mt-1 text-sm text-gray-500">Kelola data klien biro jasa STNK</p>
+        </div>
+        <a href="{{ route('clients.create') }}" class="inline-flex items-center justify-center gap-2 rounded-lg bg-indigo-600 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-indigo-700">
+            <i class="fa-solid fa-plus text-sm"></i>
+            Tambah Klien
         </a>
-
-        <!-- Kotak Pencarian -->
-        <form action="{{ route('clients.index') }}" method="GET" class="flex w-full md:w-auto gap-2">
-            <input type="text" name="search" value="{{ request('search') }}" placeholder="Cari nama, NIK, atau WA..." class="w-full md:w-72 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-shadow">
-            
-            @if(request('search'))
-                <a href="{{ route('clients.index') }}" class="px-4 py-2 bg-red-100 hover:bg-red-200 text-red-600 font-bold rounded-lg transition-colors flex items-center"><i class="fa-solid fa-rotate-left"></i></a>
-            @endif
-        </form>
     </div>
 
-    <!-- Tabel Data Klien -->
-    <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+    <div class="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm">
+        <div class="border-b border-gray-200 p-5">
+            <form action="{{ route('clients.index') }}" method="GET" class="flex w-full items-center gap-2">
+                <div class="relative w-full max-w-md">
+                    <i class="fa-solid fa-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
+                    <input type="text" name="search" value="{{ request('search') }}" placeholder="Cari nama, NIK, atau WhatsApp..." class="h-12 w-full rounded-lg border border-gray-300 bg-white pl-11 pr-4 text-sm text-gray-700 outline-none transition focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100">
+                </div>
+                @if(request('search'))
+                    <a href="{{ route('clients.index') }}" class="flex h-12 w-12 items-center justify-center rounded-lg bg-red-50 text-red-500 transition hover:bg-red-100" title="Reset pencarian">
+                        <i class="fa-solid fa-rotate-left"></i>
+                    </a>
+                @endif
+            </form>
+        </div>
+
         <div class="overflow-x-auto">
-            <table class="w-full text-left border-collapse">
+            <table class="w-full min-w-[900px] border-collapse text-left">
                 <thead>
-                    <tr class="bg-gray-50 border-b border-gray-200 text-sm text-gray-600 uppercase tracking-wider">
-                        <th class="p-4 font-bold">Nama Lengkap</th>
-                        <th class="p-4 font-bold">NIK</th>
-                        <th class="p-4 font-bold">No. WhatsApp</th>
-                        <th class="p-4 font-bold">Alamat</th>
-                        <th class="p-4 font-bold text-center">Aksi</th>
+                    <tr class="border-b border-gray-200 bg-gray-50 text-sm text-gray-700">
+                        <th class="px-7 py-4 font-semibold">No</th>
+                        <th class="px-7 py-4 font-semibold">Nama Lengkap</th>
+                        <th class="px-7 py-4 font-semibold">NIK</th>
+                        <th class="px-7 py-4 font-semibold">No WhatsApp</th>
+                        <th class="px-7 py-4 font-semibold">Alamat</th>
+                        <th class="px-7 py-4 text-center font-semibold">Aksi</th>
                     </tr>
                 </thead>
-                <tbody class="text-sm divide-y divide-gray-100">
+
+                <tbody class="divide-y divide-gray-100 text-sm text-gray-600">
                     @forelse($clients as $client)
-                    <tr class="hover:bg-gray-50/80 transition-colors">
-                        <td class="p-4 font-bold text-gray-800">{{ $client->nama_lengkap }}</td>
-                        <td class="p-4 text-gray-600">{{ $client->nik ?? '-' }}</td>
-                        <td class="p-4 text-gray-600">
-                            <a href="https://wa.me/{{ preg_replace('/[^0-9]/', '', $client->no_whatsapp) }}" target="_blank" class="text-green-600 hover:text-green-700 font-bold hover:underline flex items-center gap-1.5">
-                                <i class="fa-brands fa-whatsapp text-lg"></i> {{ $client->no_whatsapp }}
-                            </a>
-                        </td>
-                        <td class="p-4 text-gray-500 truncate max-w-xs">{{ $client->alamat ?? '-' }}</td>
-                        <td class="p-4 flex justify-center gap-4">
-                            <a href="{{ route('clients.edit', $client->id) }}" class="text-blue-500 hover:text-blue-700 font-bold"><i class="fa-solid fa-pen-to-square"></i></a>
-                            @if (Auth::user()->role === 'super_admin')
-                            <form action="{{ route('clients.destroy', $client->id) }}" method="POST" onsubmit="return confirm('Yakin ingin menghapus klien ini beserta seluruh kendaraan dan transaksinya?');" class="inline">
-                                @csrf @method('DELETE')
-                                <button type="submit" class="text-red-500 hover:text-red-700 font-bold"><i class="fa-solid fa-trash-can"></i></button>
-                            </form>
-                            @endif
-                        </td>
-                    </tr>
+                        <tr class="transition-colors hover:bg-gray-50">
+                            <td class="px-7 py-4 text-gray-500">{{ $loop->iteration }}</td>
+                            <td class="px-7 py-4 font-semibold text-gray-900">{{ $client->nama_lengkap }}</td>
+                            <td class="px-7 py-4">{{ $client->nik ?? '-' }}</td>
+                            <td class="px-7 py-4">
+                                @if($client->no_whatsapp)
+                                    <a href="https://wa.me/{{ preg_replace('/[^0-9]/', '', $client->no_whatsapp) }}" target="_blank" class="inline-flex items-center gap-2 text-gray-600 transition hover:text-green-600">
+                                        <i class="fa-brands fa-whatsapp text-base text-green-500"></i>
+                                        {{ $client->no_whatsapp }}
+                                    </a>
+                                @else
+                                    <span>-</span>
+                                @endif
+                            </td>
+                            <td class="max-w-md truncate px-7 py-4 text-gray-600">{{ $client->alamat ?? '-' }}</td>
+                            <td class="px-7 py-4">
+                                <div class="flex items-center justify-center gap-2">
+                                    <a href="{{ route('clients.edit', $client->id) }}" class="inline-flex items-center justify-center rounded-lg bg-indigo-50 px-3.5 py-2 text-sm font-medium text-indigo-600 transition hover:bg-indigo-100">
+                                        Edit
+                                    </a>
+                                    @if(Auth::user()->role === 'super_admin')
+                                        <form action="{{ route('clients.destroy', $client->id) }}" method="POST" onsubmit="return confirm('Yakin ingin menghapus klien ini beserta seluruh kendaraan dan transaksinya?');" class="inline">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" class="inline-flex items-center justify-center rounded-lg bg-red-50 px-3.5 py-2 text-sm font-medium text-red-500 transition hover:bg-red-100">
+                                                Hapus
+                                            </button>
+                                        </form>
+                                    @endif
+                                </div>
+                            </td>
+                        </tr>
                     @empty
-                    <tr>
-                        <td colspan="5" class="p-10 text-center text-gray-500 text-base">Belum ada data klien yang tersimpan.</td>
-                    </tr>
+                        <tr>
+                            <td colspan="6" class="px-7 py-12 text-center text-sm text-gray-500">
+                                Belum ada data klien yang tersimpan.
+                            </td>
+                        </tr>
                     @endforelse
                 </tbody>
             </table>
