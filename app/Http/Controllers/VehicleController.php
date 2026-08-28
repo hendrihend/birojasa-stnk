@@ -14,18 +14,23 @@ class VehicleController extends Controller
     {
         $search = $request->search;
 
-        // Cari berdasarkan nopol, merk, atau nama klien pemiliknya
         $vehicles = Vehicle::with('client')
-            ->when($search, function ($query, $search) {
-                return $query->where('nopol', 'like', "%{$search}%")
-                             ->orWhere('merk', 'like', "%{$search}%")
-                             ->orWhere('nama_pemilik', 'like', "%{$search}%")
-                             ->orWhereHas('client', function($q) use ($search) {
-                                 $q->where('nama_lengkap', 'like', "%{$search}%");
-                             });
-            })->latest()->get();
-        return view('vehicles.index', compact('vehicles'));
-    }
+        ->when($search, function ($query, $search) {
+            return $query->where(function ($q) use ($search) {
+                $q->where('nopol', 'like', "%{$search}%")
+                  ->orWhere('merk', 'like', "%{$search}%")
+                  ->orWhere('nama_pemilik', 'like', "%{$search}%")
+                  ->orWhereHas('client', function ($q) use ($search) {
+                      $q->where('nama_lengkap', 'like', "%{$search}%");
+                  });
+            });
+        })
+        ->latest()
+        ->paginate(10)
+        ->withQueryString();
+
+    return view('vehicles.index', compact('vehicles'));
+}
 
     public function create()
     {

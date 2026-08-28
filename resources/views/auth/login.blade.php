@@ -49,7 +49,7 @@
             
 
                 <!-- Button -->
-                <button type="submit" class="w-full rounded-lg bg-indigo-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">Login</button>
+                <button type="submit" class="w-full rounded-lg bg-blue-700 px-4 py-2 text-sm font-semibold text-white transition hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">Login</button>
 
                 <!-- Daftar -->
                 <p class="mt-4 text-center text-sm text-gray-600">Belum punya akun?

@@ -23,7 +23,7 @@
                 </a>
             @endif
 
-            <button type="submit" class="h-9 px-5 bg-indigo-700 hover:bg-indigo-800 text-white text-sm font-medium rounded-lg transition duration-200">
+            <button type="submit" class="h-9 px-5 bg-blue-700 hover:bg-blue-800 text-white text-sm font-medium rounded-lg transition duration-200">
                 Cari
             </button>
         </div>

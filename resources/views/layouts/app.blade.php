@@ -21,8 +21,7 @@
 <div class="flex h-screen overflow-hidden">
 
     <!-- ================= SIDEBAR ================= -->
-    <aside id="sidebar"
-        class="w-64 bg-[#35318B] text-white flex flex-col shadow-xl flex-shrink-0 transition-all duration-300">
+    <aside id="sidebar" class="w-64 bg-blue-900 text-white flex flex-col shadow-xl flex-shrink-0 transition-all duration-300">
 
         <!-- Logo -->
         <div class="h-[84px] px-5 flex items-center gap-3 border-b border-white/10">
