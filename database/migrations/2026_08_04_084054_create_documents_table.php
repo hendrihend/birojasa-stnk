@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('documents', function (Blueprint $table) {
             $table->id();
             $table->foreignId('vehicle_id')->constrained('vehicles')->onDelete('cascade');
-            $table->enum('jenis_dokumen', ['KTP', 'STNK', 'BPKB', 'Faktur', 'Kwitansi', 'Surat Jalan']);
+            $table->enum('jenis_dokumen', ['KTP', 'STNK', 'BPKB', 'Hasil Cek Fisik Kendaraan', 'Kwitansi']);
             $table->string('file_path');
             $table->timestamps();
         });

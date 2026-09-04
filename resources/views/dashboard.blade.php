@@ -10,7 +10,7 @@
   <!-- Main Content -->
   @section('content')
   <!-- Kolom Pencarian Cepat (Quick Search) -->
-    <div class="mb-8">
+    <div class="mb-6">
         <!-- Ubah route-nya menjadi 'dashboard' -->
         <form action="{{ route('dashboard') }}" method="GET" class="relative group">
             <div class="absolute inset-y-0 left-0 flex items-center pl-5 pointer-events-none">
@@ -163,7 +163,7 @@
         
         <!-- Isi Peringatan (Grid 2 Kolom) -->
         <div class="p-6">
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+            <div class="grid gird-flow-col grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 @forelse($alerts as $alert)
                     @php
                         // Logika untuk mengubah kategori warna dari Controller menjadi Class Tailwind
@@ -201,20 +201,38 @@
                                 <span class="text-xs font-bold px-2 py-1 rounded-md {{ $badgeClass }}">{{ $alert->tipe }}</span>
                             </div>
                             <p class="text-sm {{ $textClass }} opacity-90">
-                                {{ $alert->layanan }} &bull; <span class="font-bold">{{ $alert->status_teks }}</span> 
-                                ({{ \Carbon\Carbon::parse($alert->tanggal_asli)->format('d M Y') }})
+                                {{ $alert->jenis_layanan }} &bull; 
+                                <span class="text-sm font-bold {{ $textClass }}">{{ $alert->status_teks }}</span> 
+                                <p class="text-sm {{ $textClass }}">({{ \Carbon\Carbon::parse($alert->tanggal_asli)->format('d M Y') }})</p>
                             </p>
                         </div>
                         
                         <!-- Tombol Action -->
-                         <a href="{{ route('transactions.index', ['search' => $alert->nopol]) }}" 
-                           class="shrink-0 px-5 py-2.5 {{ $btnClass }} text-sm font-bold rounded-lg shadow-sm hover:shadow transition-all duration-200 flex items-center gap-2">
-                            <i class="fa-solid fa-bolt"></i> <span>{{ $btnText }}</span>
-                        </a>
-                        <!-- <a href="{{ route('transactions.create', ['vehicle_id' => $alert->vehicle_id]) }}" 
-                           class="shrink-0 px-5 py-2.5 bg-red-500 hover:bg-red-600 text-white text-sm font-bold rounded-lg shadow-sm hover:shadow transition-all duration-200 flex items-center gap-2">
-                            <i class="fa-solid fa-bolt"></i> <span>Urus Sekarang</span>
-                        </a> -->
+                        <div class="flex items-center gap-3 mb-2">
+                            <div class="grid grid-flow-row gap-2">
+                                @if($alert->kategori_warna != 'info')
+                                @if(!empty($alert->email))
+                                <a href="{{ route('reminder.send', $alert->vehicle_id) }}" 
+                                    onclick="return confirm('Kirim email peringatan pajak ke {{ $alert->nopol }}?')"
+                                    class="shrink-0 px-4 py-2.5 bg-white border border-gray-300 hover:bg-gray-100 text-gray-700 text-xs rounded-lg shadow-sm hover:shadow transition-all duration-200 flex items-center gap-2">
+                                        <i class="fa-regular fa-envelope"></i> <span>Kirim Notif</span>
+                                    </a>
+                                @else
+                                    <!-- Jika email di database kosong, tampilkan info -->
+                                    <span class="text-xs text-red-500 italic px-2 bg-white/50 py-1 rounded border border-red-100 flex items-center">
+                                        Email Klien Kosong
+                                    </span>
+                                @endif
+                            @endif
+
+                            <a href="{{ route('transactions.index', ['search' => $alert->nopol]) }}" 
+                            class="shrink-0 px-4 py-2.5 {{ $btnClass }} text-xs rounded-lg shadow-sm hover:shadow transition-all duration-200 flex items-center gap-2">
+                                <i class="fa-solid fa-bolt"></i> <span>{{ $btnText }}</span>
+                            </a>
+
+                            </div>
+                            
+                        </div>
                     </div>
 
                 @empty

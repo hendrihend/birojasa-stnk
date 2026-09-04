@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Invoice - {{ $transaction->invoice_no ?? 'TRX-'.$transaction->id }}</title>
+    <!-- PERBAIKAN 1: Memanggil variabel $invoiceNo -->
+    <title>Invoice Kolektif - {{ $invoiceNo }}</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         @media print {
@@ -17,7 +18,6 @@
 <body class="bg-gray-200 text-gray-800 font-sans p-8 print:p-0 print:bg-white relative">
 
     <?php
-        // FUNGSI UNTUK MENGUBAH ANGKA MENJADI TEKS (TERBILANG)
         function penyebut($nilai) {
             $nilai = abs($nilai);
             $huruf = array("", "Satu", "Dua", "Tiga", "Empat", "Lima", "Enam", "Tujuh", "Delapan", "Sembilan", "Sepuluh", "Sebelas");
@@ -40,7 +40,6 @@
         }
     ?>
 
-    <!-- Tombol Navigasi (Hilang saat diprint) -->
     <div class="max-w-4xl mx-auto mb-6 print:hidden flex justify-between items-center bg-white p-4 rounded-lg shadow">
         <a href="{{ route('transactions.index') }}" class="px-5 py-2 bg-gray-500 hover:bg-gray-600 text-white font-bold rounded transition-colors">
             &larr; Kembali
@@ -59,7 +58,6 @@
         <div class="flex justify-between items-start mb-8">
             <div class="w-1/2">
                 <div class="flex items-center gap-2 mb-2">
-                    <!-- Ganti kotak ini dengan <img> logo biro jasa Anda nanti -->
                     <div class="w-12 h-12 bg-blue-900 flex items-center justify-center text-white font-black text-2xl rounded-sm shadow-sm">
                         BJ
                     </div>
@@ -73,15 +71,16 @@
             </div>
             
             <div class="w-1/2 text-right">
-                <h2 class="text-4xl font-black text-gray-900 tracking-widest mb-4">INVOICE</h2>
+                <h2 class="text-3xl font-black text-gray-900 tracking-widest mb-4">INVOICE KOLEKTIF</h2>
                 <table class="w-full text-xs text-left ml-auto" style="max-width: 250px;">
                     <tr>
                         <td class="py-1 text-gray-600">No Invoice</td>
-                        <td class="py-1 font-bold">: {{ $transaction->invoice_no }}</td>
+                        <!-- PERBAIKAN 2: Variabel $invoiceNo dari controller -->
+                        <td class="py-1 font-bold">: {{ $invoiceNo }}</td>
                     </tr>
                     <tr>
                         <td class="py-1 text-gray-600">Tgl. Pembuatan</td>
-                        <td class="py-1 font-bold">: {{ \Carbon\Carbon::parse($transaction->created_at)->format('d/m/Y') }}</td>
+                        <td class="py-1 font-bold">: {{ \Carbon\Carbon::now()->format('d/m/Y') }}</td>
                     </tr>
                     <tr>
                         <td class="py-1 text-gray-600">Termin (hari)</td>
@@ -94,23 +93,24 @@
         <!-- INFO KEPADA YTH -->
         <div class="mb-6">
             <p class="text-sm text-gray-700 mb-1">Kepada Yth :</p>
-            <h3 class="font-bold text-lg text-gray-900 uppercase">{{ $transaction->vehicle->client->nama_lengkap ?? 'KLIEN UMUM' }}</h3>
-            <p class="text-xs text-gray-700 mt-1">{{ $transaction->vehicle->client->alamat ?? '-' }}</p>
-            <p class="text-xs text-gray-700 mt-1">No. WhatsApp / Telp: {{ $transaction->vehicle->client->no_whatsapp ?? '-' }}</p>
+            <!-- PERBAIKAN 3: Memanggil relasi $client -->
+            <h3 class="font-bold text-lg text-gray-900 uppercase">{{ $client->nama_lengkap ?? 'KLIEN UMUM' }}</h3>
+            <p class="text-xs text-gray-700 mt-1">{{ $client->alamat ?? '-' }}</p>
+            <p class="text-xs text-gray-700 mt-1">No. WhatsApp / Telp: {{ $client->no_whatsapp ?? '-' }}</p>
         </div>
 
         <p class="text-sm text-gray-800 mb-2">
-            Dengan ini, kami menyampaikan pengajuan atas <strong>{{ $transaction->jenis_layanan }}</strong> <span class="float-right underline text-xs">Kendaraan Terlampir:</span>
+            Dengan ini, kami menyampaikan pengajuan atas <strong>Pengurusan Pajak Kendaraan (Kolektif)</strong> <span class="float-right underline text-xs">Kendaraan Terlampir:</span>
         </p>
 
-        <!-- TABEL UTAMA (RINCIAN GLOBAL) -->
+        <!-- TABEL UTAMA (RINCIAN KOLEKTIF) -->
         <table class="w-full text-sm border-collapse border border-gray-900 mb-6">
             <thead>
                 <tr class="bg-gray-100">
                     <th class="border border-gray-900 py-2 px-3 text-center w-10">No</th>
                     <th class="border border-gray-900 py-2 px-3 text-center">No Polisi</th>
                     <th class="border border-gray-900 py-2 px-3 text-center">Merk Type</th>
-                    <th class="border border-gray-900 py-3 px-3 text-center">Layanan</th>
+                    <th class="border border-gray-900 py-2 px-3 text-center">Layanan</th>
                     <th class="border border-gray-900 py-2 px-3 text-center">Tahun</th>
                     <th class="border border-gray-900 py-2 px-3 text-center">Pajak</th>
                     <th class="border border-gray-900 py-2 px-3 text-center">Jasa</th>
@@ -119,47 +119,45 @@
                 </tr>
             </thead>
             <tbody>
+                @foreach($transactions as $index => $trx)
                 <tr>
-                    <td class="border border-gray-900 py-3 px-3 text-center">1</td>
-                    <td class="border border-gray-900 py-3 px-3 text-center text-xs">{{ $transaction->vehicle->nopol }}</td>
-                    <td class="border border-gray-900 py-3 px-3 text-center text-xs">{{ $transaction->vehicle->merk }} {{ $transaction->vehicle->tipe }}</td>
-                    <td class="border border-gray-900 py-3 px-3 text-center text-xs">{{ $transaction->jenis_layanan }}</td>
-                    <td class="border border-gray-900 py-3 px-3 text-center">{{ $transaction->vehicle->tahun_pembuatan ?? '-' }}</td>
-                    <td class="border border-gray-900 py-3 px-3 text-right">{{ number_format($transaction->biaya_pajak, 0, ',', '.') }}</td>
-                    <td class="border border-gray-900 py-3 px-3 text-right">{{ number_format($transaction->biaya_jasa, 0, ',', '.') }}</td>
-                    <td class="border border-gray-900 py-3 px-3 text-right">{{ number_format($transaction->biaya_lain, 0, ',', '.') }}</td>
+                    <td class="border border-gray-900 py-3 px-3 text-center">{{ $index + 1 }}</td>
+                    <td class="border border-gray-900 py-3 px-3 text-center text-xs">{{ $trx->vehicle->nopol }}</td>
+                    <td class="border border-gray-900 py-3 px-3 text-center text-xs">{{ $trx->vehicle->merk }} {{ $trx->vehicle->tipe }}</td>
+                    <td class="border border-gray-900 py-3 px-3 text-center text-xs">{{ $trx->jenis_layanan }}</td>
+                    <td class="border border-gray-900 py-3 px-3 text-center">{{ $trx->vehicle->tahun_pembuatan ?? '-' }}</td>
+                    <td class="border border-gray-900 py-3 px-3 text-right">{{ number_format($trx->biaya_pajak, 0, ',', '.') }}</td>
+                    <td class="border border-gray-900 py-3 px-3 text-right">{{ number_format($trx->biaya_jasa, 0, ',', '.') }}</td>
+                    <td class="border border-gray-900 py-3 px-3 text-right">{{ number_format($trx->biaya_lain, 0, ',', '.') }}</td>
                     <td class="border border-gray-900 py-3 px-3 text-right font-bold justify-between">
-                        <span>Rp</span> <span>{{ number_format($transaction->total_biaya, 0, ',', '.') }}</span>
+                        <span>Rp</span> <span>{{ number_format($trx->total_biaya, 0, ',', '.') }}</span>
                     </td>
                 </tr>
-                <!-- Baris Total -->
+                @endforeach
+
+                <!-- Baris Grand Total -->
                 <tr class="bg-gray-100 font-bold">
-                    <td colspan="8" class="border border-gray-900 py-3 px-3 text-center tracking-widest text-base">TOTAL</td>
+                    <!-- PERBAIKAN 4: Variabel $grandTotal -->
+                    <td colspan="8" class="border border-gray-900 py-3 px-3 text-center tracking-widest text-base">GRAND TOTAL</td>
                     <td class="border border-gray-900 py-3 px-3 text-right flex justify-between text-base">
-                        <span>Rp</span> <span>{{ number_format($transaction->total_biaya, 0, ',', '.') }}</span>
+                        <span>Rp</span> <span>{{ number_format($grandTotalKol, 0, ',', '.') }}</span>
                     </td>
                 </tr>
             </tbody>
         </table>
 
-        <!-- TERBILANG & CATATAN -->
+        <!-- TERBILANG -->
         <div class="mb-10 text-sm">
             <div class="flex mb-2">
                 <div class="w-32 text-gray-700 uppercase font-bold">TERBILANG:</div>
-                <div class="font-bold italic flex-1 capitalize">** {{ terbilang($transaction->total_biaya) }} **</div>
+                <div class="font-bold italic flex-1 capitalize">** {{ terbilang($grandTotalKol) }} **</div>
             </div>
-            @if($transaction->catatan)
-            <div class="flex items-start mt-4">
-                <div class="w-32 text-gray-700">Catatan:</div>
-                <div class="flex-1 bg-gray-100 px-3 py-2 text-xs text-gray-700">{{ $transaction->catatan }}</div>
-            </div>
-            @endif
         </div>
 
         <!-- TABEL RINCIAN BIAYA LAIN -->
         <div class="flex justify-between items-start mb-16 text-sm">
             <div class="w-1/2">
-                <p class="font-bold text-gray-700 uppercase">Rincian Biaya Lainnya:</p>
+                <p class="font-bold text-gray-700 uppercase">Rincian Biaya Lainnya (Total Gabungan):</p>
             </div>
             <div class="w-1/2 flex justify-end">
                 <table class="w-[85%] border-collapse border border-gray-900 text-xs">
@@ -167,47 +165,47 @@
                         <tr>
                             <td class="border border-gray-900 px-3 py-1.5 text-gray-700">Loket Pendaftaran</td>
                             <td class="border border-gray-900 px-3 py-1.5 w-8">Rp</td>
-                            <td class="border border-gray-900 px-3 py-1.5 text-right">{{ $transaction->loket_pendaftaran > 0 ? number_format($transaction->loket_pendaftaran, 0, ',', '.') : '-' }}</td>
+                            <td class="border border-gray-900 px-3 py-1.5 text-right">{{ $totalPendaftaran > 0 ? number_format($totalPendaftaran, 0, ',', '.') : '-' }}</td>
                         </tr>
                         <tr>
                             <td class="border border-gray-900 px-3 py-1.5 text-gray-700">Loket Cek Fisik</td>
                             <td class="border border-gray-900 px-3 py-1.5">Rp</td>
-                            <td class="border border-gray-900 px-3 py-1.5 text-right">{{ $transaction->loket_cek_fisik > 0 ? number_format($transaction->loket_cek_fisik, 0, ',', '.') : '-' }}</td>
+                            <td class="border border-gray-900 px-3 py-1.5 text-right">{{ $totalCekFisik > 0 ? number_format($totalCekFisik, 0, ',', '.') : '-' }}</td>
                         </tr>
                         <tr>
                             <td class="border border-gray-900 px-3 py-1.5 text-gray-700">Acc tidak hadir STNK</td>
                             <td class="border border-gray-900 px-3 py-1.5">Rp</td>
-                            <td class="border border-gray-900 px-3 py-1.5 text-right">{{ $transaction->acc_tidak_hadir > 0 ? number_format($transaction->acc_tidak_hadir, 0, ',', '.') : '-' }}</td>
+                            <td class="border border-gray-900 px-3 py-1.5 text-right">{{ $totalAccTidakHadir > 0 ? number_format($totalAccTidakHadir, 0, ',', '.') : '-' }}</td>
                         </tr>
                         <tr>
                             <td class="border border-gray-900 px-3 py-1.5 text-gray-700">Acc Domisili (Beda Alamat)</td>
                             <td class="border border-gray-900 px-3 py-1.5">Rp</td>
-                            <td class="border border-gray-900 px-3 py-1.5 text-right">{{ $transaction->acc_domisili > 0 ? number_format($transaction->acc_domisili, 0, ',', '.') : '-' }}</td>
+                            <td class="border border-gray-900 px-3 py-1.5 text-right">{{ $totalAccDomisili > 0 ? number_format($totalAccDomisili, 0, ',', '.') : '-' }}</td>
                         </tr>
                         <tr>
                             <td class="border border-gray-900 px-3 py-1.5 text-gray-700">Loket Penetapan</td>
                             <td class="border border-gray-900 px-3 py-1.5">Rp</td>
-                            <td class="border border-gray-900 px-3 py-1.5 text-right">{{ $transaction->loket_penetapan > 0 ? number_format($transaction->loket_penetapan, 0, ',', '.') : '-' }}</td>
+                            <td class="border border-gray-900 px-3 py-1.5 text-right">{{ $totalLoketPenetapan > 0 ? number_format($totalLoketPenetapan, 0, ',', '.') : '-' }}</td>
                         </tr>
                         <tr>
                             <td class="border border-gray-900 px-3 py-1.5 text-gray-700">Loket Pengesahan Pertama</td>
                             <td class="border border-gray-900 px-3 py-1.5">Rp</td>
-                            <td class="border border-gray-900 px-3 py-1.5 text-right">{{ $transaction->loket_pengesahan_1 > 0 ? number_format($transaction->loket_pengesahan_1, 0, ',', '.') : '-' }}</td>
+                            <td class="border border-gray-900 px-3 py-1.5 text-right">{{ $totalLoketPengesahan1 > 0 ? number_format($totalLoketPengesahan1, 0, ',', '.') : '-' }}</td>
                         </tr>
                         <tr>
                             <td class="border border-gray-900 px-3 py-1.5 text-gray-700">Loket Pengesahan Kedua</td>
                             <td class="border border-gray-900 px-3 py-1.5">Rp</td>
-                            <td class="border border-gray-900 px-3 py-1.5 text-right">{{ $transaction->loket_pengesahan_2 > 0 ? number_format($transaction->loket_pengesahan_2, 0, ',', '.') : '-' }}</td>
+                            <td class="border border-gray-900 px-3 py-1.5 text-right">{{ $totalLoketPengesahan2 > 0 ? number_format($totalLoketPengesahan2, 0, ',', '.') : '-' }}</td>
                         </tr>
                         <tr>
                             <td class="border border-gray-900 px-3 py-1.5 text-gray-700">Bea Materai</td>
                             <td class="border border-gray-900 px-3 py-1.5">Rp</td>
-                            <td class="border border-gray-900 px-3 py-1.5 text-right">{{ $transaction->bea_materai > 0 ? number_format($transaction->bea_materai, 0, ',', '.') : '-' }}</td>
+                            <td class="border border-gray-900 px-3 py-1.5 text-right">{{ $totalBeaMaterai > 0 ? number_format($totalBeaMaterai, 0, ',', '.') : '-' }}</td>
                         </tr>
                         <tr class="font-bold bg-gray-100">
                             <td class="border border-gray-900 px-3 py-2">Total</td>
                             <td class="border border-gray-900 px-3 py-2">Rp</td>
-                            <td class="border border-gray-900 px-3 py-2 text-right">{{ number_format($transaction->biaya_lain, 0, ',', '.') }}</td>
+                            <td class="border border-gray-900 px-3 py-2 text-right">{{ number_format($totalBiayaLain, 0, ',', '.') }}</td>
                         </tr>
                     </tbody>
                 </table>
@@ -219,7 +217,6 @@
             <!-- Tanda Tangan Kiri -->
             <div class="text-left w-64">
                 <p class="text-sm text-gray-800 mb-20">{{ \Carbon\Carbon::now()->format('d/m/Y') }}<br>Dibuat Oleh,</p>
-                <!-- Space untuk stempel/ttd asli -->
                 <p class="font-bold text-gray-900 uppercase">ADMIN BIRO JASA</p>
             </div>
             

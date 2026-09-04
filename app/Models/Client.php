@@ -12,6 +12,7 @@ class Client extends Model
         'nik',
         'nama_lengkap',
         'no_whatsapp',
+        'email',
         'alamat',
     ];
 }

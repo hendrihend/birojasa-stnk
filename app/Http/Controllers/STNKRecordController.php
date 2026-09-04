@@ -23,7 +23,7 @@ class STNKRecordController extends Controller
                                        $q2->where('nama_lengkap', 'like', "%{$search}%");
                                    });
                              });
-            })->orderBy('tgl_jatuh_tempo_pajak', 'asc')->get();
+            })->orderBy('tgl_jatuh_tempo_pajak', 'asc')->paginate(10)->withQueryString();
         return view('stnk_records.index', compact('records'));
     }
 

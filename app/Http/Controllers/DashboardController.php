@@ -64,7 +64,7 @@ class DashboardController extends Controller
                     continue; // LEWATI! Kendaraan ini tidak akan dimasukkan ke Dashboard (Dashboard Bersih)
                 }
                 // SYARAT 3: Jika statusnya bukan Done (contoh: Pending, Diproses)
-                if ($transaksiTerakhir->status_proses != 'Done') {
+                if ($transaksiTerakhir->status_proses == 'Pending') {
                     $sedangDiurus = true; // Akan memicu warna biru dan tombol "Cek Transaksi"
                 }
             }
@@ -134,12 +134,13 @@ class DashboardController extends Controller
         return (object) [
             'nopol' => $stnk->vehicle->nopol,
             'tipe' => $tipe,
-            'layanan' => $layanan,
+            'jenis_layanan' => $layanan,
             'status_teks' => $statusTeks,
             'kategori_warna' => $kategoriWarna,
             'tanggal_asli' => $tanggal->format('d M Y'),
             'vehicle_id' => $stnk->vehicle_id,
             'sisa_hari' => $selisihHari,
+            'email' => $stnk->vehicle->client->email,
         ];
     }
 }

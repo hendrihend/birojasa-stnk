@@ -51,36 +51,36 @@
                     </div>
 
                     <div>
-                        <label class="block text-sm font-bold text-gray-700 mb-1">Nomor Mesin</label>
-                        <input type="text" name="no_mesin" value="{{ old('no_mesin') }}" placeholder="Contoh: H3J88Y838" 
+                        <label class="block text-sm font-bold text-gray-700 mb-1">Nomor Mesin <span class="text-red-500">*</span></label>
+                        <input type="text" name="no_mesin" value="{{ old('no_mesin') }}" required placeholder="Contoh: H3J88Y838" 
                             class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-shadow bg-gray-50 focus:bg-white uppercase">
                     </div>
 
                     <div>
-                        <label class="block text-sm font-bold text-gray-700 mb-1">Merk Kendaraan</label>
-                        <input type="text" name="merk" value="{{ old('merk') }}" placeholder="Contoh: Honda, Toyota" 
+                        <label class="block text-sm font-bold text-gray-700 mb-1">Merk Kendaraan <span class="text-red-500">*</span></label>
+                        <input type="text" name="merk" value="{{ old('merk') }}" required placeholder="Contoh: Honda, Toyota" 
                             class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-shadow bg-gray-50 focus:bg-white">
                     </div>
 
                     <div>
-                        <label class="block text-sm font-bold text-gray-700 mb-1">Tipe Kendaraan</label>
-                        <input type="text" name="tipe" value="{{ old('tipe') }}" placeholder="Contoh: Vario 150, Avanza" 
+                        <label class="block text-sm font-bold text-gray-700 mb-1">Tipe Kendaraan <span class="text-red-500">*</span></label>
+                        <input type="text" name="tipe" value="{{ old('tipe') }}" required placeholder="Contoh: Vario 150, Avanza" 
                             class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-shadow bg-gray-50 focus:bg-white">
                     </div>
 
                     <div>
-                        <label class="block text-sm font-bold text-gray-700 mb-1">Tahun Pembuatan</label>
-                        <input type="number" name="tahun_pembuatan" value="{{ old('tahun_pembuatan') }}" placeholder="Contoh: 2020" min="1950" max="{{ date('Y') + 1 }}"
+                        <label class="block text-sm font-bold text-gray-700 mb-1">Tahun Pembuatan <span class="text-red-500">*</span></label>
+                        <input type="number" name="tahun_pembuatan" value="{{ old('tahun_pembuatan') }}" required placeholder="Contoh: 2020" min="1950" max="{{ date('Y') + 1 }}"
                             class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-shadow bg-gray-50 focus:bg-white">
                     </div>
 
-                    <div class="col-span-1 md:col-span-2">
-                        <label class="block text-sm font-bold text-gray-700 mb-1">Warna Kendaraan</label>
-                        <input type="text" name="warna" value="{{ old('warna') }}" placeholder="Contoh: Biru" min="1950" max="{{ date('Y') + 1 }}"
+                    <div>
+                        <label class="block text-sm font-bold text-gray-700 mb-1">Warna Kendaraan <span class="text-red-500">*</span></label>
+                        <input type="text" name="warna" value="{{ old('warna') }}" required placeholder="Contoh: Biru" min="1950" max="{{ date('Y') + 1 }}"
                             class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-shadow bg-gray-50 focus:bg-white">
                     </div>
 
-                    <div class="col-span-1 md:col-span-2">
+                    <div>
                         <label class="block text-sm font-bold text-gray-700 mb-1">Nama Tercetak di STNK</label>
                         <input type="text" name="nama_pemilik" value="{{ old('nama_pemilik') }}" placeholder="Kosongkan jika namanya sama dengan nama Klien" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-shadow bg-gray-50 focus:bg-white">
                         <p class="text-xs text-gray-500 mt-1">Sistem otomatis menggunakan nama Klien jika dikosongkan.</p>

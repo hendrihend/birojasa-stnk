@@ -71,9 +71,8 @@
                             <option value="KTP">KTP (Pemilik)</option>
                             <option value="STNK">STNK (Asli/Fotokopi)</option>
                             <option value="BPKB">BPKB</option>
-                            <option value="Faktur">Faktur Kendaraan</option>
+                            <option value="Hasil Cek Fisik Kendaraan">Hasil Cek Fisik Kendaraan</option>
                             <option value="Kwitansi">Kwitansi Pembelian</option>
-                            <option value="Surat Jalan">Surat Jalan / Pengantar</option>
                         </select>
                     </div>
     

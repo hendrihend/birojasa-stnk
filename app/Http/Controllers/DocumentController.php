@@ -31,7 +31,7 @@ class DocumentController extends Controller
 
         // validasi input
         $request->validate([
-            'jenis_dokumen' => 'required|in:KTP,STNK,BPKB,Faktur,Kwitansi,Surat Jalan',
+            'jenis_dokumen' => 'required|in:KTP,STNK,BPKB,Hasil Cek Fisik Kendaraan,Kwitansi',
             'file_dokumen' => 'required|file|mimes:jpg,jpeg,png,pdf|max:2048', // Maksimal 2MB, format gambar/PDF
 
         ], $messages);

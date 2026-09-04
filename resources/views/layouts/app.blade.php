@@ -13,75 +13,130 @@
 <body class="bg-gray-100 font-sans antialiased text-gray-900">
     <div class="flex h-screen overflow-hidden">
         <!-- Sidebar navigation -->
-         <aside class="w-64 bg-gray-900 text-white flex flex-col shadow-2xl flex-shrink-0">
-             <div class="p-6 border-b border-gray-800">
-                <i class="fa-solid fa-shield-halved text-blue-400 text-2xl"></i>
-                <div>
-                    <h2 class="text-xl font-black tracking-wider text-blue-400 leading-none">BIRO JASA</h2>
-                    <p class="text-[10px] text-gray-400 mt-1 uppercase tracking-widest">Sistem Manajemen STNK</p>
+        <aside class="w-64 bg-blue-900 text-white flex flex-col shadow-2xl flex-shrink-0" id="sidebar">
+            <!-- Logo -->
+            <div class="h-[84px] px-5 flex items-center gap-3 border-b border-white/10">
+                <img src="{{ asset('images/images_logo.png') }}" alt="Logo Biro Jasa STNK" class="w-11 h-11 object-contain flex-shrink-0">
+                <div id="sidebarBrand" class="overflow-hidden whitespace-nowrap">
+                    <h2 class="text-xl font-black tracking-wider text-blue-200 leading-tight">BIRO JASA</h2>
+                    <p class="text-[10px] text-blue-200 mt-1 uppercase mt-0.5 tracking-widest">Sistem Manajemen STNK</p>
                 </div>
             </div>
+            <!-- Navigasi -->
             <nav class="flex-1 overflow-y-auto py-4 space-y-1">
-                <a href="{{ route('dashboard') }}" class="flex items-center gap-3 px-6 py-3 border-l-4 transition-colors duration-200 {{ request()->routeIs('dashboard') ? 'bg-gray-800 text-blue-400 font-bold border-blue-500' : 'text-gray-400 border-transparent hover:bg-gray-800 hover:text-white' }}">
+                <a href="{{ route('dashboard') }}" class="menu-item flex items-center gap-4 px-7 py-3.5 rounded-xl transition-all duration-200 {{ request()->routeIs('dashboard') ? 'bg-blue-800 text-blue-200 font-bold border-blue-500' : 'text-blue-200 border-transparent hover:bg-blue-800 hover:text-white' }}">
                    <i class="fa-solid fa-chart-pie w-5 text-center text-lg"></i>
-                   <span>Dashboard</span>
+                   <span class="menu-text whitespace-nowrap">Dashboard</span>
                 </a>
-                <a href="{{ route('clients.index') }}" class="flex items-center gap-3 px-6 py-3 border-l-4 transition-colors duration-200 {{ request()->routeIs('clients.*') ? 'bg-gray-800 text-blue-400 font-bold border-blue-500' : 'text-gray-400 border-transparent hover:bg-gray-800 hover:text-white' }}">
-                    <i class="fa-solid fa-users w-5 text-center text-lg"></i>
-                    <span>Data Client</span>
-                </a>
-                <a href="{{ route('vehicles.index') }}" class="flex items-center gap-3 px-6 py-3 border-l-4 transition-colors duration-200 {{ request()->routeIs('vehicles.*', 'documents.*') ? 'bg-gray-800 text-blue-400 font-bold border-blue-500' : 'text-gray-400 border-transparent hover:bg-gray-800 hover:text-white' }}">
-                    <i class="fa-solid fa-car w-5 text-center text-lg"></i>
-                    <span>Data Kendaraan</span>
-                </a>
-                <a href="{{ route('stnk_records.index') }}" class="flex items-center gap-3 px-6 py-3 border-l-4 transition-colors duration-200 {{ request()->routeIs('stnk_records.*') ? 'bg-gray-800 text-blue-400 font-bold border-blue-500' : 'text-gray-400 border-transparent hover:bg-gray-800 hover:text-white' }}">
+                <!-- Data Master -->
+                @php
+                    $dataMasterOpen = request()->routeIs('clients.*', 'vehicles.*', 'documents.*');
+                @endphp
+                <div>
+                    <button type="button"
+                        onclick="toggleDataMaster()"
+                        class="menu-item w-full flex items-center justify-between px-7 py-3.5 rounded-xl
+                        transition-all duration-200 {{ $dataMasterOpen ? 'bg-blue-800 text-blue-200 font-bold border-blue-500' : 'text-blue-200 border-transparent hover:bg-blue-800 hover:text-white' }}">
+
+                        <div class="flex items-center gap-4">
+                            <i class="fa-solid fa-database w-5 text-center text-lg flex-shrink-0"></i>
+                            <span class="menu-text whitespace-nowrap">Data Master</span>
+                        </div>
+
+                        <i id="dataMasterIcon"
+                            class="menu-text fa-solid fa-chevron-right mx-2 text-xs transition-transform duration-200
+                            {{ $dataMasterOpen ? 'rotate-90' : '' }}">
+                        </i>
+                    </button>
+                    <!-- Submenu -->
+                    <div id="dataMasterMenu" class="{{ $dataMasterOpen ? '' : 'hidden' }} mt-1 ml-4 space-y-1">
+                        <!-- Data Klien -->
+                        <a href="{{ route('clients.index') }}"
+                            class="flex items-center gap-3 px-5 py-2.5 rounded-lg text-sm transition-all duration-200
+                            {{ request()->routeIs('clients.*') ? 'bg-blue-800 text-blue-200 font-bold border-blue-500' : 'text-blue-200 border-transparent hover:bg-blue-800 hover:text-white' }}">
+                            <i class="fa-solid fa-users w-4 text-center"></i><span class="menu-text">Data Klien</span>
+                        </a>
+                        <!-- Data Kendaraan -->
+                        <a href="{{ route('vehicles.index') }}"
+                            class="flex items-center gap-3 px-5 py-2.5 rounded-lg text-sm transition-all duration-200
+                            {{ request()->routeIs('vehicles.*', 'documents.*') ? 'bg-blue-800 text-blue-200 font-bold border-blue-500' : 'text-blue-200 border-transparent hover:bg-blue-800 hover:text-white' }}">
+                            <i class="fa-solid fa-car w-4 text-center"></i><span class="menu-text">Data Kendaraan</span>
+                        </a>
+                    </div>
+                </div>
+
+                <a href="{{ route('stnk_records.index') }}" class="menu-item flex items-center gap-4 px-7 py-3.5 rounded-xl transition-all duration-200 duration-200 {{ request()->routeIs('stnk_records.*') ? 'bg-blue-800 text-blue-200 font-bold border-blue-500' : 'text-blue-200 border-transparent hover:bg-blue-800 hover:text-white' }}">
                     <i class="fa-regular fa-calendar-check w-5 text-center text-lg"></i>
-                    <span>Manajemen Pajak</span>
+                    <span class="menu-text whitespace-nowrap">Manajemen Pajak</span>
                 </a>
-                <a href="{{ route('transactions.index') }}" class="flex items-center gap-3 px-6 py-3 border-l-4 transition-colors duration-200 {{ request()->routeIs('transactions.*') ? 'bg-gray-800 text-blue-400 font-bold border-blue-500' : 'text-gray-400 border-transparent hover:bg-gray-800 hover:text-white' }}">
+                <a href="{{ route('transactions.index') }}" class="menu-item flex items-center gap-4 px-7 py-3.5 rounded-xl transition-all duration-200 duration-200 {{ request()->routeIs('transactions.*') ? 'bg-blue-800 text-blue-200 font-bold border-blue-500' : 'text-blue-200 border-transparent hover:bg-blue-800 hover:text-white' }}">
                     <i class="fa-solid fa-file-signature w-5 text-center text-lg"></i>
-                    <span>Transaksi</span>
+                    <span class="menu-text whitespace-nowrap">Transaksi</span>
                 </a>
                 @if(Auth::user()->role === 'super_admin')
-                <a href="{{ route('users.index') }}" class="flex items-center gap-3 px-6 py-3 border-l-4 transition-colors duration-200 {{ request()->routeIs('users.*') ? 'bg-gray-800 text-blue-400 font-bold border-blue-500' : 'text-gray-400 border-transparent hover:bg-gray-800 hover:text-white' }}">
+                <a href="{{ route('users.index') }}" class="menu-item flex items-center gap-4 px-7 py-3.5 rounded-xl transition-all duration-200 duration-200 {{ request()->routeIs('users.*') ? 'bg-blue-800 text-blue-200 font-bold border-blue-500' : 'text-blue-200 border-transparent hover:bg-blue-800 hover:text-white' }}">
                     <i class="fa-solid fa-user-shield w-5 text-center text-lg"></i>
-                    <span>Kelola User</span>
+                    <span class="menu-text whitespace-nowrap">Kelola User</span>
                 </a>
                 @endif
-                <a href="{{ route('scan.qr') }}" class="flex items-center gap-3 px-6 py-3 border-l-4 transition-colors duration-200 {{ request()->routeIs('scan.qr') ? 'bg-gray-800 text-blue-400 font-bold border-blue-500' : 'text-gray-400 border-transparent hover:bg-gray-800 hover:text-white' }}">
+                <a href="{{ route('scan.qr') }}" class="menu-item flex items-center gap-4 px-7 py-3.5 rounded-xl transition-all duration-200 duration-200 {{ request()->routeIs('scan.qr') ? 'bg-blue-800 text-blue-200 font-bold border-blue-500' : 'text-blue-200 border-transparent hover:bg-blue-800 hover:text-white' }}">
                     <i class="fa-solid fa-qrcode w-5 text-center text-lg"></i>
-                    <span>Scan QR Code</span>
+                    <span class="menu-text whitespace-nowrap">Scan QR Code</span>
                 </a>
             </nav>
             <!-- Footer Sidebar -->
-            <div class="p-4 border-t border-gray-800 text-center text-xs text-gray-500">
+            <div id="sidebarFooter" class="p-4 border-t border-blue-800 text-center text-xs text-blue-200">
                 &copy; {{ date('Y') }} Biro Jasa STNK
             </div>
-         </aside>
+        </aside>
 
-         <!-- Main content -->
-          <main class="flex-1 flex flex-col h-screen overflow-y-auto overflow-x-hidden bg-gray-50">
-            <div class="p-8 pb-4">
-                <header class="flex justify-between items-center pb-5 border-b border-gray-200 mb-6">
-                    <h1 class="text-3xl font-bold text-gray-800">@yield('header_title')</h1>
+        <!-- Main content -->
+        <main class="flex-1 flex flex-col h-screen overflow-y-auto overflow-x-hidden bg-gray-50">
+                <!-- Header -->
+                <header class="h-[64px] bg-white border-b border-gray-200 flex items-center justify-between px-6 flex-shrink-0">
                     <div class="flex items-center gap-5">
-                        <div class="text-right">
-                            <span class="block font-bold text-gray-700 leading-none">Halo, {{ Auth::user()->name }}</span>
-                            <span class="text-[11px] font-bold text-blue-500 tracking-wider">{{ strtoupper(Auth::user()->role) }}</span>
+                        <!-- Hamburger -->
+                        <button type="button" onclick="toggleSidebar()" class="w-9 h-9 flex items-center justify-center rounded-lg text-gray-500 hover:bg-gray-100 hover:text-gray-700 transition">
+                            <i class="fa-solid fa-bars text-lg"></i>
+                        </button>
+
+                        <!-- Page Title -->
+                        <h1 class="text-2xl font-semibold text-gray-800">
+                            @yield('header_title')
+                        </h1>
+
+                    </div>
+
+
+                    <!-- User -->
+                    <div class="flex items-center gap-4">
+                        <!-- Avatar -->
+                        <div class="w-9 h-9 rounded-full bg-indigo-100 text-[#35318B] flex items-center justify-center font-semibold text-sm">
+                            {{ strtoupper(substr(Auth::user()->name, 0, 1)) }}
                         </div>
-                        <div class="h-8 w-px bg-gray-300"></div>
-                        
+                        <!-- User Info -->
+                        <div class="hidden sm:block">
+                            <p class="text-sm font-medium text-gray-800 leading-tight">
+                                {{ Auth::user()->name }}
+                            </p>
+                            <p class="text-xs text-gray-400 mt-0.5">
+                                {{ ucfirst(str_replace('_', ' ', Auth::user()->role)) }}
+                            </p>
+                        </div>
+                        <!-- Logout -->
+                        <div class="h-8 w-px bg-gray-200"></div>
                         <form action="{{ route('logout') }}" method="POST" class="m-0">
                             @csrf
-                            <button type="submit" class="flex items-center gap-2 text-gray-500 hover:text-red-600 font-bold transition duration-300">
-                                <i class="fa-solid fa-power-off"></i>
-                                <span>Logout</span>
+                            <button type="submit" class="flex items-center gap-2 px-3 py-2 rounded-lg text-gray-500 hover:bg-red-50 hover:text-red-600 font-medium transition">
+                                <i class="fa-solid fa-arrow-right-from-bracket"></i>
+                                <span class="hidden sm:inline">Logout</span>
                             </button>
                         </form>
                     </div>
                 </header>
-                @yield('content')
-            </div>
+                <div class="p-6 lg:p-7">
+                    @yield('content')
+                </div>
           </main>
     </div>
 
@@ -90,6 +145,48 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <script>
+        /* ================= SIDEBAR ================= */
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const brand = document.getElementById('sidebarBrand');
+            const footer = document.getElementById('sidebarFooter');
+            const menuTexts = document.querySelectorAll('.menu-text');
+
+            const isCollapsed = sidebar.classList.contains('w-20');
+
+            if (isCollapsed) {
+                sidebar.classList.remove('w-20');
+                sidebar.classList.add('w-64');
+
+                brand.classList.remove('hidden');
+                footer.classList.remove('hidden');
+
+                menuTexts.forEach(item => {
+                    item.classList.remove('hidden');
+                });
+
+            } else {
+                sidebar.classList.remove('w-64');
+                sidebar.classList.add('w-20');
+
+                brand.classList.add('hidden');
+                footer.classList.add('hidden');
+
+                menuTexts.forEach(item => {
+                    item.classList.add('hidden');
+                });
+            }
+        }
+
+        /* ================= DATA MASTER ================= */
+        function toggleDataMaster() {
+            const menu = document.getElementById('dataMasterMenu');
+            const icon = document.getElementById('dataMasterIcon');
+
+            menu.classList.toggle('hidden');
+            icon.classList.toggle('rotate-90');
+        }
+
         // <!-- Logika Popup Otomatis -->
         // Konfigurasi default Toast (Popup kecil di pojok kanan atas)
         const Toast = Swal.mixin({
@@ -161,6 +258,43 @@
                     }, 500); 
                 });
             }
+        });
+
+        /* ================= LIVE SEARCH ================= */
+        document.addEventListener('DOMContentLoaded', function () {
+            const searchInput = document.querySelector('input[name="search"]');
+            if (!searchInput) return;
+            let timeout = null;
+            searchInput.addEventListener('input', function () {
+                clearTimeout(timeout);
+                const query = this.value;
+                const form = this.closest('form');
+                if (!form) return;
+                const url = form.action + '?search=' + encodeURIComponent(query);
+                timeout = setTimeout(() => {
+                    fetch(url)
+                        .then(response => response.text())
+                        .then(html => {
+
+                            const parser = new DOMParser();
+                            const doc = parser.parseFromString(html, 'text/html');
+
+                            const newTable = doc.querySelector('table');
+                            const currentTable = document.querySelector('table');
+
+                            if (newTable && currentTable) {
+                                currentTable.innerHTML = newTable.innerHTML;
+                            }
+
+                        })
+                        .catch(error => {
+                            console.error('Search error:', error);
+                        });
+
+                }, 500);
+
+            });
+
         });
     </script>
     

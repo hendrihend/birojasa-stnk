@@ -23,7 +23,7 @@ class VehicleController extends Controller
                              ->orWhereHas('client', function($q) use ($search) {
                                  $q->where('nama_lengkap', 'like', "%{$search}%");
                              });
-            })->latest()->get();
+            })->latest()->paginate(10)->withQueryString();
         return view('vehicles.index', compact('vehicles'));
     }
 
@@ -92,7 +92,7 @@ class VehicleController extends Controller
 
             // simpan stnk (jika ada input)
             if ($request->tgl_jatuh_tempo_pajak || $request->tgl_habis_stnk) {
-                StnkRecord::create([
+                STNKRecord::create([
                     'vehicle_id' => $vehicle->id,
                     'no_stnk' => $request->no_stnk,
                     'tgl_jatuh_tempo_pajak' => $request->tgl_jatuh_tempo_pajak,
@@ -145,7 +145,7 @@ class VehicleController extends Controller
     public function edit(string $id)
     {
         // cari data kendaraan berdasarkan id, jika tidak ditemukan maka akan menampilkan halaman 404
-        $vehicle = Vehicle::findOrFail($id);
+        $vehicle = Vehicle::with('stnk')->findOrFail($id);
         // ambil semua data klien untuk dropdown
         $clients = Client::orderBy('nama_lengkap', 'asc')->get();
         return view('vehicles.edit', compact('vehicle', 'clients'));
@@ -154,7 +154,7 @@ class VehicleController extends Controller
 
     public function update(Request $request, string $id)
     {
-        // validasi input
+        // validasi input gabungan kendaraan dan STNK
         $request->validate([
             'client_id' => 'required|exists:clients,id',
             'nopol' => 'required|string|max:15|unique:vehicles,nopol,' . $id,
@@ -165,6 +165,12 @@ class VehicleController extends Controller
             'tahun_pembuatan' => 'required|integer|min:1900|max:' . date('Y'),
             'warna' => 'required|string|max:30',
             'nama_pemilik' => 'nullable|string|max:100',
+
+            // Validasi Field STNK
+            'no_stnk' => 'required|string|max:50',
+            'tgl_jatuh_tempo_pajak' => 'required|date',
+            'tgl_habis_stnk' => 'required|date',
+            'status_aktif' => 'required|boolean',
         ]);
 
     
@@ -177,7 +183,28 @@ class VehicleController extends Controller
         }
 
         $vehicle = Vehicle::findOrFail($id);
-        $vehicle->update($data);
+        $vehicle->update([
+            'client_id' => $data['client_id'],
+            'nopol' => $data['nopol'],
+            'no_rangka' => $data['no_rangka'],
+            'no_mesin' => $data['no_mesin'],
+            'merk' => $data['merk'],
+            'tipe' => $data['tipe'],
+            'tahun_pembuatan' => $data['tahun_pembuatan'],
+            'warna' => $data['warna'],
+            'nama_pemilik' => $data['nama_pemilik'],
+            ]);
+            
+            // Simpan data stnk ke tabel stnk_records
+        STNKRecord::updateOrCreate(
+            ['vehicle_id' => $vehicle->id],
+            [
+                'no_stnk' => $data['no_stnk'],
+                'tgl_jatuh_tempo_pajak' => $data['tgl_jatuh_tempo_pajak'],
+                'tgl_habis_stnk' => $data['tgl_habis_stnk'],
+                'status_aktif' => $data['status_aktif'],
+            ]
+        );
         // redirect ke halaman index dengan pesan sukses
         return redirect()->route('vehicles.index')->with('success', 'Data kendaraan berhasil diperbarui.');
     }

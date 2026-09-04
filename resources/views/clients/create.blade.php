@@ -40,6 +40,12 @@
                 </div>
 
                 <div>
+                    <label class="block text-sm font-bold text-gray-700 mb-1">Email <span class="text-red-500">*</span></label>
+                    <input type="mail" name="email" value="{{ old('email') }}" required placeholder="Contoh: klien@gmail.com" 
+                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-shadow bg-gray-50 focus:bg-white">
+                </div>
+
+                <div>
                     <label class="block text-sm font-bold text-gray-700 mb-1">Alamat Lengkap</label>
                     <textarea name="alamat" rows="3" placeholder="Alamat sesuai KTP atau domisili" 
                         class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-shadow bg-gray-50 focus:bg-white resize-none">{{ old('alamat') }}</textarea>

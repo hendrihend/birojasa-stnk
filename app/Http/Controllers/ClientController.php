@@ -15,7 +15,7 @@ class ClientController extends Controller
             return $query->where('nama_lengkap', 'like', "%{$search}%")
                         ->orWhere('nik', 'like', "%{$search}%")
                         ->orWhere('no_whatsapp', 'like', "%{$search}%");
-        })->latest()->get();
+        })->latest()->paginate(10)->withQueryString();
         return view('clients.index', compact('clients'));
     }
 
@@ -31,6 +31,7 @@ class ClientController extends Controller
             'nik' => 'nullable|unique:clients,nik|max:16',
             'nama_lengkap' => 'required|string|max:255',
             'no_whatsapp' => 'nullable|string|max:20',
+            'email' => 'nullable|string|max:64',
             'alamat' => 'nullable|string|max:500',
         ]);
 
@@ -59,6 +60,7 @@ class ClientController extends Controller
             'nik' => 'nullable|unique:clients,nik,' . $id . '|max:16',
             'nama_lengkap' => 'required|string|max:255',
             'no_whatsapp' => 'nullable|string|max:20',
+            'email' => 'nullable|string|max:64',
             'alamat' => 'nullable|string|max:500',
         ]);
 

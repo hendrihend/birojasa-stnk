@@ -38,7 +38,7 @@
                 <tbody class="text-sm divide-y divide-gray-100">
                     @forelse($vehicles as $vehicle)
                     <tr class="hover:bg-gray-50/80 transition-colors">
-                        <td class="p-4 font-black text-gray-800 tracking-wider uppercase">{{ preg_replace('/([A-Z]+)(\d+)([A-Z]+)/', '$1 $2 $3', strtoupper($vehicle->nopol)) }}</td>
+                        <td class="p-4 font-black text-gray-800">{{ preg_replace('/([A-Z]+)(\d+)([A-Z]+)/', '$1 $2 $3', strtoupper($vehicle->nopol)) }}</td>
                         <td class="p-4 text-gray-700">
                             {{ $vehicle->merk }} 
                             <span class="text-xs font-bold bg-gray-200 text-gray-600 px-2 py-1 rounded ml-1">{{ $vehicle->tipe ?? '-' }}</span>
@@ -71,5 +71,45 @@
                 </tbody>
             </table>
         </div>
+
+        <!-- Paginations -->
+        @if($vehicles->hasPages())
+            <div class="px-5 py-4 border-t border-gray-200 flex flex-col sm:flex-row justify-between items-center gap-3">
+                <div class="text-sm text-gray-500">
+                    Menampilkan <span class="font-semibold text-gray-700">{{ $vehicles->firstItem() }}</span> - <span class="font-semibold text-gray-700">{{ $vehicles->lastItem() }}</span> dari <span class="font-semibold text-gray-700">{{ $vehicles->total() }}</span> data
+                </div>
+                <div class="flex items-center gap-1">
+                    @if($vehicles->onFirstPage())
+                        <span class="px-3 py-2 border border-gray-200 rounded-lg text-gray-300 bg-gray-50">
+                            <i class="fa-solid fa-chevron-left"></i>
+                        </span>
+                    @else
+                        <a href="{{ $vehicles->withQueryString()->previousPageUrl() }}" class="px-3 py-2 border border-gray-200 rounded-lg text-gray-600 bg-white hover:bg-blue-80 hover:text-blue-700 transition-colors">
+                            <i class="fa-solid fa-chevron-left"></i>
+                        </a>
+                    @endif
+
+                    @foreach($vehicles->getUrlRange(1, $vehicles->lastPage()) as $page => $url)
+                        @if($page == $vehicles->currentPage())
+                            <span class="px-3 py-2 rounded-lg bg-blue-900 text-white font-semibold">{{ $page }}</span>
+                        @else
+                            <a href="{{ $vehicles->withQueryString()->url($page) }}" class="px-3 py-2 border border-gray-200 rounded-lg text-gray-600 bg-white hover:bg-blue-80 hover:text-blue-700 transition-colors">{{ $page }}</a>
+                        @endif
+                    @endforeach
+
+                    @if($vehicles->hasMorePages())
+                        <a href="{{ $vehicles->withQueryString()->nextPageUrl() }}" class="px-3 py-2 border border-gray-200 rounded-lg text-gray-600 bg-white hover:bg-blue-80 hover:text-blue-700 transition-colors">
+                            <i class="fa-solid fa-chevron-right"></i>
+                        </a>
+                    @else
+                        <span class="px-3 py-2 border border-gray-200 rounded-lg text-gray-300 bg-gray-50">
+                            <i class="fa-solid fa-chevron-right"></i>
+                        </span>
+                    @endif
+                </div>
+            </div>
+        @endif
+
+
     </div>
 @endsection

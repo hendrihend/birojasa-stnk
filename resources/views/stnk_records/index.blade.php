@@ -99,5 +99,43 @@
                 </tbody>
             </table>
         </div>
+        
+        <!-- Paginations -->
+        @if($records->hasPages())
+            <div class="px-5 py-4 border-t border-gray-200 flex flex-col sm:flex-row justify-between items-center gap-3">
+                <div class="text-sm text-gray-500">
+                    Menampilkan <span class="font-semibold text-gray-700">{{ $records->firstItem() }}</span> - <span class="font-semibold text-gray-700">{{ $records->lastItem() }}</span> dari <span class="font-semibold text-gray-700">{{ $records->total() }}</span> data
+                </div>
+                <div class="flex items-center gap-1">
+                    @if($records->onFirstPage())
+                        <span class="px-3 py-2 border border-gray-200 rounded-lg text-gray-300 bg-gray-50">
+                            <i class="fa-solid fa-chevron-left"></i>
+                        </span>
+                    @else
+                        <a href="{{ $records->withQueryString()->previousPageUrl() }}" class="px-3 py-2 border border-gray-200 rounded-lg text-gray-600 bg-white hover:bg-blue-80 hover:text-blue-700 transition-colors">
+                            <i class="fa-solid fa-chevron-left"></i>
+                        </a>
+                    @endif
+
+                    @foreach($records->getUrlRange(1, $records->lastPage()) as $page => $url)
+                        @if($page == $records->currentPage())
+                            <span class="px-3 py-2 rounded-lg bg-blue-900 text-white font-semibold">{{ $page }}</span>
+                        @else
+                            <a href="{{ $records->withQueryString()->url($page) }}" class="px-3 py-2 border border-gray-200 rounded-lg text-gray-600 bg-white hover:bg-blue-80 hover:text-blue-700 transition-colors">{{ $page }}</a>
+                        @endif
+                    @endforeach
+
+                    @if($records->hasMorePages())
+                        <a href="{{ $records->withQueryString()->nextPageUrl() }}" class="px-3 py-2 border border-gray-200 rounded-lg text-gray-600 bg-white hover:bg-blue-80 hover:text-blue-700 transition-colors">
+                            <i class="fa-solid fa-chevron-right"></i>
+                        </a>
+                    @else
+                        <span class="px-3 py-2 border border-gray-200 rounded-lg text-gray-300 bg-gray-50">
+                            <i class="fa-solid fa-chevron-right"></i>
+                        </span>
+                    @endif
+                </div>
+            </div>
+        @endif
     </div>
 @endsection

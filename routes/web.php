@@ -20,12 +20,14 @@ Route::get('/dashboard', function () {
 
 Route::middleware('auth')->group(function () {
     Route::get('/dashboard',[DashboardController::class, 'index'])->name('dashboard');
+    Route::get('/reminder/send/{vehicle_id}', [TransactionController::class, 'sendReminder'])->name('reminder.send');
     Route::resource('users', UserController::class)->middleware('can:super_admin');
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
     Route::resource('clients', ClientController::class);
     Route::resource('vehicles', VehicleController::class);
+    Route::get('/transactions/print-bulk', [TransactionController::class, 'bulkPrint'])->name('transactions.print-bulk');
     Route::resource('transactions', TransactionController::class);
     Route::get('/transactions/{id}/print', [TransactionController::class, 'print'])->name('transactions.print');
     

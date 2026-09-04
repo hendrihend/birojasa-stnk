@@ -26,9 +26,21 @@ class Vehicle extends Model
         return $this->belongsTo(Client::class, 'client_id');
     }
 
+    // relasi ke model stnk
+    public function stnk()
+    {
+        // vehicle memiliki 1 STNKRecord
+        return $this->hasOne(STNKRecord::class, 'vehicle_id', 'id');
+    }
+
     // relasi ke model Transaction
     public function transactions()
     {
         return $this->HasMany(Transaction::class);
+    }
+
+    public function documents()
+    {
+        return $this->hasMany(Document::class, 'vehicle_id', 'id');
     }
 }

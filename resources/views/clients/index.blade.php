@@ -29,6 +29,7 @@
                         <th class="p-4 font-bold">Nama Lengkap</th>
                         <th class="p-4 font-bold">NIK</th>
                         <th class="p-4 font-bold">No. WhatsApp</th>
+                        <th class="p-4 font-bold">Email</th>
                         <th class="p-4 font-bold">Alamat</th>
                         <th class="p-4 font-bold text-center">Aksi</th>
                     </tr>
@@ -43,7 +44,8 @@
                                 <i class="fa-brands fa-whatsapp text-lg"></i> {{ $client->no_whatsapp }}
                             </a>
                         </td>
-                        <td class="p-4 text-gray-500 truncate max-w-xs">{{ $client->alamat ?? '-' }}</td>
+                        <td class="p-4 text-gray-500">{{ $client->email ?? '-' }}</td>
+                        <td class="p-4 text-gray-500">{{ $client->alamat ?? '-' }}</td>
                         <td class="p-4 flex justify-center gap-4">
                             <a href="{{ route('clients.edit', $client->id) }}" class="text-blue-500 hover:text-blue-700 font-bold"><i class="fa-solid fa-pen-to-square"></i></a>
                             @if (Auth::user()->role === 'super_admin')
@@ -62,5 +64,43 @@
                 </tbody>
             </table>
         </div>
+
+        <!-- Paginations -->
+        @if($clients->hasPages())
+            <div class="px-5 py-4 border-t border-gray-200 flex flex-col sm:flex-row justify-between items-center gap-3">
+                <div class="text-sm text-gray-500">
+                    Menampilkan <span class="font-semibold text-gray-700">{{ $clients->firstItem() }}</span> - <span class="font-semibold text-gray-700">{{ $clients->lastItem() }}</span> dari <span class="font-semibold text-gray-700">{{ $clients->total() }}</span> data
+                </div>
+                <div class="flex items-center gap-1">
+                    @if($clients->onFirstPage())
+                        <span class="px-3 py-2 border border-gray-200 rounded-lg text-gray-300 bg-gray-50">
+                            <i class="fa-solid fa-chevron-left"></i>
+                        </span>
+                    @else
+                        <a href="{{ $clients->withQueryString()->previousPageUrl() }}" class="px-3 py-2 border border-gray-200 rounded-lg text-gray-600 bg-white hover:bg-blue-80 hover:text-blue-700 transition-colors">
+                            <i class="fa-solid fa-chevron-left"></i>
+                        </a>
+                    @endif
+
+                    @foreach($clients->getUrlRange(1, $clients->lastPage()) as $page => $url)
+                        @if($page == $clients->currentPage())
+                            <span class="px-3 py-2 rounded-lg bg-blue-900 text-white font-semibold">{{ $page }}</span>
+                        @else
+                            <a href="{{ $clients->withQueryString()->url($page) }}" class="px-3 py-2 border border-gray-200 rounded-lg text-gray-600 bg-white hover:bg-blue-80 hover:text-blue-700 transition-colors">{{ $page }}</a>
+                        @endif
+                    @endforeach
+
+                    @if($clients->hasMorePages())
+                        <a href="{{ $clients->withQueryString()->nextPageUrl() }}" class="px-3 py-2 border border-gray-200 rounded-lg text-gray-600 bg-white hover:bg-blue-80 hover:text-blue-700 transition-colors">
+                            <i class="fa-solid fa-chevron-right"></i>
+                        </a>
+                    @else
+                        <span class="px-3 py-2 border border-gray-200 rounded-lg text-gray-300 bg-gray-50">
+                            <i class="fa-solid fa-chevron-right"></i>
+                        </span>
+                    @endif
+                </div>
+            </div>
+        @endif
     </div>
 @endsection
