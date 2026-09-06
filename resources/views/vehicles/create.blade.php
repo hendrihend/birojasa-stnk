@@ -89,34 +89,34 @@
             </div>
 
             <!-- BAGIAN 2: DATA STNK & PAJAK -->
-            <div class="p-8 bg-gray-50 border-t border-gray-100">
+            <div class="p-8 border-t border-gray-100">
                 <div class="flex justify-between items-center mb-5 border-b border-gray-200 pb-2">
                     <h3 class="text-lg font-bold text-gray-800">
-                        <i class="fa-regular fa-file-lines text-green-500 mr-2"></i> Data STNK & Pajak <span class="text-sm font-normal text-gray-500">(Opsional, bisa diisi nanti)</span>
+                        <i class="fa-regular fa-file-lines text-green-500 mr-2"></i> Data STNK & Pajak</span>
                     </h3>
                 </div>
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
-                        <label class="block text-sm font-bold text-gray-700 mb-1">Nomor STNK</label>
-                        <input type="text" name="no_stnk" value="{{ old('no_stnk') }}" placeholder="Kosongkan jika belum ada" 
-                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none transition-shadow bg-white">
+                        <label class="block text-sm font-bold text-gray-700 mb-1">Nomor STNK <span class="text-red-500">*</label>
+                        <input type="text" name="no_stnk" value="{{ old('no_stnk') }}" required placeholder="Contoh:11332208" 
+                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none transition-shadow bg-gray-50">
                     </div>
 
                     <div>
-                        <label class="block text-sm font-bold text-gray-700 mb-1">Jatuh Tempo Pajak (Tahunan)</label>
-                        <input type="date" name="tgl_jatuh_tempo_pajak" value="{{ old('tgl_jatuh_tempo_pajak') }}" 
-                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none transition-shadow bg-white text-gray-700">
+                        <label class="block text-sm font-bold text-gray-700 mb-1">Jatuh Tempo Pajak (Tahunan) <span class="text-red-500">*</label>
+                        <input type="date" name="tgl_jatuh_tempo_pajak" required value="{{ old('tgl_jatuh_tempo_pajak') }}" 
+                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none transition-shadow bg-gray-50 text-gray-700">
                     </div>
 
                     <div>
-                        <label class="block text-sm font-bold text-gray-700 mb-1">Habis Masa STNK (5 Tahunan)</label>
-                        <input type="date" name="tgl_habis_stnk" value="{{ old('tgl_habis_stnk') }}" 
-                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none transition-shadow bg-white text-gray-700">
+                        <label class="block text-sm font-bold text-gray-700 mb-1">Habis Masa STNK (5 Tahunan) <span class="text-red-500">*</label>
+                        <input type="date" name="tgl_habis_stnk" required value="{{ old('tgl_habis_stnk') }}" 
+                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none transition-shadow bg-gray-50 text-gray-700">
                     </div>
 
                     <div>
-                        <label class="block text-sm font-bold text-gray-700 mb-1">Status Aktif *</label>
+                        <label class="block text-sm font-bold text-gray-700 mb-1">Status Aktif <span class="text-red-500">*</label>
                         <select name="status_aktif" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none transition-shadow bg-gray-50 focus:bg-white appearance-none">
                             <option value="1" {{ old('status_aktif') == '1' ? 'selected' : '' }}>Aktif (STNK Terbaru)</option>
                             <option value="0" {{ (old('status_aktif') !== null && old('status_aktif') == '0') ? 'selected' : '' }}>Nonaktif (Hanya Riwayat/Arsip)</option>
@@ -137,7 +137,7 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
                         <label class="block text-sm font-bold text-gray-700 mb-1">Jenis Dokumen</label>
-                        <select name="jenis_dokumen" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-shadow bg-white appearance-none">
+                        <select name="jenis_dokumen" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-shadow bg-gray-50 focus:bg-white appearance-none">
                             <option value="">-- Pilih Jika Ingin Mengunggah --</option>
                             <option value="KTP" {{ old('jenis_dokumen') == 'KTP' ? 'selected' : '' }}>KTP Pemilik</option>
                             <option value="STNK" {{ old('jenis_dokumen') == 'STNK' ? 'selected' : '' }}>Foto STNK Asli</option>

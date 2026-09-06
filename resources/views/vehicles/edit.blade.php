@@ -81,25 +81,25 @@
                 </div>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
-                        <label class="block text-sm font-bold text-gray-700 mb-1">Nomor STNK</label>
-                        <input type="text" name="no_stnk" value="{{ old('no_stnk', $vehicle->stnk->no_stnk ?? '') }}" 
+                        <label class="block text-sm font-bold text-gray-700 mb-1">Nomor STNK <span class="text-red-500">*</span></label>
+                        <input type="text" name="no_stnk" required placeholder="Contoh:11332208" value="{{ old('no_stnk', $vehicle->stnk->no_stnk ?? '') }}" 
                             class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none transition-shadow bg-gray-50 focus:bg-white">
                     </div>
 
                     <div>
-                        <label class="block text-sm font-bold text-gray-700 mb-1">Jatuh Tempo Pajak (Tahunan)</label>
-                        <input type="date" name="tgl_jatuh_tempo_pajak" value="{{ old('tgl_jatuh_tempo_pajak', optional($vehicle->stnk)->tgl_jatuh_tempo_pajak ? \Carbon\Carbon::parse($vehicle->stnk->tgl_jatuh_tempo_pajak)->format('Y-m-d') : '') }}" 
+                        <label class="block text-sm font-bold text-gray-700 mb-1">Jatuh Tempo Pajak (Tahunan) <span class="text-red-500">*</span></label>
+                        <input type="date" name="tgl_jatuh_tempo_pajak" required value="{{ old('tgl_jatuh_tempo_pajak', optional($vehicle->stnk)->tgl_jatuh_tempo_pajak ? \Carbon\Carbon::parse($vehicle->stnk->tgl_jatuh_tempo_pajak)->format('Y-m-d') : '') }}" 
                             class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none transition-shadow bg-gray-50 focus:bg-white">
                     </div>
 
                     <div>
-                        <label class="block text-sm font-bold text-gray-700 mb-1">Habis Masa STNK (5 Tahunan)</label>
-                        <input type="date" name="tgl_habis_stnk" value="{{ old('tgl_habis_stnk', optional($vehicle->stnk)->tgl_habis_stnk ? \Carbon\Carbon::parse($vehicle->stnk->tgl_habis_stnk)->format('Y-m-d') : '') }}" 
+                        <label class="block text-sm font-bold text-gray-700 mb-1">Habis Masa STNK (5 Tahunan) <span class="text-red-500">*</span></label>
+                        <input type="date" name="tgl_habis_stnk" required value="{{ old('tgl_habis_stnk', optional($vehicle->stnk)->tgl_habis_stnk ? \Carbon\Carbon::parse($vehicle->stnk->tgl_habis_stnk)->format('Y-m-d') : '') }}" 
                             class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none transition-shadow bg-gray-50 focus:bg-white">
                     </div>
 
                     <div>
-                        <label class="block text-sm font-bold text-gray-700 mb-1">Status Aktif *</label>
+                        <label class="block text-sm font-bold text-gray-700 mb-1">Status Aktif  <span class="text-red-500">*</span></label>
                         <select name="status_aktif" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none transition-shadow bg-gray-50 focus:bg-white appearance-none">
                             <option value="1" {{ old('status_aktif') == '1' ? 'selected' : '' }}>Aktif (STNK Terbaru)</option>
                             <option value="0" {{ (old('status_aktif') !== null && old('status_aktif') == '0') ? 'selected' : '' }}>Nonaktif (Hanya Riwayat/Arsip)</option>

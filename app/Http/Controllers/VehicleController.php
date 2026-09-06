@@ -55,9 +55,9 @@ class VehicleController extends Controller
             'nama_pemilik' => 'nullable|string|max:100',
 
             // validasi input STNK
-            'no_stnk' => 'nullable|string',
-            'tgl_jatuh_tempo_pajak' => 'nullable|date',
-            'tgl_habis_stnk' => 'nullable|date',
+            'no_stnk' => 'required|string',
+            'tgl_jatuh_tempo_pajak' => 'required|date',
+            'tgl_habis_stnk' => 'required|date',
 
             // validasi dokumen
             'jenis_dokumen' => 'in:KTP,STNK,BPKB,Faktur,Kwitansi,Surat Jalan',

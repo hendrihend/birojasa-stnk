@@ -35,6 +35,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/vehicles/{vehicle_id}/documents', [DocumentController::class, 'store'])->name('documents.store');
     Route::delete('/documents/{id}', [DocumentController::class, 'destroy'])->name('documents.destroy');
     Route::resource('stnk_records', STNKRecordController::class);
+    Route::delete('stnk_records/{id}', [STNKRecordController::class, 'destroy'])->name('records.destroy');
     Route::get('/scan-qr', function() {
         return view('scan');
     })->name('scan.qr');

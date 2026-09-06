@@ -71,6 +71,6 @@ class STNKRecordController extends Controller
     public function destroy(string $id)
     {
         STNKRecord::findOrFail($id)->delete();
-        return redirect()->route('stnk-records.index')->with('success', 'Data STNK berhasil dihapus.');
+        return redirect()->route('stnk_records.index')->with('success', 'Data STNK berhasil dihapus.');
     }
 }
