@@ -27,7 +27,6 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
     Route::resource('clients', ClientController::class);
     Route::resource('vehicles', VehicleController::class);
-    Route::get('/transactions/print-bulk', [TransactionController::class, 'bulkPrint'])->name('transactions.print-bulk');
     Route::resource('transactions', TransactionController::class);
     Route::get('/transactions/{id}/print', [TransactionController::class, 'print'])->name('transactions.print');
     

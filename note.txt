@@ -45,3 +45,33 @@ Minggu 4 tanggal 17 Agustus - 21 Agustus 2026
   - Lanjut Desain UI/UX
   - Laporan projek hari/tanggal: Sabtu, 22 Agustus 2026
 ----------------------------------------------------------------------
+#=====================================================================
+Minggu 5 tanggal 24 Agustus - 28 Agustus 2026
+  - Membuat dan Modifikasi menu:
+    - Transaksi Controller
+    - View Transaki Modifikasi kolom input dengan format otomatis ketika pengisian nominal
+    - Menambahkan Fitur Cetak Invoice
+  - Laporan projek hari/tanggal: Sabtu, 29 Agustus 2026
+----------------------------------------------------------------------
+#=====================================================================
+Minggu 6 tanggal 31 Agustus - 04 September 2026
+  - Membuat dan Modifikasi menu:
+    - Transaksi Controller
+    - Menambahkan Fitur Cetak Invoice
+    - Menambahkan Fitur Cetak Invoice Kolektif di list Transaksi
+    - Menambahkan fitur notifikasi email ke klien untuk peringatan jatuh tempo pajak
+    - Modifikasi fitur dokumen
+      - Menambahkan verifikasi dan validasi dokumen sebelum melakukan Transaksi
+  - Laporan projek hari/tanggal: Minggu, 06 September 2026
+    - Laporan pada Minggu 6 di geser ke minggu karena ada kendala dari pihak pembimbing lapangan
+----------------------------------------------------------------------
+#=====================================================================
+Minggu 7 tanggal 07 September - 11 September 2026
+  - Membuat dan Modifikasi menu:
+    - Modifikasi Transaksi Controller 
+      - Tambah Transaki lebih dari satu Kendaraan untuk satu klien yg mungkin memiliki banyak kendaraan
+    - Revisi Fitur Cetak Invoice
+      - Menambahkan fitur preview sebelum di cetak
+  - Laporan projek hari/tanggal: Sabtu, 12 September 2026
+    - Laporan pada Minggu 6 di geser ke minggu karena ada kendala dari pihak pembimbing lapangan
+----------------------------------------------------------------------
