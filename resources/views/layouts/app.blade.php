@@ -1,11 +1,16 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@yield('title') - Biro Jasa STNK</title>
     <!-- tailwindcss -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+
+    <link rel="icon" type="image/png" href="{{ asset('images/images_logo.png') }}">
 
     <!-- fonts awesome -->
      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -13,19 +18,19 @@
 <body class="bg-gray-100 font-sans antialiased text-gray-900">
     <div class="flex h-screen overflow-hidden">
         <!-- Sidebar navigation -->
-        <aside class="w-64 bg-blue-900 text-white flex flex-col shadow-2xl flex-shrink-0" id="sidebar">
+        <aside class="w-64 bg-blue-50 text-gray-600 flex flex-col border-r border-gray-200 flex-shrink-0" id="sidebar">
             <!-- Logo -->
-            <div class="h-[84px] px-5 flex items-center gap-3 border-b border-white/10">
-                <img src="{{ asset('images/images_logo.png') }}" alt="Logo Biro Jasa STNK" class="w-11 h-11 object-contain flex-shrink-0">
+            <div class="h-[84px] px-5 flex items-center gap-3 border-b border-gray-100">
+                <img src="{{ asset('images/images_logo.png') }}" alt="Logo Biro Jasa STNK" class="w-10 h-10 object-contain flex-shrink-0">
                 <div id="sidebarBrand" class="overflow-hidden whitespace-nowrap">
-                    <h2 class="text-xl font-black tracking-wider text-blue-200 leading-tight">BIRO JASA</h2>
-                    <p class="text-[10px] text-blue-200 mt-1 uppercase mt-0.5 tracking-widest">Sistem Manajemen STNK</p>
+                    <h2 class="text-base font-bold tracking-wide text-gray-800 leading-tight">BIRO JASA</h2>
+                    <p class="text-[10px] text-blue-600 mt-0.5 uppercase tracking-widest font-semibold">Sistem Manajemen STNK</p>
                 </div>
             </div>
             <!-- Navigasi -->
             <nav class="flex-1 overflow-y-auto py-4 space-y-1">
-                <a href="{{ route('dashboard') }}" class="menu-item flex items-center gap-4 px-7 py-3.5 rounded-xl transition-all duration-200 {{ request()->routeIs('dashboard') ? 'bg-blue-800 text-blue-200 font-bold border-blue-500' : 'text-blue-200 border-transparent hover:bg-blue-800 hover:text-white' }}">
-                   <i class="fa-solid fa-chart-pie w-5 text-center text-lg"></i>
+                <a href="{{ route('dashboard') }}" class="menu-item flex items-center gap-3 px-6 py-2.5 rounded-lg text-sm transition-all duration-200 {{ request()->routeIs('dashboard') ? 'text-blue-600 font-semibold shadow-sm' : 'text-gray-600 hover:bg-blue-600/10 hover:text-blue-600' }}">
+                   <i class="fa-solid fa-chart-pie w-4 text-center text-sm"></i>
                    <span class="menu-text whitespace-nowrap">Dashboard</span>
                 </a>
                 <!-- Data Master -->
@@ -35,11 +40,11 @@
                 <div>
                     <button type="button"
                         onclick="toggleDataMaster()"
-                        class="menu-item w-full flex items-center justify-between px-7 py-3.5 rounded-xl
-                        transition-all duration-200 {{ $dataMasterOpen ? 'bg-blue-800 text-blue-200 font-bold border-blue-500' : 'text-blue-200 border-transparent hover:bg-blue-800 hover:text-white' }}">
+                        class="menu-item w-full flex items-center justify-between px-6 py-2.5 rounded-lg text-sm
+                        transition-all duration-200 duration-200 text-gray-600 hover:bg-blue-600/10 hover:text-blue-600">
 
-                        <div class="flex items-center gap-4">
-                            <i class="fa-solid fa-database w-5 text-center text-lg flex-shrink-0"></i>
+                        <div class="flex items-center gap-3">
+                            <i class="fa-solid fa-database w-4 text-center text-sm flex-shrink-0"></i>
                             <span class="menu-text whitespace-nowrap">Data Master</span>
                         </div>
 
@@ -52,41 +57,60 @@
                     <div id="dataMasterMenu" class="{{ $dataMasterOpen ? '' : 'hidden' }} mt-1 ml-4 space-y-1">
                         <!-- Data Klien -->
                         <a href="{{ route('clients.index') }}"
-                            class="flex items-center gap-3 px-5 py-2.5 rounded-lg text-sm transition-all duration-200
-                            {{ request()->routeIs('clients.*') ? 'bg-blue-800 text-blue-200 font-bold border-blue-500' : 'text-blue-200 border-transparent hover:bg-blue-800 hover:text-white' }}">
-                            <i class="fa-solid fa-users w-4 text-center"></i><span class="menu-text">Data Klien</span>
+                            class="flex items-center gap-3 px-4 py-2 rounded-lg text-sm transition-all duration-200
+                            {{ request()->routeIs('clients.*') ? 'text-blue-600 font-semibold shadow-sm' : 'text-gray-500 hover:bg-blue-600/10 hover:text-blue-600' }}">
+                            <i class="fa-solid fa-users w-4 text-center text-xs"></i><span class="menu-text">Data Klien</span>
                         </a>
                         <!-- Data Kendaraan -->
                         <a href="{{ route('vehicles.index') }}"
-                            class="flex items-center gap-3 px-5 py-2.5 rounded-lg text-sm transition-all duration-200
-                            {{ request()->routeIs('vehicles.*', 'documents.*') ? 'bg-blue-800 text-blue-200 font-bold border-blue-500' : 'text-blue-200 border-transparent hover:bg-blue-800 hover:text-white' }}">
-                            <i class="fa-solid fa-car w-4 text-center"></i><span class="menu-text">Data Kendaraan</span>
+                            class="flex items-center gap-3 px-4 py-2 rounded-lg text-sm transition-all duration-200
+                            {{ request()->routeIs('vehicles.*', 'documents.*') ? 'text-blue-600 font-semibold shadow-sm' : 'text-gray-500 hover:bg-blue-600/10 hover:text-blue-600' }}">
+                            <i class="fa-solid fa-car w-4 text-center text-xs"></i><span class="menu-text">Data Kendaraan</span>
                         </a>
                     </div>
                 </div>
 
-                <a href="{{ route('stnk_records.index') }}" class="menu-item flex items-center gap-4 px-7 py-3.5 rounded-xl transition-all duration-200 duration-200 {{ request()->routeIs('stnk_records.*') ? 'bg-blue-800 text-blue-200 font-bold border-blue-500' : 'text-blue-200 border-transparent hover:bg-blue-800 hover:text-white' }}">
-                    <i class="fa-regular fa-calendar-check w-5 text-center text-lg"></i>
+                <a href="{{ route('stnk_records.index') }}" class="menu-item flex items-center gap-3 px-6 py-2.5 rounded-lg text-sm transition-all duration-200 {{ request()->routeIs('stnk_records.*') ? 'text-blue-600 font-semibold shadow-sm' : 'text-gray-600 hover:bg-blue-600/10 hover:text-blue-600' }}">
+                    <i class="fa-regular fa-calendar-check w-4 text-center text-sm"></i>
                     <span class="menu-text whitespace-nowrap">Manajemen Pajak</span>
                 </a>
-                <a href="{{ route('transactions.index') }}" class="menu-item flex items-center gap-4 px-7 py-3.5 rounded-xl transition-all duration-200 duration-200 {{ request()->routeIs('transactions.*') ? 'bg-blue-800 text-blue-200 font-bold border-blue-500' : 'text-blue-200 border-transparent hover:bg-blue-800 hover:text-white' }}">
-                    <i class="fa-solid fa-file-signature w-5 text-center text-lg"></i>
+                <a href="{{ route('transactions.index') }}" class="menu-item flex items-center gap-3 px-6 py-2.5 rounded-lg text-sm transition-all duration-200 {{ request()->routeIs('transactions.*') ? 'text-blue-600 font-semibold shadow-sm' : 'text-gray-600 hover:bg-blue-600/10 hover:text-blue-600' }}">
+                    <i class="fa-solid fa-file-signature w-4 text-center text-sm"></i>
                     <span class="menu-text whitespace-nowrap">Transaksi</span>
                 </a>
                 @if(Auth::user()->role === 'super_admin')
-                <a href="{{ route('users.index') }}" class="menu-item flex items-center gap-4 px-7 py-3.5 rounded-xl transition-all duration-200 duration-200 {{ request()->routeIs('users.*') ? 'bg-blue-800 text-blue-200 font-bold border-blue-500' : 'text-blue-200 border-transparent hover:bg-blue-800 hover:text-white' }}">
-                    <i class="fa-solid fa-user-shield w-5 text-center text-lg"></i>
+                <a href="{{ route('users.index') }}" class="menu-item flex items-center gap-3 px-6 py-2.5 rounded-lg text-sm transition-all duration-200 {{ request()->routeIs('users.*') ? 'text-blue-600 font-semibold shadow-sm' : 'text-gray-600 hover:bg-blue-600/10 hover:text-blue-600' }}">
+                    <i class="fa-solid fa-user-shield w-4 text-center text-sm"></i>
                     <span class="menu-text whitespace-nowrap">Kelola User</span>
                 </a>
                 @endif
-                <a href="{{ route('scan.qr') }}" class="menu-item flex items-center gap-4 px-7 py-3.5 rounded-xl transition-all duration-200 duration-200 {{ request()->routeIs('scan.qr') ? 'bg-blue-800 text-blue-200 font-bold border-blue-500' : 'text-blue-200 border-transparent hover:bg-blue-800 hover:text-white' }}">
-                    <i class="fa-solid fa-qrcode w-5 text-center text-lg"></i>
+                <a href="{{ route('scan.qr') }}" class="menu-item flex items-center gap-3 px-6 py-2.5 rounded-lg text-sm transition-all duration-200 {{ request()->routeIs('scan.qr') ? 'text-blue-600 font-semibold shadow-sm' : 'text-gray-600 hover:bg-blue-600/10 hover:text-blue-600' }}">
+                    <i class="fa-solid fa-qrcode w-4 text-center text-sm"></i>
                     <span class="menu-text whitespace-nowrap">Scan QR Code</span>
                 </a>
             </nav>
             <!-- Footer Sidebar -->
-            <div id="sidebarFooter" class="p-4 border-t border-blue-800 text-center text-xs text-blue-200">
-                &copy; {{ date('Y') }} Biro Jasa STNK
+            <div id="sidebarFooter">
+                <!-- User Info -->
+                <div class="flex items-center gap-3 px-5 py-4">
+                    <!-- Avatar -->
+                    <div class="w-9 h-9 rounded-full bg-indigo-100 text-[#35318B] flex items-center justify-center font-semibold text-sm shrink-0">
+                        {{ strtoupper(substr(Auth::user()->name, 0, 1)) }}
+                    </div>
+                    <!-- Nama & Role -->
+                    <div class="overflow-hidden whitespace-nowrap">
+                        <p class="text-sm font-medium text-gray-800 leading-tight truncate">
+                            {{ Auth::user()->name }}
+                        </p>
+                        <p class="text-xs text-gray-400 mt-0.5">
+                            {{ ucfirst(str_replace('_', ' ', Auth::user()->role)) }}
+                        </p>
+                    </div>
+                </div>
+                <!-- Copyright -->
+                <p class="menu-text text-center text-xs text-gray-400 border-t border-gray-100 mx-5 pt-3 pb-4">
+                    &copy; {{ date('Y') }} Biro Jasa STNK
+                </p>
             </div>
         </aside>
 
@@ -107,32 +131,14 @@
 
                     </div>
 
-
-                    <!-- User -->
-                    <div class="flex items-center gap-4">
-                        <!-- Avatar -->
-                        <div class="w-9 h-9 rounded-full bg-indigo-100 text-[#35318B] flex items-center justify-center font-semibold text-sm">
-                            {{ strtoupper(substr(Auth::user()->name, 0, 1)) }}
-                        </div>
-                        <!-- User Info -->
-                        <div class="hidden sm:block">
-                            <p class="text-sm font-medium text-gray-800 leading-tight">
-                                {{ Auth::user()->name }}
-                            </p>
-                            <p class="text-xs text-gray-400 mt-0.5">
-                                {{ ucfirst(str_replace('_', ' ', Auth::user()->role)) }}
-                            </p>
-                        </div>
-                        <!-- Logout -->
-                        <div class="h-8 w-px bg-gray-200"></div>
-                        <form action="{{ route('logout') }}" method="POST" class="m-0">
-                            @csrf
-                            <button type="submit" class="flex items-center gap-2 px-3 py-2 rounded-lg text-gray-500 hover:bg-red-50 hover:text-red-600 font-medium transition">
-                                <i class="fa-solid fa-arrow-right-from-bracket"></i>
-                                <span class="hidden sm:inline">Logout</span>
-                            </button>
-                        </form>
-                    </div>
+                    <!-- Logout -->
+                    <form action="{{ route('logout') }}" method="POST" class="m-0">
+                        @csrf
+                        <button type="submit" class="flex items-center gap-2 px-3 py-2 rounded-lg text-gray-500 hover:bg-red-50 hover:text-red-600 font-medium transition">
+                            <i class="fa-solid fa-arrow-right-from-bracket"></i>
+                            <span class="hidden sm:inline">Logout</span>
+                        </button>
+                    </form>
                 </header>
                 <div class="p-6 lg:p-7">
                     @yield('content')

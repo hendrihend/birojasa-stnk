@@ -55,7 +55,7 @@
                         <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-gray-400">
                             <i class="fa-regular fa-envelope"></i>
                         </div>
-                        <input type="email" id="email" name="email" placeholder="contoh@email.com" 
+                        <input type="email" id="email" name="email" placeholder="nama@email.com" 
                             class="w-full rounded-xl border border-gray-300 pl-10 pr-4 py-3 text-sm text-gray-900 bg-gray-50/50 outline-none transition focus:bg-white focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10"/>
                     </div>
                     @error('email')

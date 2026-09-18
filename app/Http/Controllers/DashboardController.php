@@ -7,6 +7,7 @@ use App\Models\Vehicle;
 use App\Models\STNKRecord;
 use App\Models\Transaction;
 use Carbon\Carbon;
+use Illuminate\Pagination\LengthAwarePaginator;
 
 class DashboardController extends Controller
 {
@@ -95,6 +96,17 @@ class DashboardController extends Controller
 
         // Urutkan peringatan dari yang paling mendesak (angka minus / telat diurutkan paling atas)
         $alerts = $alerts->sortBy('sisa_hari')->values();
+
+        //pagination
+        $perPage = 6;
+        $currentPage = LengthAwarePaginator::resolveCurrentPage();
+        $currentItems = $alerts->slice(($currentPage - 1) * $perPage, $perPage)->values();
+        
+        $alerts = new LengthAwarePaginator(
+            $currentItems,
+            $alerts->count(),
+            $perPage,
+            $currentPage,['path' => $request->url(), 'query' => $request->query()]);
 
         // C. MENGIRIM DATA KE VIEW
         return view('dashboard', compact(
