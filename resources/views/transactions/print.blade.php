@@ -44,6 +44,12 @@
         // DATA SETUP UNTUK INVOICE KOLEKTIF
         $firstTrx = $transactions->first();
         $client = $firstTrx->vehicle->client ?? null;
+
+        // HITUNG TERMIN HARI
+        $terminHari = 0;
+        if($firstTrx->tgl_mulai_termin && $firstTrx->tgl_jatuh_tempo) {
+            $terminHari = \Carbon\Carbon::parse($firstTrx->tgl_mulai_termin)->diffInDays(\Carbon\Carbon::parse($firstTrx->tgl_jatuh_tempo));
+        }
         
         // Kalkulasi Grand Total Keseluruhan
         $grandTotalPajak = $transactions->sum('biaya_pajak');
@@ -64,9 +70,10 @@
 
     <!-- Tombol Navigasi (Hilang saat diprint) -->
     <div class="max-w-5xl mx-auto mb-6 print:hidden flex justify-between items-center bg-white p-4 rounded-lg shadow">
-        <a href="{{ route('transactions.index') }}" class="px-5 py-2 bg-gray-500 hover:bg-gray-600 text-white font-bold rounded transition-colors">
+        <a href="{{ route('transactions.index') }}" class="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded shadow transition-colors flex items-center gap-2">
             &larr; Kembali
         </a>
+        <div class="font-semibold text-lg text-gray-700">Preview Invoice</div>
         <div class="flex gap-3">
             <button onclick="window.print()" class="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded shadow transition-colors flex items-center gap-2">
                 <i class="fa-solid fa-print"></i> Print / Cetak PDF
@@ -106,7 +113,7 @@
                     </tr>
                     <tr>
                         <td class="py-1 text-gray-600">Termin (hari)</td>
-                        <td class="py-1 font-bold">: 14</td>
+                        <td class="py-1 font-bold">: {{ $terminHari }}</td>
                     </tr>
                 </table>
             </div>
@@ -173,6 +180,14 @@
                 <div class="w-32 text-gray-700 uppercase font-bold">TERBILANG:</div>
                 <div class="font-bold italic flex-1 capitalize bg-gray-100 px-3 py-1 rounded">** {{ terbilang($grandTotalBiaya) }} **</div>
             </div>
+            @if($firstTrx->catatan)
+            <div class="flex items-start mt-4">
+                <div class="w-32 text-gray-700 font-bold text-xs mt-1 uppercase tracking-wider">CATATAN:</div>
+                <div class="flex-1 bg-yellow-50 border border-yellow-200 px-3 py-2 text-xs text-gray-800 rounded">
+                    {!! $firstTrx->catatan !!}
+                </div>
+            </div>
+            @endif
         </div>
 
         <!-- TABEL RINCIAN BIAYA LAIN (GABUNGAN SEMUA KENDARAAN) -->

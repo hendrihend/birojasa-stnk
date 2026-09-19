@@ -46,17 +46,17 @@
                         <td class="p-4 text-gray-700 font-medium">{{ $vehicle->client->nama_lengkap ?? 'Tanpa Pemilik' }}</td>
                         <td class="p-4">
                             <div class="flex flex-wrap justify-center gap-2">
-                                <a href="{{ route('vehicles.show', $vehicle->id) }}" class="px-3 py-1.5 bg-purple-50 hover:bg-purple-100 text-purple-700 text-xs font-semibold rounded-lg transition-colors flex items-center gap-1.5">
-                                    <i class="fa-solid fa-eye"></i> Detail
+                                <a href="{{ route('vehicles.show', $vehicle->id) }}" title="Lihat Detail Kendaraan" class="px-3 py-1.5 bg-purple-50 hover:bg-purple-100 text-purple-700 text-xs font-semibold rounded-lg transition-colors flex items-center gap-1.5">
+                                    <i class="fa-solid fa-eye"></i>
                                 </a>
-                                <a href="{{ route('vehicles.edit', $vehicle->id) }}" class="px-3 py-1.5 bg-blue-50 hover:bg-blue-100 text-blue-700 text-xs font-semibold rounded-lg transition-colors flex items-center gap-1.5">
-                                    <i class="fa-solid fa-pen-to-square"></i> Edit
+                                <a href="{{ route('vehicles.edit', $vehicle->id) }}" title="Edit Data Kendaraan" class="px-3 py-1.5 bg-blue-50 hover:bg-blue-100 text-blue-700 text-xs font-semibold rounded-lg transition-colors flex items-center gap-1.5">
+                                    <i class="fa-solid fa-pen-to-square"></i>
                                 </a>
                                 @if(Auth::user()->role === 'super_admin')
                                 <form action="{{ route('vehicles.destroy', $vehicle->id) }}" method="POST" onsubmit="return confirm('Yakin ingin menghapus data kendaraan ini?');" class="inline">
                                     @csrf @method('DELETE')
-                                    <button type="submit" class="px-3 py-1.5 bg-red-50 hover:bg-red-100 text-red-600 text-xs font-semibold rounded-lg transition-colors flex items-center gap-1.5">
-                                        <i class="fa-solid fa-trash-can"></i> Hapus
+                                    <button type="submit" title="Hapus Data Kendaraan" class="px-3 py-1.5 bg-red-50 hover:bg-red-100 text-red-600 text-xs font-semibold rounded-lg transition-colors flex items-center gap-1.5">
+                                        <i class="fa-solid fa-trash-can"></i>
                                     </button>
                                 </form>
                                 @endif

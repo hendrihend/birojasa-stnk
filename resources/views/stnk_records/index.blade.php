@@ -122,8 +122,8 @@
                         <td class="p-4 text-center">
                             <form action="{{ route('stnk_records.destroy', $record->id) }}" method="POST" onsubmit="return confirm('Yakin ingin menghapus data STNK ini?');" class="inline">
                                 @csrf @method('DELETE')
-                                <button type="submit" class="px-3 py-1.5 bg-red-50 hover:bg-red-100 text-red-600 text-xs font-semibold rounded-lg transition-colors flex items-center gap-1.5 mx-auto">
-                                    <i class="fa-solid fa-trash-can"></i> Hapus
+                                <button type="submit" title="Hapus Data STNK" class="px-3 py-1.5 bg-red-50 hover:bg-red-100 text-red-600 text-xs font-semibold rounded-lg transition-colors flex items-center gap-1.5 mx-auto">
+                                    <i class="fa-solid fa-trash-can"></i>
                                 </button>
                             </form>
                         </td>

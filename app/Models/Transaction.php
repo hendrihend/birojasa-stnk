@@ -28,6 +28,10 @@ class Transaction extends Model
         'total_biaya', // Total global dari seluruh biaya
         'tgl_masuk',
         'tgl_selesai',
+        // --- TAMBAHAN BARU ---
+        'tgl_mulai_termin',
+        'tgl_jatuh_tempo',
+        'catatan',
     ];
     // relasi ke tabel kendaraan (1 transaksi dimiliki oleh 1 kendaraan
     public function vehicle()

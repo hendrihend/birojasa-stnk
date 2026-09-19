@@ -62,9 +62,13 @@ class TransactionController extends Controller
         }
 
         $request->validate([
-            'tgl_masuk' => 'required|date',
-            'tgl_selesai' => 'nullable|date|after_or_equal:tgl_masuk',
+            'tgl_masuk'        => 'required|date',
+            'tgl_selesai'      => 'nullable|date|after_or_equal:tgl_masuk',
+            'tgl_mulai_termin' => 'required|date',
+            'tgl_jatuh_tempo'  => 'required|date|after_or_equal:tgl_mulai_termin', // Cegah tanggal mundur
         ]);
+
+        
 
         // 2. VALIDASI DOKUMEN DINAMIS (Kolektif)
         $syaratDokumen = [
@@ -99,6 +103,18 @@ class TransactionController extends Controller
         $tglMasuk = $request->input('tgl_masuk');
         $tglSelesai = $request->input('tgl_selesai');
         $urutan = 1; // Variabel penghitung urutan kendaraan
+
+        $tglMulai = $request->input('tgl_mulai_termin');
+        $tglJatuh = $request->input('tgl_jatuh_tempo');
+        $catatanTermin = null;
+        
+        if ($tglMulai && $tglJatuh) {
+            // Hitung selisih hari menggunakan Carbon
+            $selisihHari = \Carbon\Carbon::parse($tglMulai)->diffInDays(\Carbon\Carbon::parse($tglJatuh));
+            
+            // Rangkai kalimat ciamiknya!
+            $catatanTermin = 'Pembayaran tagihan ini memiliki termin <strong>' . $selisihHari . ' Hari</strong> terhitung sejak tanggal berkas diterima (' . \Carbon\Carbon::parse($tglMulai)->format('d/m/Y') . '). Jatuh tempo pembayaran pada tanggal <strong class="text-red-600">' . \Carbon\Carbon::parse($tglJatuh)->format('d/m/Y') . '</strong>.';
+        }
 
         foreach ($dataTransaksi as $vehicleId => $trx) {
             if (isset($trx['is_selected']) && $trx['is_selected'] == '1') {
@@ -143,6 +159,9 @@ class TransactionController extends Controller
                     'total_biaya'        => $grandTotal,
                     'tgl_masuk'          => $tglMasuk,
                     'tgl_selesai'        => $tglSelesai,
+                    'tgl_mulai_termin'   => $tglMulai,
+                    'tgl_jatuh_tempo'    => $tglJatuh,
+                    'catatan' => $catatanTermin,
                 ]);
             }
         }
@@ -179,6 +198,26 @@ class TransactionController extends Controller
     // perbarui status pengurusan biro jasa
     public function update(Request $request, string $id)
     {
+
+        $request->validate([
+            'tgl_masuk'        => 'required|date',
+            'tgl_selesai'      => 'nullable|date|after_or_equal:tgl_masuk',
+            'tgl_mulai_termin' => 'required|date',
+            'tgl_jatuh_tempo'  => 'required|date|after_or_equal:tgl_mulai_termin', // Cegah tanggal mundur
+        ]);
+        
+        $tglMulai = $request->input('tgl_mulai_termin');
+        $tglJatuh = $request->input('tgl_jatuh_tempo');
+        $catatanTermin = null;
+        
+        if ($tglMulai && $tglJatuh) {
+            // Hitung selisih hari menggunakan Carbon
+            $selisihHari = \Carbon\Carbon::parse($tglMulai)->diffInDays(\Carbon\Carbon::parse($tglJatuh));
+            
+            // Rangkai kalimat ciamiknya!
+            $catatanTermin = 'Pembayaran tagihan ini memiliki termin <strong>' . $selisihHari . ' Hari</strong> terhitung sejak tanggal berkas diterima (' . \Carbon\Carbon::parse($tglMulai)->format('d/m/Y') . '). Jatuh tempo pembayaran pada tanggal <strong class="text-red-600">' . \Carbon\Carbon::parse($tglJatuh)->format('d/m/Y') . '</strong>.';
+        }
+        
         // Ambil array transaksi dan tanggal dari input global form
         $dataTransaksi = $request->input('transaksi');
         $tglMasukGlobal = $request->input('tgl_masuk');

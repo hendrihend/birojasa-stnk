@@ -61,10 +61,20 @@
                     </div>
                 </div>
                 
-                <!-- Tanggal Masuk (Global untuk 1 Invoice) -->
-                <div class="w-full md:w-auto">
-                    <label class="block text-xs font-bold text-gray-700 mb-1">Tanggal Masuk Berkas *</label>
-                    <input type="date" name="tgl_masuk" value="{{ old('tgl_masuk', date('Y-m-d')) }}" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-sm">
+                <!-- Tanggal Masuk & Termin (Global untuk 1 Invoice) -->
+                <div class="flex flex-wrap gap-3 w-full md:w-auto">
+                    <div>
+                        <!-- <label class="block text-[11px] font-bold text-gray-700 mb-1">Tgl Masuk Berkas *</label> -->
+                        <input type="hidden" name="tgl_masuk" value="{{ old('tgl_masuk', date('Y-m-d')) }}" required class="w-full px-3 py-1.5 border border-gray-300 rounded focus:ring-1 outline-none text-sm">
+                    </div>
+                    <div>
+                        <label class="block text-[11px] font-bold text-gray-700 mb-1">Dari Tgl (Mulai Termin) *</label>
+                        <input type="date" name="tgl_mulai_termin" id="tgl_mulai_termin" value="{{ old('tgl_mulai_termin', date('Y-m-d')) }}" class="w-full px-3 py-1.5 border border-gray-300 rounded focus:ring-1 outline-none text-sm text-blue-700">
+                    </div>
+                    <div>
+                        <label class="block text-[11px] font-bold text-gray-700 mb-1">Sampai Tgl (Jatuh Tempo) *</label>
+                        <input type="date" name="tgl_jatuh_tempo" id="tgl_jatuh_tempo" class="w-full px-3 py-1.5 border border-gray-300 rounded focus:ring-1 outline-none text-sm text-red-600">
+                    </div>
                 </div>
             </div>
 
@@ -91,8 +101,8 @@
                             
                             <div class="grid grid-cols-2 gap-4">
                                 <div>
-                                    <label class="block text-xs font-bold text-gray-700 mb-1">Jenis Layanan <span class="text-red-500">*</span></label>
-                                    <select name="transaksi[{{ $vehicle->id }}][jenis_layanan]" class="w-full px-3 py-2 border border-gray-300 rounded-lg outline-none text-sm">
+                                    <label class="block text-xs font-bold text-gray-700 mb-1">Jenis Layanan *</label>
+                                    <select name="transaksi[{{ $vehicle->id }}][jenis_layanan]" data-vid="{{ $vehicle->id }}" class="select-layanan w-full px-3 py-2 border border-gray-300 rounded-lg outline-none text-sm">
                                         <option value="Pajak Tahunan">Pajak Tahunan</option>
                                         <option value="Pajak 5 Tahunan">Pajak 5 Tahunan</option>
                                         <option value="Balik Nama">Balik Nama</option>
@@ -100,7 +110,7 @@
                                     </select>
                                 </div>
                                 <div>
-                                    <label class="block text-xs font-bold text-gray-700 mb-1">Status Awal <span class="text-red-500">*</span></label>
+                                    <label class="block text-xs font-bold text-gray-700 mb-1">Status Awal *</label>
                                     <select name="transaksi[{{ $vehicle->id }}][status_proses]" class="w-full px-3 py-2 border border-gray-300 rounded-lg outline-none text-sm text-blue-700 font-bold">
                                         <option value="Pending" selected>Pending</option>
                                         <option value="Cancel">Cancel</option>
@@ -113,7 +123,7 @@
                         <div class="bg-blue-50/50 p-4 rounded-xl border border-blue-100">
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4 border-b border-blue-200 pb-4">
                                 <div>
-                                    <label class="block text-xs font-bold text-gray-700 mb-1">Biaya Pajak</label>
+                                    <label class="block text-xs font-bold text-gray-700 mb-1">Biaya Pajak *</label>
                                     <div class="relative">
                                         <span class="absolute inset-y-0 left-3 flex items-center text-gray-500 font-bold text-sm">Rp</span>
                                         <input type="text" id="pajak_tampil_{{ $vehicle->id }}" placeholder="0" class="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-1 focus:ring-blue-500 font-bold text-gray-800 text-sm">
@@ -121,7 +131,7 @@
                                     </div>
                                 </div>
                                 <div>
-                                    <label class="block text-xs font-bold text-gray-700 mb-1">Biaya Jasa</label>
+                                    <label class="block text-xs font-bold text-gray-700 mb-1">Biaya Jasa *</label>
                                     <div class="relative">
                                         <span class="absolute inset-y-0 left-3 flex items-center text-gray-500 font-bold text-sm">Rp</span>
                                         <input type="text" id="jasa_tampil_{{ $vehicle->id }}" placeholder="0" class="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-1 focus:ring-blue-500 font-bold text-gray-800 text-sm">
@@ -136,7 +146,7 @@
                                     $rincianLain = [
                                         ['id' => 'loket_pendaftaran', 'label' => 'Loket Pendaftaran'],
                                         ['id' => 'loket_cek_fisik', 'label' => 'Cek Fisik'],
-                                        ['id' => 'acc_tidak_hadir', 'label' => 'Acc Tdk Hadir'],
+                                        ['id' => 'acc_tidak_hadir', 'label' => 'Acc Tidak Hadir STNK'],
                                         ['id' => 'acc_domisili', 'label' => 'Acc Domisili'],
                                         ['id' => 'loket_penetapan', 'label' => 'Penetapan'],
                                         ['id' => 'loket_pengesahan_1', 'label' => 'Pengesahan 1'],
@@ -146,7 +156,7 @@
                                 @endphp
                                 @foreach($rincianLain as $item)
                                 <div>
-                                    <label class="block text-[10px] font-bold text-gray-600 mb-1">{{ $item['label'] }}</label>
+                                    <label id="label_{{ $item['id'] }}_{{ $vehicle->id }}" class="block text-[10px] font-bold text-gray-600 mb-1">{{ $item['label'] }}</label>
                                     <div class="relative">
                                         <span class="absolute inset-y-0 left-2 flex items-center text-gray-400 font-bold text-[10px]">Rp</span>
                                         <input type="text" id="tampil_{{ $item['id'] }}_{{ $vehicle->id }}" placeholder="0" class="input-detail-lain w-full pl-7 pr-2 py-1 border border-gray-300 rounded focus:ring-1 focus:ring-blue-500 font-bold text-gray-700 text-xs">
@@ -184,63 +194,165 @@
     @endif
 
     <!-- ==================================================== -->
-    <!-- MODAL PREVIEW INVOICE KOLEKTIF                       -->
+    <!-- MODAL PREVIEW INVOICE KOLEKTIF (GAYA KERTAS PRINT)   -->
     <!-- ==================================================== -->
-    <div id="previewModal" class="hidden fixed inset-0 z-50 bg-gray-900/60 backdrop-blur-sm overflow-y-auto flex items-center justify-center p-4 transition-opacity">
-        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-5xl overflow-hidden flex flex-col max-h-[90vh]">
+    <div id="previewModal" class="hidden fixed inset-0 z-50 bg-gray-900/70 backdrop-blur-sm overflow-y-auto flex items-center justify-center p-4 transition-opacity">
+        <div class="bg-white shadow-2xl w-full max-w-5xl flex flex-col scale-100 max-h-[95vh] relative">
             
-            <!-- Modal Header -->
-            <div class="px-6 py-4 border-b border-gray-100 flex justify-between items-center bg-gray-50/50">
-                <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center text-lg">
-                        <i class="fa-solid fa-file-invoice-dollar"></i>
+            <!-- Tombol Close Melayang -->
+            <button type="button" id="btnCloseModal" class="absolute right-4 top-4 text-gray-400 hover:text-red-500 hover:bg-red-50 w-10 h-10 rounded-full flex items-center justify-center transition-colors z-10">
+                <i class="fa-solid fa-xmark text-2xl"></i>
+            </button>
+
+            <!-- KERTAS INVOICE (Isi Modal) -->
+            <div class="p-10 overflow-y-auto bg-white flex-1 relative border-b-4 border-blue-600">
+                
+                <!-- HEADER KOP SURAT -->
+                <div class="flex justify-between items-start mb-8">
+                    <div class="w-1/2">
+                        <div class="flex items-center gap-2 mb-2">
+                            <div class="w-12 h-12 bg-blue-900 flex items-center justify-center text-white font-black text-2xl rounded-sm">BJ</div>
+                            <div>
+                                <h1 class="text-2xl font-black text-gray-900 tracking-tight leading-none">BIRO JASA STNK</h1>
+                                <p class="text-[10px] text-gray-500 italic mt-0.5">Committed to Service, Excellence in Every Process</p>
+                            </div>
+                        </div>
+                        <p class="text-xs text-gray-700 mt-3">Alamat: Jl. Contoh Kemerdekaan No. 45, Kota Anda, 12345</p>
+                        <p class="text-xs text-gray-700">No.Telp : +62 812-3456-7890</p>
                     </div>
-                    <div>
-                        <h3 class="font-black text-gray-800 text-lg">Preview Transaksi Kolektif</h3>
-                        <p class="text-xs text-gray-500" id="previewClientName">Klien: {{ $selectedClient->nama_lengkap ?? '' }}</p>
+                    <div class="w-1/2 text-right">
+                        <h2 class="text-4xl font-black text-gray-900 tracking-widest mb-4">INVOICE</h2>
+                        <table class="w-full text-xs text-left ml-auto" style="max-width: 250px;">
+                            <tr><td class="py-1 text-gray-600">No Invoice</td><td class="py-1 font-bold">: [ Dibuat Otomatis ]</td></tr>
+                            <tr><td class="py-1 text-gray-600">Tgl. Pembuatan</td><td class="py-1 font-bold" id="prevInvDate">: -</td></tr>
+                            <tr><td class="py-1 text-gray-600">Termin (hari)</td><td class="py-1 font-bold" id="prevTerminHari">: -</td></tr>
+                        </table>
                     </div>
                 </div>
-                <button type="button" id="btnCloseModal" class="text-gray-400 hover:text-red-500 transition-colors">
-                    <i class="fa-solid fa-xmark text-2xl"></i>
-                </button>
-            </div>
 
-            <!-- Modal Body (Isi Tabel) -->
-            <div class="p-6 overflow-y-auto bg-white flex-1">
-                <table class="w-full text-sm text-left border border-gray-200 rounded-lg overflow-hidden">
-                    <thead class="bg-blue-50 text-blue-800 border-b border-blue-100">
-                        <tr>
-                            <th class="p-3">Kendaraan</th>
-                            <th class="p-3">Layanan</th>
-                            <th class="p-3 text-right">Pajak</th>
-                            <th class="p-3 text-right">Jasa</th>
-                            <th class="p-3 text-right">Biaya Lain</th>
-                            <th class="p-3 text-right">Subtotal</th>
+                <!-- INFO KEPADA YTH -->
+                <div class="mb-6">
+                    <p class="text-sm text-gray-700 mb-1">Kepada Yth :</p>
+                    <h3 class="font-bold text-lg text-gray-900 uppercase">{{ $selectedClient->nama_lengkap ?? '' }}</h3>
+                    <p class="text-xs text-gray-700 mt-1">{{ $selectedClient->alamat ?? '-' }}</p>
+                    <p class="text-xs text-gray-700 mt-1">No. WhatsApp / Telp: {{ $selectedClient->no_whatsapp ?? '-' }}</p>
+                </div>
+
+                <p class="text-sm text-gray-800 mb-2">Dengan ini, kami menyampaikan pengajuan atas <strong>Layanan Biro Jasa Kolektif</strong> <span class="float-right underline text-xs">Kendaraan Terlampir:</span></p>
+
+                <!-- TABEL UTAMA (RINCIAN KENDARAAN) -->
+                <table class="w-full text-sm border-collapse border border-gray-900 mb-6">
+                    <thead>
+                        <tr class="bg-gray-100">
+                            <th class="border border-gray-900 py-2 px-2 text-center w-8">No</th>
+                            <th class="border border-gray-900 py-2 px-2 text-center">No Polisi</th>
+                            <th class="border border-gray-900 py-2 px-2 text-center">Merk / Type</th>
+                            <th class="border border-gray-900 py-2 px-2 text-center">Layanan</th>
+                            <th class="border border-gray-900 py-2 px-2 text-center">Pajak</th>
+                            <th class="border border-gray-900 py-2 px-2 text-center">Jasa</th>
+                            <th class="border border-gray-900 py-2 px-2 text-center">Biaya Lain</th>
+                            <th class="border border-gray-900 py-2 px-2 text-center w-28">Total</th>
                         </tr>
                     </thead>
-                    <tbody id="previewTableBody" class="divide-y divide-gray-100">
-                        <!-- Baris akan diisi otomatis oleh JavaScript -->
+                    <tbody id="previewTableBody">
+                        <!-- Baris akan diisi JS -->
                     </tbody>
-                    <tfoot class="bg-gray-50 border-t border-gray-200">
-                        <tr>
-                            <th colspan="5" class="p-4 text-right font-bold text-gray-700 uppercase tracking-wider text-xs">Grand Total Keseluruhan:</th>
-                            <th class="p-4 text-right text-xl font-black text-blue-700" id="previewGrandTotal">Rp 0</th>
+                    <tfoot>
+                        <tr class="bg-gray-100 font-bold">
+                            <td colspan="4" class="border border-gray-900 py-3 px-3 text-right tracking-widest text-sm uppercase">Grand Total</td>
+                            <td class="border border-gray-900 py-3 px-3 text-right text-xs" id="prevGrandTotalPajak">0</td>
+                            <td class="border border-gray-900 py-3 px-3 text-right text-xs" id="prevGrandTotalJasa">0</td>
+                            <td class="border border-gray-900 py-3 px-3 text-right text-xs" id="prevGrandTotalLain">0</td>
+                            <td class="border border-gray-900 py-3 px-3 text-right flex justify-between text-sm">
+                                <span>Rp</span> <span id="prevGrandTotalBiaya">0</span>
+                            </td>
                         </tr>
                     </tfoot>
                 </table>
-                
-                <div class="mt-4 p-4 bg-yellow-50 border border-yellow-200 rounded-lg text-yellow-800 text-sm flex gap-2">
-                    <i class="fa-solid fa-circle-info mt-0.5"></i>
-                    <p><strong>Pastikan angka sudah benar.</strong> Saat Anda menekan Konfirmasi, sistem akan membuatkan beberapa nomor urut untuk Invoice Kolektif ini.</p>
+
+                <!-- TERBILANG -->
+                <div class="mb-10 text-sm">
+                    <div class="flex mb-2 items-center">
+                        <div class="w-32 text-gray-700 uppercase font-bold text-xs tracking-wider">TERBILANG:</div>
+                        <div class="font-bold italic flex-1 capitalize bg-gray-100 px-3 py-1.5 rounded" id="prevTerbilang">** Nol Rupiah **</div>
+                    </div>
+
+                    <!-- TAMBAHAN BARU: CATATAN JATUH TEMPO -->
+                    <div class="flex items-start mt-4">
+                        <div class="w-32 text-gray-700 font-bold text-xs mt-1">CATATAN:</div>
+                        <div class="flex-1 bg-yellow-50 border border-yellow-200 px-3 py-2 text-xs text-gray-800 rounded" id="prevCatatan">
+                            <!-- Teks catatan akan diisi otomatis oleh JS -->
+                        </div>
+                    </div>
                 </div>
+
+                <!-- TABEL RINCIAN BIAYA LAIN (GABUNGAN SEMUA KENDARAAN) -->
+                <div class="flex justify-between items-start text-sm">
+                    <div class="w-1/2">
+                        <p class="font-bold text-gray-700 uppercase">Rincian Biaya Lainnya :</p>
+                        <p class="text-xs text-gray-500 italic mt-1">Akumulasi total dari seluruh kendaraan di atas.</p>
+                    </div>
+                    <div class="w-1/2 flex justify-end">
+                        <table class="w-[85%] border-collapse border border-gray-900 text-xs">
+                            <tbody>
+                                <tr>
+                                    <td class="border border-gray-900 px-3 py-1.5 text-gray-700">Loket Pendaftaran</td>
+                                    <td class="border border-gray-900 px-3 py-1.5 w-8">Rp</td>
+                                    <td class="border border-gray-900 px-3 py-1.5 text-right font-medium" id="prevPendaftaran">-</td>
+                                </tr>
+                                <tr>
+                                    <td class="border border-gray-900 px-3 py-1.5 text-gray-700">Loket Cek Fisik</td>
+                                    <td class="border border-gray-900 px-3 py-1.5">Rp</td>
+                                    <td class="border border-gray-900 px-3 py-1.5 text-right font-medium" id="prevCekFisik">-</td>
+                                </tr>
+                                <tr>
+                                    <!-- LABEL INI AKAN BERUBAH OTOMATIS OLEH JAVASCRIPT -->
+                                    <td class="border border-gray-900 px-3 py-1.5 text-gray-700 transition-colors" id="prevLabelAcc">Acc Tidak Hadir STNK</td>
+                                    <td class="border border-gray-900 px-3 py-1.5">Rp</td>
+                                    <td class="border border-gray-900 px-3 py-1.5 text-right font-medium" id="prevAccTidakHadir">-</td>
+                                </tr>
+                                <tr>
+                                    <td class="border border-gray-900 px-3 py-1.5 text-gray-700">Acc Domisili (Beda Alamat)</td>
+                                    <td class="border border-gray-900 px-3 py-1.5">Rp</td>
+                                    <td class="border border-gray-900 px-3 py-1.5 text-right font-medium" id="prevAccDomisili">-</td>
+                                </tr>
+                                <tr>
+                                    <td class="border border-gray-900 px-3 py-1.5 text-gray-700">Loket Penetapan</td>
+                                    <td class="border border-gray-900 px-3 py-1.5">Rp</td>
+                                    <td class="border border-gray-900 px-3 py-1.5 text-right font-medium" id="prevPenetapan">-</td>
+                                </tr>
+                                <tr>
+                                    <td class="border border-gray-900 px-3 py-1.5 text-gray-700">Loket Pengesahan Pertama</td>
+                                    <td class="border border-gray-900 px-3 py-1.5">Rp</td>
+                                    <td class="border border-gray-900 px-3 py-1.5 text-right font-medium" id="prevPengesahan1">-</td>
+                                </tr>
+                                <tr>
+                                    <td class="border border-gray-900 px-3 py-1.5 text-gray-700">Loket Pengesahan Kedua</td>
+                                    <td class="border border-gray-900 px-3 py-1.5">Rp</td>
+                                    <td class="border border-gray-900 px-3 py-1.5 text-right font-medium" id="prevPengesahan2">-</td>
+                                </tr>
+                                <tr>
+                                    <td class="border border-gray-900 px-3 py-1.5 text-gray-700">Bea Materai</td>
+                                    <td class="border border-gray-900 px-3 py-1.5">Rp</td>
+                                    <td class="border border-gray-900 px-3 py-1.5 text-right font-medium" id="prevMaterai">-</td>
+                                </tr>
+                                <tr class="font-bold bg-gray-100">
+                                    <td class="border border-gray-900 px-3 py-2 text-right">Total Biaya Lain</td>
+                                    <td class="border border-gray-900 px-3 py-2">Rp</td>
+                                    <td class="border border-gray-900 px-3 py-2 text-right" id="prevTotalLainBawah">-</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
             </div>
 
             <!-- Modal Footer (Tombol Aksi) -->
-            <div class="px-6 py-4 border-t border-gray-100 bg-gray-50 flex justify-end gap-3">
+            <div class="px-6 py-4 bg-gray-100 flex justify-end gap-3 border-t border-gray-200">
                 <button type="button" id="btnCancelModal" class="px-6 py-2.5 bg-white border border-gray-300 hover:bg-gray-50 text-gray-700 font-bold rounded-lg transition-colors">
                     Cek Lagi
                 </button>
-                <!-- Tombol inilah yang akan memicu Submit Form sesungguhnya -->
                 <button type="button" id="btnSubmitReal" class="px-8 py-2.5 bg-green-600 hover:bg-green-700 text-white font-bold rounded-lg shadow-sm transition-colors flex items-center gap-2">
                     <i class="fa-solid fa-check"></i> Konfirmasi & Simpan
                 </button>
@@ -311,75 +423,205 @@
             hitungTotal();
         });
 
+        // LOGIKA PERUBAHAN LABEL ACC TIDAK HADIR
+        // =======================================================
+        const selectLayananElems = document.querySelectorAll('.select-layanan');
+        
+        // Fungsi untuk memperbarui label spesifik milik 1 kendaraan
+        const updateLabelAcc = (selectElem) => {
+            const vid = selectElem.dataset.vid; // Ambil ID kendaraan
+            const labelAcc = document.getElementById(`label_acc_tidak_hadir_${vid}`);
+            
+            if (labelAcc) {
+                if (selectElem.value === 'Pajak 5 Tahunan') {
+                    labelAcc.innerText = 'Acc Tidak Hadir Unit';
+                    labelAcc.classList.add('text-blue-600'); // Beri warna beda sbg penanda (opsional)
+                } else {
+                    labelAcc.innerText = 'Acc Tidak Hadir STNK';
+                    labelAcc.classList.remove('text-blue-600');
+                }
+            }
+        };
+
+        // Terapkan ke semua dropdown jenis_layanan
+        selectLayananElems.forEach(select => {
+            // 1. Jalankan sekali saat halaman dimuat (untuk old value)
+            updateLabelAcc(select);
+            
+            // 2. Jalankan setiap kali admin mengubah pilihan dropdown
+            select.addEventListener('change', function() {
+                updateLabelAcc(this);
+            });
+        });
+
         // ==============================================================
         // LOGIKA POP-UP PREVIEW INVOICE (BARU)
         // ==============================================================
-        const btnShowPreview = document.getElementById('btnShowPreview');
-        const previewModal = document.getElementById('previewModal');
         const previewTableBody = document.getElementById('previewTableBody');
         const previewGrandTotal = document.getElementById('previewGrandTotal');
+        
+        // Fungsi Terbilang Javascript
+        function penyebut(nilai) {
+            nilai = Math.abs(nilai);
+            const huruf = ["", "Satu", "Dua", "Tiga", "Empat", "Lima", "Enam", "Tujuh", "Delapan", "Sembilan", "Sepuluh", "Sebelas"];
+            let temp = "";
+            if (nilai < 12) { temp = " " + huruf[nilai]; }
+            else if (nilai < 20) { temp = penyebut(nilai - 10) + " Belas"; }
+            else if (nilai < 100) { temp = penyebut(Math.floor(nilai / 10)) + " Puluh" + penyebut(nilai % 10); }
+            else if (nilai < 200) { temp = " Seratus" + penyebut(nilai - 100); }
+            else if (nilai < 1000) { temp = penyebut(Math.floor(nilai / 100)) + " Ratus" + penyebut(nilai % 100); }
+            else if (nilai < 2000) { temp = " Seribu" + penyebut(nilai - 1000); }
+            else if (nilai < 1000000) { temp = penyebut(Math.floor(nilai / 1000)) + " Ribu" + penyebut(nilai % 1000); }
+            else if (nilai < 1000000000) { temp = penyebut(Math.floor(nilai / 1000000)) + " Juta" + penyebut(nilai % 1000000); }
+            return temp;
+        }
+        function terbilangJS(nilai) {
+            if (nilai === 0) return "Nol Rupiah";
+            let hasil = nilai < 0 ? "Minus " + penyebut(nilai).trim() : penyebut(nilai).trim();
+            return hasil + " Rupiah";
+        }
+
+        const btnShowPreview = document.getElementById('btnShowPreview');
+        const previewModal = document.getElementById('previewModal');
         
         if(btnShowPreview) {
             btnShowPreview.addEventListener('click', function() {
                 let htmlContent = '';
-                let grandTotalSemua = 0;
+                let grandPajak = 0, grandJasa = 0, grandLain = 0, grandSemua = 0;
+                let sumPendaftaran = 0, sumCekFisik = 0, sumAccTidakHadir = 0, sumAccDomisili = 0;
+                let sumPenetapan = 0, sumPengesahan1 = 0, sumPengesahan2 = 0, sumMaterai = 0;
                 let selectedCount = 0;
+                let has5Tahunan = false; // Penanda untuk Acc Unit
 
-                // Looping ke semua kotak kendaraan
                 document.querySelectorAll('.vehicle-card').forEach(card => {
                     const vid = card.dataset.vid;
                     const checkbox = card.querySelector(`input[name="transaksi[${vid}][is_selected]"]`);
                     
-                    // HANYA ambil data yang dicentang
                     if (checkbox && checkbox.checked) {
                         selectedCount++;
                         
-                        // 1. Ambil Nama Kendaraan
+                        // 1. Ambil Nama Kendaraan & Layanan
                         const nopolText = card.querySelector('input[disabled]').value;
+                        const splitText = nopolText.split(' - ');
+                        const nopol = splitText[0];
+                        const merk = splitText[1] || '-';
+
+                        const layananElem = card.querySelector(`select[name="transaksi[${vid}][jenis_layanan]"]`);
+                        const layanan = layananElem.options[layananElem.selectedIndex].text;
                         
-                        // 2. Ambil Layanan
-                        const layanan = card.querySelector(`select[name="transaksi[${vid}][jenis_layanan]"]`).options[card.querySelector(`select[name="transaksi[${vid}][jenis_layanan]"]`).selectedIndex].text;
+                        // DETEKSI 5 TAHUNAN
+                        if (layananElem.value === 'Pajak 5 Tahunan') has5Tahunan = true;
                         
-                        // 3. Ambil Biaya Asli (dari hidden input)
+                        // 2. Ambil Biaya
                         const pajak = parseInt(document.getElementById(`pajak_asli_${vid}`).value) || 0;
                         const jasa = parseInt(document.getElementById(`jasa_asli_${vid}`).value) || 0;
                         
-                        // 4. Hitung Ulang Biaya Lain per card
-                        let subtotalLain = 0;
-                        card.querySelectorAll('.input-detail-lain').forEach(inputTampil => {
-                            let idAsli = inputTampil.id.replace('tampil_', 'asli_');
-                            subtotalLain += parseInt(document.getElementById(idAsli).value) || 0;
-                        });
+                        const pend = parseInt(document.getElementById(`asli_loket_pendaftaran_${vid}`).value) || 0;
+                        const cekf = parseInt(document.getElementById(`asli_loket_cek_fisik_${vid}`).value) || 0;
+                        const acc = parseInt(document.getElementById(`asli_acc_tidak_hadir_${vid}`).value) || 0;
+                        const dom = parseInt(document.getElementById(`asli_acc_domisili_${vid}`).value) || 0;
+                        const pntp = parseInt(document.getElementById(`asli_loket_penetapan_${vid}`).value) || 0;
+                        const psh1 = parseInt(document.getElementById(`asli_loket_pengesahan_1_${vid}`).value) || 0;
+                        const psh2 = parseInt(document.getElementById(`asli_loket_pengesahan_2_${vid}`).value) || 0;
+                        const mtr = parseInt(document.getElementById(`asli_bea_materai_${vid}`).value) || 0;
 
-                        const subtotalPerMobil = pajak + jasa + subtotalLain;
-                        grandTotalSemua += subtotalPerMobil;
+                        const subLain = pend + cekf + acc + dom + pntp + psh1 + psh2 + mtr;
+                        const subTotal = pajak + jasa + subLain;
 
-                        // 5. Susun Baris Tabel HTML
+                        // Tambahkan ke Grand Total
+                        sumPendaftaran += pend; sumCekFisik += cekf; sumAccTidakHadir += acc; sumAccDomisili += dom;
+                        sumPenetapan += pntp; sumPengesahan1 += psh1; sumPengesahan2 += psh2; sumMaterai += mtr;
+
+                        grandPajak += pajak; grandJasa += jasa; grandLain += subLain; grandSemua += subTotal;
+
+                        // 3. Susun Baris Tabel HTML (Border Kotak-Kotak Ala Invoice)
                         htmlContent += `
-                            <tr class="hover:bg-gray-50 transition-colors">
-                                <td class="p-3 font-bold text-gray-800">${nopolText}</td>
-                                <td class="p-3 text-gray-600">${layanan}</td>
-                                <td class="p-3 text-right text-gray-600">Rp ${formatRupiah(pajak)}</td>
-                                <td class="p-3 text-right text-gray-600">Rp ${formatRupiah(jasa)}</td>
-                                <td class="p-3 text-right text-gray-600">Rp ${formatRupiah(subtotalLain)}</td>
-                                <td class="p-3 text-right font-bold text-blue-600">Rp ${formatRupiah(subtotalPerMobil)}</td>
+                            <tr>
+                                <td class="border border-gray-900 py-2 px-2 text-center">${selectedCount}</td>
+                                <td class="border border-gray-900 py-2 px-2 text-center text-xs font-bold">${nopol}</td>
+                                <td class="border border-gray-900 py-2 px-2 text-center text-xs">${merk}</td>
+                                <td class="border border-gray-900 py-2 px-2 text-center text-xs">${layanan}</td>
+                                <td class="border border-gray-900 py-2 px-2 text-right text-xs">${formatRupiah(pajak)}</td>
+                                <td class="border border-gray-900 py-2 px-2 text-right text-xs">${formatRupiah(jasa)}</td>
+                                <td class="border border-gray-900 py-2 px-2 text-right text-xs">${formatRupiah(subLain)}</td>
+                                <td class="border border-gray-900 py-2 px-2 text-right font-bold flex justify-between text-xs">
+                                    <span>Rp</span> <span>${formatRupiah(subTotal)}</span>
+                                </td>
                             </tr>
                         `;
                     }
                 });
 
-                // Validasi: Cegah modal muncul kalau tidak ada yang dicentang
                 if (selectedCount === 0) {
                     alert('Silakan centang minimal 1 kendaraan yang ingin diproses!');
                     return;
                 }
 
                 // Tempelkan data ke dalam Modal
-                previewTableBody.innerHTML = htmlContent;
-                previewGrandTotal.innerText = 'Rp ' + formatRupiah(grandTotalSemua);
+                document.getElementById('previewTableBody').innerHTML = htmlContent;
+                
+                // Header Date
+                const inputTglMasuk = document.querySelector('input[name="tgl_masuk"]');
+                document.getElementById('prevInvDate').innerText = `: ${inputTglMasuk.value.split('-').reverse().join('/')}`;
+
+                // Set Total Kalkulasi
+                document.getElementById('prevGrandTotalPajak').innerText = formatRupiah(grandPajak);
+                document.getElementById('prevGrandTotalJasa').innerText = formatRupiah(grandJasa);
+                document.getElementById('prevGrandTotalLain').innerText = formatRupiah(grandLain);
+                document.getElementById('prevGrandTotalBiaya').innerText = formatRupiah(grandSemua);
+                document.getElementById('prevTotalLainBawah').innerText = formatRupiah(grandLain);
+                
+                // Set Terbilang
+                document.getElementById('prevTerbilang').innerText = '** ' + terbilangJS(grandSemua) + ' **';
+
+                // Set Rincian Biaya Lain
+                document.getElementById('prevPendaftaran').innerText = sumPendaftaran > 0 ? formatRupiah(sumPendaftaran) : '-';
+                document.getElementById('prevCekFisik').innerText = sumCekFisik > 0 ? formatRupiah(sumCekFisik) : '-';
+                document.getElementById('prevAccTidakHadir').innerText = sumAccTidakHadir > 0 ? formatRupiah(sumAccTidakHadir) : '-';
+                document.getElementById('prevAccDomisili').innerText = sumAccDomisili > 0 ? formatRupiah(sumAccDomisili) : '-';
+                document.getElementById('prevPenetapan').innerText = sumPenetapan > 0 ? formatRupiah(sumPenetapan) : '-';
+                document.getElementById('prevPengesahan1').innerText = sumPengesahan1 > 0 ? formatRupiah(sumPengesahan1) : '-';
+                document.getElementById('prevPengesahan2').innerText = sumPengesahan2 > 0 ? formatRupiah(sumPengesahan2) : '-';
+                document.getElementById('prevMaterai').innerText = sumMaterai > 0 ? formatRupiah(sumMaterai) : '-';
+
+                // LOGIKA PERUBAHAN NAMA LABEL ACC (BERDASARKAN LAYANAN KENDARAAN YG DIPILIH)
+                const prevLabelAcc = document.getElementById('prevLabelAcc');
+                if (has5Tahunan) {
+                    prevLabelAcc.innerText = 'Acc Tidak Hadir Unit';
+                    prevLabelAcc.classList.add('text-blue-700');
+                } else {
+                    prevLabelAcc.innerText = 'Acc Tidak Hadir STNK';
+                    prevLabelAcc.classList.remove('text-blue-700');
+                }
 
                 // Tampilkan Modal
                 previewModal.classList.remove('hidden');
+                
+                // ==========================================
+                // LOGIKA HITUNG SELISIH HARI (TERMIN) OTOMATIS
+                // ==========================================
+                const formatTgl = (tglStr) => tglStr ? tglStr.split('-').reverse().join('/') : '-';
+                
+                const tglMulaiVal = document.getElementById('tgl_mulai_termin').value;
+                const tglJatuhVal = document.getElementById('tgl_jatuh_tempo').value;
+                
+                if(tglMulaiVal && tglJatuhVal) {
+                    const date1 = new Date(tglMulaiVal);
+                    const date2 = new Date(tglJatuhVal);
+                    
+                    // Hitung selisih waktu (dalam milidetik) lalu konversi ke Hari
+                    const diffTime = date2 - date1;
+                    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+                    
+                    if (diffDays >= 0) {
+                        document.getElementById('prevTerminHari').innerText = ': ' + diffDays;
+                        document.getElementById('prevCatatan').innerHTML = `Pembayaran tagihan ini memiliki termin <strong>${diffDays} Hari</strong> terhitung sejak tanggal berkas diterima (${formatTgl(tglMulaiVal)}). Jatuh tempo pembayaran pada tanggal <strong class="text-red-600">${formatTgl(tglJatuhVal)}</strong>.`;
+                    } else {
+                        document.getElementById('prevCatatan').innerHTML = `<span class="text-red-500 italic"><i class="fa-solid fa-triangle-exclamation"></i> Tanggal Jatuh Tempo tidak boleh mundur dari Tanggal Mulai!</span>`;
+                    }
+                } else {
+                    document.getElementById('prevCatatan').innerHTML = `<span class="text-red-500 italic">Silakan isi tanggal mulai dan jatuh tempo di form terlebih dahulu!</span>`;
+                }
             });
         }
 

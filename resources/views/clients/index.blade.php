@@ -48,14 +48,14 @@
                         <td class="p-4 text-gray-500 max-w-xs whitespace-normal break-words">{{ $client->alamat ?? '-' }}</td>
                         <td class="p-4">
                             <div class="flex justify-center gap-2">
-                                <a href="{{ route('clients.edit', $client->id) }}" class="px-3 py-1.5 bg-blue-50 hover:bg-blue-100 text-blue-700 text-xs font-semibold rounded-lg transition-colors flex items-center gap-1.5">
-                                    <i class="fa-solid fa-pen-to-square"></i> Edit
+                                <a href="{{ route('clients.edit', $client->id) }}" title="Edit Data Klien" class="px-3 py-1.5 bg-blue-50 hover:bg-blue-100 text-blue-700 text-xs font-semibold rounded-lg transition-colors flex items-center gap-1.5">
+                                    <i class="fa-solid fa-pen-to-square"></i>
                                 </a>
                                 @if (Auth::user()->role === 'super_admin')
                                 <form action="{{ route('clients.destroy', $client->id) }}" method="POST" onsubmit="return confirm('Yakin ingin menghapus klien ini beserta seluruh kendaraan dan transaksinya?');" class="inline">
                                     @csrf @method('DELETE')
-                                    <button type="submit" class="px-3 py-1.5 bg-red-50 hover:bg-red-100 text-red-600 text-xs font-semibold rounded-lg transition-colors flex items-center gap-1.5">
-                                        <i class="fa-solid fa-trash-can"></i> Hapus
+                                    <button type="submit" title="Hapus Data Klien" class="px-3 py-1.5 bg-red-50 hover:bg-red-100 text-red-600 text-xs font-semibold rounded-lg transition-colors flex items-center gap-1.5">
+                                        <i class="fa-solid fa-trash-can"></i>
                                     </button>
                                 </form>
                                 @endif
