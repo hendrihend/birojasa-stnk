@@ -167,7 +167,7 @@
                     <td class="border border-gray-900 py-3 px-3 text-right text-xs">{{ number_format($grandTotalPajak, 0, ',', '.') }}</td>
                     <td class="border border-gray-900 py-3 px-3 text-right text-xs">{{ number_format($grandTotalJasa, 0, ',', '.') }}</td>
                     <td class="border border-gray-900 py-3 px-3 text-right text-xs">{{ number_format($grandTotalLain, 0, ',', '.') }}</td>
-                    <td class="border border-gray-900 py-3 px-3 text-right flex justify-between text-base">
+                    <td class="border border-gray-900 py-3 px-3 text-right flex justify-between text-xs">
                         <span>Rp</span> <span>{{ number_format($grandTotalBiaya, 0, ',', '.') }}</span>
                     </td>
                 </tr>

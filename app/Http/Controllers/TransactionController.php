@@ -42,7 +42,7 @@ class TransactionController extends Controller
 
         // Jika admin sudah memilih klien (via dropdown), ambil daftar kendaraannya
         if ($request->filled('client_id')) {
-            $selectedClient = \App\Models\Client::find($request->client_id);
+            $selectedClient = Client::find($request->client_id);
             // Ambil kendaraan yang dimiliki klien ini beserta dokumennya
             $vehicles = Vehicle::with('documents')
                         ->where('client_id', $request->client_id)
@@ -57,8 +57,8 @@ class TransactionController extends Controller
         $dataTransaksi = $request->input('transaksi');
         
         // 1. Validasi Awal
-        if (!$dataTransaksi || !collect($dataTransaksi)->contains('is_selected', '1')) {
-            return redirect()->back()->with('error', 'Pilih dan centang minimal 1 kendaraan untuk diproses!');
+        if (!$dataTransaksi || !collect($dataTransaksi)->pluck('vehicle_id')->filter()->isNotEmpty()) {
+            return redirect()->back()->with('error', 'Silakan tambahkan baris dan pilih minimal 1 kendaraan untuk diproses!');
         }
 
         $request->validate([
@@ -68,8 +68,6 @@ class TransactionController extends Controller
             'tgl_jatuh_tempo'  => 'required|date|after_or_equal:tgl_mulai_termin', // Cegah tanggal mundur
         ]);
 
-        
-
         // 2. VALIDASI DOKUMEN DINAMIS (Kolektif)
         $syaratDokumen = [
             'Pajak Tahunan'    => ['STNK', 'KTP'],
@@ -78,10 +76,11 @@ class TransactionController extends Controller
             'Mutasi Keluar'    => ['STNK', 'KTP', 'BPKB Asli', 'Hasil Cek Fisik Kendaraan'],
         ];
 
-        foreach ($dataTransaksi as $vehicleId => $trx) {
-            // Hanya periksa kendaraan yang dicentang
-            if (isset($trx['is_selected']) && $trx['is_selected'] == '1') {
-                $vehicle = \App\Models\Vehicle::with('documents')->find($vehicleId);
+        foreach ($dataTransaksi as $index => $trx) {
+            // Ambil ID Kendaraan dari deopdown form
+            $vehicleId = $trx['vehicle_id'] ?? null;
+            if ($vehicleId) {
+                $vehicle = Vehicle::with('documents')->find($vehicleId);
                 $dokumenTersedia = $vehicle->documents->pluck('jenis_dokumen')->toArray();
                 
                 $layanan = $trx['jenis_layanan'];
@@ -116,8 +115,26 @@ class TransactionController extends Controller
             $catatanTermin = 'Pembayaran tagihan ini memiliki termin <strong>' . $selisihHari . ' Hari</strong> terhitung sejak tanggal berkas diterima (' . \Carbon\Carbon::parse($tglMulai)->format('d/m/Y') . '). Jatuh tempo pembayaran pada tanggal <strong class="text-red-600">' . \Carbon\Carbon::parse($tglJatuh)->format('d/m/Y') . '</strong>.';
         }
 
-        foreach ($dataTransaksi as $vehicleId => $trx) {
-            if (isset($trx['is_selected']) && $trx['is_selected'] == '1') {
+        // --- TAMBAHAN BARU: AMBIL INPUT BIAYA GLOBAL DARI FORM ---
+        $globalBiaya = $request->input('global_biaya', []);
+        
+        $lp   = (int) ($globalBiaya['loket_pendaftaran'] ?? 0);
+        $lcf  = (int) ($globalBiaya['loket_cek_fisik'] ?? 0);
+        $acc  = (int) ($globalBiaya['acc_tidak_hadir'] ?? 0);
+        $dom  = (int) ($globalBiaya['acc_domisili'] ?? 0);
+        $pntp = (int) ($globalBiaya['loket_penetapan'] ?? 0);
+        $psh1 = (int) ($globalBiaya['loket_pengesahan_1'] ?? 0);
+        $psh2 = (int) ($globalBiaya['loket_pengesahan_2'] ?? 0);
+        $mtr  = (int) ($globalBiaya['bea_materai'] ?? 0);
+
+        // 4. SIMPAN TRANSAKSI KE DATABASE (LOOPING)
+        $urutan = 1; 
+
+        foreach ($dataTransaksi as $index => $trx) {
+            $vehicleId = $trx['vehicle_id'] ?? null;
+
+            // Eksekusi HANYA jika baris tersebut kendaraannya sudah dipilih
+            if ($vehicleId) {
                 // Modifikasi invoice agar berakhiran -1, -2, dst supaya lolos dari aturan UNIQUE database
                 $invoiceNo = $baseInvoiceNo . '-' . $urutan;
                 $urutan++;
@@ -126,17 +143,8 @@ class TransactionController extends Controller
                 $pajak = (int) ($trx['biaya_pajak'] ?? 0);
                 $jasa  = (int) ($trx['biaya_jasa'] ?? 0);
                 
-                $loketPendaftaran = (int) ($trx['loket_pendaftaran'] ?? 0);
-                $loketCekFisik    = (int) ($trx['loket_cek_fisik'] ?? 0);
-                $accTidakHadir    = (int) ($trx['acc_tidak_hadir'] ?? 0);
-                $accDomisili      = (int) ($trx['acc_domisili'] ?? 0);
-                $loketPenetapan   = (int) ($trx['loket_penetapan'] ?? 0);
-                $loketPengesahan1 = (int) ($trx['loket_pengesahan_1'] ?? 0);
-                $loketPengesahan2 = (int) ($trx['loket_pengesahan_2'] ?? 0);
-                $beaMaterai       = (int) ($trx['bea_materai'] ?? 0);
-
-                $grandTotalBiayaLain = $loketPendaftaran + $loketCekFisik + $accTidakHadir + $accDomisili +
-                                       $loketPenetapan + $loketPengesahan1 + $loketPengesahan2 + $beaMaterai;
+                $grandTotalBiayaLain = $lp + $lcf + $acc + $dom +
+                                       $pntp + $psh1 + $psh2 + $mtr;
 
                 $grandTotal = $pajak + $jasa + $grandTotalBiayaLain;
 
@@ -144,29 +152,30 @@ class TransactionController extends Controller
                     'invoice_no'         => $invoiceNo,
                     'vehicle_id'         => $vehicleId,
                     'jenis_layanan'      => $trx['jenis_layanan'],
-                    'status_proses'      => $trx['status_proses'],
+                    'status_proses'      => 'Pending', // Force status default untuk form Create
                     'biaya_pajak'        => $pajak,
                     'biaya_jasa'         => $jasa,
-                    'loket_pendaftaran'  => $loketPendaftaran,
-                    'loket_cek_fisik'    => $loketCekFisik,
-                    'acc_tidak_hadir'    => $accTidakHadir,
-                    'acc_domisili'       => $accDomisili,
-                    'loket_penetapan'    => $loketPenetapan,
-                    'loket_pengesahan_1' => $loketPengesahan1,
-                    'loket_pengesahan_2' => $loketPengesahan2,
-                    'bea_materai'        => $beaMaterai,
+                    // Variable biaya yg sudah di filter
+                    'loket_pendaftaran'  => $lp,
+                    'loket_cek_fisik'    => $lcf,
+                    'acc_tidak_hadir'    => $acc,
+                    'acc_domisili'       => $dom,
+                    'loket_penetapan'    => $pntp,
+                    'loket_pengesahan_1' => $psh1,
+                    'loket_pengesahan_2' => $psh2,
+                    'bea_materai'        => $mtr,
                     'biaya_lain'         => $grandTotalBiayaLain,
                     'total_biaya'        => $grandTotal,
                     'tgl_masuk'          => $tglMasuk,
                     'tgl_selesai'        => $tglSelesai,
                     'tgl_mulai_termin'   => $tglMulai,
                     'tgl_jatuh_tempo'    => $tglJatuh,
-                    'catatan' => $catatanTermin,
+                    'catatan'            => $catatanTermin,
                 ]);
             }
         }
 
-        return redirect()->route('transactions.index')->with('success', 'Transaksi baru berhasil ditambahkan dengan Nomor: ' . $invoiceNo);
+        return redirect()->route('transactions.index')->with('success', 'Transaksi baru berhasil ditambahkan dengan Nomor: ' . $baseInvoiceNo);
 
     }
 
@@ -183,21 +192,35 @@ class TransactionController extends Controller
 
         // 3. Tarik SEMUA transaksi yang satu rombongan (memiliki Base Invoice yang sama)
         $transactions = \App\Models\Transaction::with('vehicle.client')
-            ->where('invoice_no', 'like', $baseInvoice . '%')
+            ->where('invoice_no', 'like', $baseInvoice . '-%')
             ->get();
 
         // 4. Ambil data klien dari transaksi pertama
         $client = $transactions->first()->vehicle->client ?? null;
+        
+        // 5. [BARU] Ambil data seluruh kendaraan milik klien ini untuk pilihan Dropdown
+        $vehicles = [];
+        if ($client) {
+            $vehicles = \App\Models\Vehicle::where('client_id', $client->id)->get();
+        }
+
         // daftar status proses yang bisa dipilih
         $statuses = [
             'Pending', 'Done', 'Cancel'
         ];
-        return view('transactions.edit', compact('transactions', 'baseInvoice', 'client', 'statuses'));
+        
+        return view('transactions.edit', compact('transactions', 'baseInvoice', 'client', 'statuses', 'vehicles'));
     }
 
     // perbarui status pengurusan biro jasa
     public function update(Request $request, string $id)
     {
+        $dataTransaksi = $request->input('transaksi');
+
+        // 1. Validasi pastikan minimal ada 1 kendaraan yang dipilih dari dropdown
+        if (!$dataTransaksi || !collect($dataTransaksi)->pluck('vehicle_id')->filter()->isNotEmpty()) {
+            return redirect()->back()->with('error', 'Minimal 1 kendaraan harus dipilih!');
+        }
 
         $request->validate([
             'tgl_masuk'        => 'required|date',
@@ -213,123 +236,137 @@ class TransactionController extends Controller
         if ($tglMulai && $tglJatuh) {
             // Hitung selisih hari menggunakan Carbon
             $selisihHari = \Carbon\Carbon::parse($tglMulai)->diffInDays(\Carbon\Carbon::parse($tglJatuh));
-            
             // Rangkai kalimat ciamiknya!
             $catatanTermin = 'Pembayaran tagihan ini memiliki termin <strong>' . $selisihHari . ' Hari</strong> terhitung sejak tanggal berkas diterima (' . \Carbon\Carbon::parse($tglMulai)->format('d/m/Y') . '). Jatuh tempo pembayaran pada tanggal <strong class="text-red-600">' . \Carbon\Carbon::parse($tglJatuh)->format('d/m/Y') . '</strong>.';
         }
         
-        // Ambil array transaksi dan tanggal dari input global form
-        $dataTransaksi = $request->input('transaksi');
         $tglMasukGlobal = $request->input('tgl_masuk');
         $tglSelesaiGlobal = $request->input('tgl_selesai');
 
-        // Lakukan perulangan untuk mengupdate SETIAP kendaraan dalam invoice kolektif ini
-        foreach ($dataTransaksi as $trxId => $data) {
-            $transaction = Transaction::find($trxId);
-            if ($transaction) {
-                // 1. Simpan status lama sebelum diupdate untuk perbandingan
-                $statusLama = $transaction->status_proses;
-                $statusBaru = $data['status_proses'];
+        // [BARU] Ambil data biaya Global (Sistem Bulk Apply)
+        $globalBiaya = $request->input('global_biaya', []);
+        $lp   = (int) ($globalBiaya['loket_pendaftaran'] ?? 0);
+        $lcf  = (int) ($globalBiaya['loket_cek_fisik'] ?? 0);
+        $acc  = (int) ($globalBiaya['acc_tidak_hadir'] ?? 0);
+        $dom  = (int) ($globalBiaya['acc_domisili'] ?? 0);
+        $pntp = (int) ($globalBiaya['loket_penetapan'] ?? 0);
+        $psh1 = (int) ($globalBiaya['loket_pengesahan_1'] ?? 0);
+        $psh2 = (int) ($globalBiaya['loket_pengesahan_2'] ?? 0);
+        $mtr  = (int) ($globalBiaya['bea_materai'] ?? 0);
 
-                // Atur tanggal selesai secara cerdas per kendaraan
+        $grandTotalBiayaLain = $lp + $lcf + $acc + $dom + $pntp + $psh1 + $psh2 + $mtr;
+
+        // Persiapan Base Invoice No
+        $baseTrx = Transaction::findOrFail($id);
+        $baseInvoiceNo = preg_replace('/-\d+$/', '', $baseTrx->invoice_no);
+
+        // [BARU] Hapus baris transaksi lama jika Admin menekan tombol X di form Edit
+        $submittedIds = collect($dataTransaksi)->pluck('id')->filter()->toArray();
+        Transaction::where('invoice_no', 'LIKE', $baseInvoiceNo . '-%')
+            ->whereNotIn('id', $submittedIds)
+            ->delete();
+
+        // Lakukan perulangan untuk mengupdate SETIAP baris kendaraan
+        $urutan = 1;
+        foreach ($dataTransaksi as $index => $data) {
+            $vehicleId = $data['vehicle_id'] ?? null;
+            
+            // Eksekusi HANYA jika dropdown kendaraan di baris ini tidak kosong
+            if ($vehicleId) {
+                // Tata ulang nomor invoice (agar selalu urut -1, -2, -3 meski ada baris yg dihapus)
+                $invoiceNo = $baseInvoiceNo . '-' . $urutan;
+                $urutan++;
+
+                $statusBaru = $data['status_proses'] ?? 'Pending';
+                
+                // Atur tanggal selesai secara cerdas
                 $tglSelesai = $tglSelesaiGlobal;
                 if ($statusBaru == 'Done' && empty($tglSelesai)) {
-                    $tglSelesai = date('Y-m-d'); // Auto-fill hari ini jika Done tapi form tgl_selesai kosong
+                    $tglSelesai = date('Y-m-d'); // Auto-fill hari ini jika Done
                 } elseif ($statusBaru == 'Cancel') {
                     $tglSelesai = null; // Kosongkan jika dibatalkan
                 }
 
-                // Kalkulasi Biaya (Konversi ke integer agar aman)
                 $pajak = (int) ($data['biaya_pajak'] ?? 0);
                 $jasa  = (int) ($data['biaya_jasa'] ?? 0);
-                
-                $loketPendaftaran = (int) ($data['loket_pendaftaran'] ?? 0);
-                $loketCekFisik    = (int) ($data['loket_cek_fisik'] ?? 0);
-                $accTidakHadir    = (int) ($data['acc_tidak_hadir'] ?? 0);
-                $accDomisili      = (int) ($data['acc_domisili'] ?? 0);
-                $loketPenetapan   = (int) ($data['loket_penetapan'] ?? 0);
-                $loketPengesahan1 = (int) ($data['loket_pengesahan_1'] ?? 0);
-                $loketPengesahan2 = (int) ($data['loket_pengesahan_2'] ?? 0);
-                $beaMaterai       = (int) ($data['bea_materai'] ?? 0);
-
-                $grandTotalBiayaLain = $loketPendaftaran + $loketCekFisik + $accTidakHadir + $accDomisili +
-                                       $loketPenetapan + $loketPengesahan1 + $loketPengesahan2 + $beaMaterai;
-
                 $grandTotal = $pajak + $jasa + $grandTotalBiayaLain;
 
-                // 2. Update data transaksi
-                $transaction->update([
+                $dataToSave = [
+                    'invoice_no'         => $invoiceNo,
+                    'vehicle_id'         => $vehicleId,
                     'jenis_layanan'      => $data['jenis_layanan'],
                     'status_proses'      => $statusBaru,
                     'biaya_pajak'        => $pajak,
                     'biaya_jasa'         => $jasa,
-                    // 8 rincian biaya lain
-                    'loket_pendaftaran'  => $loketPendaftaran,
-                    'loket_cek_fisik'    => $loketCekFisik,
-                    'acc_tidak_hadir'    => $accTidakHadir,
-                    'acc_domisili'       => $accDomisili,
-                    'loket_penetapan'    => $loketPenetapan,
-                    'loket_pengesahan_1' => $loketPengesahan1,
-                    'loket_pengesahan_2' => $loketPengesahan2,
-                    'bea_materai'        => $beaMaterai,
-                    // grand total
+                    'loket_pendaftaran'  => $lp,
+                    'loket_cek_fisik'    => $lcf,
+                    'acc_tidak_hadir'    => $acc,
+                    'acc_domisili'       => $dom,
+                    'loket_penetapan'    => $pntp,
+                    'loket_pengesahan_1' => $psh1,
+                    'loket_pengesahan_2' => $psh2,
+                    'bea_materai'        => $mtr,
                     'biaya_lain'         => $grandTotalBiayaLain,
                     'total_biaya'        => $grandTotal,
                     'tgl_masuk'          => $tglMasukGlobal,
                     'tgl_selesai'        => $tglSelesai,
-                ]);
+                    'tgl_mulai_termin'   => $tglMulai,
+                    'tgl_jatuh_tempo'    => $tglJatuh,
+                    'catatan'            => $catatanTermin,
+                ];
 
-                // 3. FITUR OTOMATISASI PERPANJANGAN PAJAK (AUTO-RENEW)
-                // Sistem hanya akan menambah tahun JIKA statusnya BARU SAJA berubah menjadi 'Done'
-                // (Ini mencegah penambahan tahun berkali-kali jika mengedit transaksi yang sudah Done)
-                if ($statusLama != 'Done' && $statusBaru == 'Done') {
-                    // Cari data STNK milik kendaraan ini
-                    $stnk = STNKRecord::where('vehicle_id', $transaction->vehicle_id)->first();
+                // CEK APAKAH INI DATA LAMA (UPDATE) ATAU BARIS BARU (CREATE)
+                if (!empty($data['id'])) {
+                    $transaction = Transaction::find($data['id']);
+                    
+                    if ($transaction) {
+                        $statusLama = $transaction->status_proses;
+                        
+                        // Eksekusi Update
+                        $transaction->update($dataToSave);
 
-                    if ($stnk) {
-                        // A. Pajak Tahunan
-                        if ($transaction->jenis_layanan == 'Pajak Tahunan' && $stnk->tgl_jatuh_tempo_pajak) {
-                            // Tambah 1 tahun
-                            $stnk->tgl_jatuh_tempo_pajak = Carbon::parse($stnk->tgl_jatuh_tempo_pajak)->addYear();
-                        } 
-                        elseif ($transaction->jenis_layanan == 'Pajak 5 Tahunan') { //B. Ganti Kaleng 5 Tahunan
-                            if ($stnk->tgl_jatuh_tempo_pajak) {
-                                // Maju 1 tahun untuk pajak tahunan
-                                $stnk->tgl_jatuh_tempo_pajak = Carbon::parse($stnk->tgl_jatuh_tempo_pajak)->addYear();
-                            }
-                            if ($stnk->tgl_habis_stnk) {
-                                // Plat nomor maju 5 tahun
-                                $stnk->tgl_habis_stnk = Carbon::parse($stnk->tgl_habis_stnk)->addYear(5);
-                            }
-                        }
-                        $stnk->save();
-                    }
-                }
-
-                // 4. FITUR PENGURANGAN PAJAK KETIKA STATUS MENJADI CANCEL
-                if ($statusLama == 'Done' && $statusBaru == 'Cancel') {
-                    // Cari data STNK milik kendaraan ini
-                    $stnk = STNKRecord::where('vehicle_id', $transaction->vehicle_id)->first();
-
-                    if ($stnk) {
-                        // A. Pajak Tahunan
-                        if ($transaction->jenis_layanan == 'Pajak Tahunan' && $stnk->tgl_jatuh_tempo_pajak) {
-                            // Kurangi 1 tahun
-                            $stnk->tgl_jatuh_tempo_pajak = Carbon::parse($stnk->tgl_jatuh_tempo_pajak)->subYear();
-                        } 
-                        elseif ($transaction->jenis_layanan == 'Pajak 5 Tahunan') { //B. Ganti Kaleng 5 Tahunan
-                            if ($stnk->tgl_jatuh_tempo_pajak) {
-                                // Kurangi 1 tahun untuk pajak tahunan
-                                $stnk->tgl_jatuh_tempo_pajak = Carbon::parse($stnk->tgl_jatuh_tempo_pajak)->subYear();
-                            }
-                            if ($stnk->tgl_habis_stnk) {
-                                // Plat nomor berkurang 5 tahun
-                                $stnk->tgl_habis_stnk = Carbon::parse($stnk->tgl_habis_stnk)->subYear(5);
+                        // FITUR OTOMATISASI PERPANJANGAN PAJAK (AUTO-RENEW)
+                        if ($statusLama != 'Done' && $statusBaru == 'Done') {
+                            $stnk = \App\Models\STNKRecord::where('vehicle_id', $transaction->vehicle_id)->first();
+                            if ($stnk) {
+                                if ($transaction->jenis_layanan == 'Pajak Tahunan' && $stnk->tgl_jatuh_tempo_pajak) {
+                                    $stnk->tgl_jatuh_tempo_pajak = \Carbon\Carbon::parse($stnk->tgl_jatuh_tempo_pajak)->addYear();
+                                } 
+                                elseif ($transaction->jenis_layanan == 'Pajak 5 Tahunan') { 
+                                    if ($stnk->tgl_jatuh_tempo_pajak) {
+                                        $stnk->tgl_jatuh_tempo_pajak = \Carbon\Carbon::parse($stnk->tgl_jatuh_tempo_pajak)->addYear();
+                                    }
+                                    if ($stnk->tgl_habis_stnk) {
+                                        $stnk->tgl_habis_stnk = \Carbon\Carbon::parse($stnk->tgl_habis_stnk)->addYear(5);
+                                    }
+                                }
+                                $stnk->save();
                             }
                         }
-                        $stnk->save();
+
+                        // FITUR PENGURANGAN PAJAK KETIKA STATUS MENJADI CANCEL
+                        if ($statusLama == 'Done' && $statusBaru == 'Cancel') {
+                            $stnk = \App\Models\STNKRecord::where('vehicle_id', $transaction->vehicle_id)->first();
+                            if ($stnk) {
+                                if ($transaction->jenis_layanan == 'Pajak Tahunan' && $stnk->tgl_jatuh_tempo_pajak) {
+                                    $stnk->tgl_jatuh_tempo_pajak = \Carbon\Carbon::parse($stnk->tgl_jatuh_tempo_pajak)->subYear();
+                                } 
+                                elseif ($transaction->jenis_layanan == 'Pajak 5 Tahunan') { 
+                                    if ($stnk->tgl_jatuh_tempo_pajak) {
+                                        $stnk->tgl_jatuh_tempo_pajak = \Carbon\Carbon::parse($stnk->tgl_jatuh_tempo_pajak)->subYear();
+                                    }
+                                    if ($stnk->tgl_habis_stnk) {
+                                        $stnk->tgl_habis_stnk = \Carbon\Carbon::parse($stnk->tgl_habis_stnk)->subYear(5);
+                                    }
+                                }
+                                $stnk->save();
+                            }
+                            $transaction->update(['tgl_selesai' => null]);
+                        }
                     }
-                    $transaction->update(['tgl_selesai' => null]);
+                } else {
+                    // JIKA BARIS BARU DITAMBAHKAN SAAT EDIT (CREATE)
+                    Transaction::create($dataToSave);
                 }
             }
         }

@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
-@section('title', 'Buat Transaksi Baru')
-@section('header_title', 'Mulai Pengurusan Berkas')
+@section('title', 'Buat Transaksi')
+@section('header_title', 'Buat Transaksi Baru')
 
 @section('content')
     <a href="{{ route('transactions.index') }}" class="inline-flex items-center gap-2 px-4 py-2 bg-white border border-gray-300 rounded-lg text-gray-700 font-bold hover:bg-gray-50 transition-colors mb-6 shadow-sm">
@@ -57,7 +57,7 @@
                     </div>
                     <div>
                         <h2 class="text-lg font-bold text-gray-800">Invoice Kolektif: {{ $selectedClient->nama_lengkap }}</h2>
-                        <p class="text-xs text-gray-500">Centang kendaraan yang akan diurus dan isi rincian biayanya.</p>
+                        <p class="text-xs text-gray-500">Pilih kendaraan yang akan diurus dan isi rincian biayanya.</p>
                     </div>
                 </div>
                 
@@ -80,100 +80,50 @@
 
             <!-- LOOPING KENDARAAN KLIEN -->
             <div class="p-6 space-y-8">
-                @foreach($vehicles as $vehicle)
-                <div class="vehicle-card relative border border-gray-200 rounded-xl p-5 bg-white shadow-sm" data-vid="{{ $vehicle->id }}">
-                    
-                    <!-- Checkbox Seleksi -->
-                    <div class="absolute -top-3 left-4 bg-white px-2">
-                        <label class="flex items-center gap-2 cursor-pointer text-blue-700 font-bold">
-                            <input type="checkbox" name="transaksi[{{ $vehicle->id }}][is_selected]" value="1" class="w-5 h-5 rounded border-gray-300 text-blue-600 focus:ring-blue-500">
-                            Proses Kendaraan Ini
-                        </label>
-                    </div>
-
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-3">
-                        <!-- Info Kendaraan & Status -->
+                <!-- BIAYA LAINNYA GLOBAL (SATU KALI INPUT) -->
+                <div class="p-6 bg-blue-50/50 border-t border-gray-100">
+                    <h3 class="text-sm font-bold text-gray-700 mb-4 uppercase tracking-wider"><i class="fa-solid fa-file-invoice-dollar text-blue-600 mr-2"></i> Rincian Biaya Lainnya</h3>
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 bg-white p-5 rounded-xl border border-blue-100 shadow-sm">
+                        @php
+                            $rincianGlobal = [
+                                ['id' => 'loket_pendaftaran', 'label' => 'Loket Pendaftaran'],
+                                ['id' => 'loket_cek_fisik', 'label' => 'Cek Fisik'],
+                                ['id' => 'acc_tidak_hadir', 'label' => 'Acc Tdk Hadir STNK'],
+                                ['id' => 'acc_domisili', 'label' => 'Acc Domisili'],
+                                ['id' => 'loket_penetapan', 'label' => 'Penetapan'],
+                                ['id' => 'loket_pengesahan_1', 'label' => 'Pengesahan 1'],
+                                ['id' => 'loket_pengesahan_2', 'label' => 'Pengesahan 2'],
+                                ['id' => 'bea_materai', 'label' => 'Bea Materai'],
+                            ];
+                        @endphp
+                        @foreach($rincianGlobal as $item)
                         <div>
-                            <div class="mb-4">
-                                <label class="block text-sm font-bold text-gray-700 mb-1">Kendaraan</label>
-                                <input type="text" disabled value="{{ $vehicle->nopol }} - {{ $vehicle->merk }} {{ $vehicle->tipe }}" class="w-full px-4 py-2 border border-gray-200 rounded-lg bg-gray-50 text-gray-600 font-bold">
-                            </div>
-                            
-                            <div class="grid grid-cols-2 gap-4">
-                                <div>
-                                    <label class="block text-xs font-bold text-gray-700 mb-1">Jenis Layanan *</label>
-                                    <select name="transaksi[{{ $vehicle->id }}][jenis_layanan]" data-vid="{{ $vehicle->id }}" class="select-layanan w-full px-3 py-2 border border-gray-300 rounded-lg outline-none text-sm">
-                                        <option value="Pajak Tahunan">Pajak Tahunan</option>
-                                        <option value="Pajak 5 Tahunan">Pajak 5 Tahunan</option>
-                                        <option value="Balik Nama">Balik Nama</option>
-                                        <option value="Mutasi Keluar">Mutasi Keluar</option>
-                                    </select>
-                                </div>
-                                <div>
-                                    <label class="block text-xs font-bold text-gray-700 mb-1">Status Awal *</label>
-                                    <select name="transaksi[{{ $vehicle->id }}][status_proses]" class="w-full px-3 py-2 border border-gray-300 rounded-lg outline-none text-sm text-blue-700 font-bold">
-                                        <option value="Pending" selected>Pending</option>
-                                        <option value="Cancel">Cancel</option>
-                                    </select>
-                                </div>
+                            <label id="label_global_{{ $item['id'] }}" class="block text-xs font-bold text-gray-700 mb-1">{{ $item['label'] }}</label>
+                            <div class="relative">
+                                <span class="absolute inset-y-0 left-3 flex items-center text-gray-400 font-bold text-[11px]">Rp</span>
+                                <input type="text" id="tampil_global_{{ $item['id'] }}" placeholder="0" class="input-global-lain w-full pl-8 pr-3 py-1.5 border border-gray-300 rounded focus:ring-1 focus:ring-blue-500 font-bold text-gray-800 text-sm">
+                                <input type="hidden" name="global_biaya[{{ $item['id'] }}]" id="asli_global_{{ $item['id'] }}" value="0">
                             </div>
                         </div>
-
-                        <!-- Rincian Biaya (Pajak, Jasa, Lainnya) -->
-                        <div class="bg-blue-50/50 p-4 rounded-xl border border-blue-100">
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4 border-b border-blue-200 pb-4">
-                                <div>
-                                    <label class="block text-xs font-bold text-gray-700 mb-1">Biaya Pajak *</label>
-                                    <div class="relative">
-                                        <span class="absolute inset-y-0 left-3 flex items-center text-gray-500 font-bold text-sm">Rp</span>
-                                        <input type="text" id="pajak_tampil_{{ $vehicle->id }}" placeholder="0" class="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-1 focus:ring-blue-500 font-bold text-gray-800 text-sm">
-                                        <input type="hidden" name="transaksi[{{ $vehicle->id }}][biaya_pajak]" id="pajak_asli_{{ $vehicle->id }}">
-                                    </div>
-                                </div>
-                                <div>
-                                    <label class="block text-xs font-bold text-gray-700 mb-1">Biaya Jasa *</label>
-                                    <div class="relative">
-                                        <span class="absolute inset-y-0 left-3 flex items-center text-gray-500 font-bold text-sm">Rp</span>
-                                        <input type="text" id="jasa_tampil_{{ $vehicle->id }}" placeholder="0" class="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-1 focus:ring-blue-500 font-bold text-gray-800 text-sm">
-                                        <input type="hidden" name="transaksi[{{ $vehicle->id }}][biaya_jasa]" id="jasa_asli_{{ $vehicle->id }}">
-                                    </div>
-                                </div>
-                            </div>
-
-                            <label class="block text-xs font-bold text-gray-700 mb-2">Rincian Biaya Lainnya</label>
-                            <div class="grid grid-cols-2 gap-3 bg-white p-3 rounded-lg border border-gray-200">
-                                @php
-                                    $rincianLain = [
-                                        ['id' => 'loket_pendaftaran', 'label' => 'Loket Pendaftaran'],
-                                        ['id' => 'loket_cek_fisik', 'label' => 'Cek Fisik'],
-                                        ['id' => 'acc_tidak_hadir', 'label' => 'Acc Tidak Hadir STNK'],
-                                        ['id' => 'acc_domisili', 'label' => 'Acc Domisili'],
-                                        ['id' => 'loket_penetapan', 'label' => 'Penetapan'],
-                                        ['id' => 'loket_pengesahan_1', 'label' => 'Pengesahan 1'],
-                                        ['id' => 'loket_pengesahan_2', 'label' => 'Pengesahan 2'],
-                                        ['id' => 'bea_materai', 'label' => 'Bea Materai'],
-                                    ];
-                                @endphp
-                                @foreach($rincianLain as $item)
-                                <div>
-                                    <label id="label_{{ $item['id'] }}_{{ $vehicle->id }}" class="block text-[10px] font-bold text-gray-600 mb-1">{{ $item['label'] }}</label>
-                                    <div class="relative">
-                                        <span class="absolute inset-y-0 left-2 flex items-center text-gray-400 font-bold text-[10px]">Rp</span>
-                                        <input type="text" id="tampil_{{ $item['id'] }}_{{ $vehicle->id }}" placeholder="0" class="input-detail-lain w-full pl-7 pr-2 py-1 border border-gray-300 rounded focus:ring-1 focus:ring-blue-500 font-bold text-gray-700 text-xs">
-                                        <input type="hidden" name="transaksi[{{ $vehicle->id }}][{{ $item['id'] }}]" id="asli_{{ $item['id'] }}_{{ $vehicle->id }}">
-                                    </div>
-                                </div>
-                                @endforeach
-                            </div>
-                            
-                            <div class="mt-3 pt-3 border-t border-blue-200 flex justify-between items-center">
-                                <span class="text-xs font-bold text-gray-600 uppercase">Subtotal Kendaraan</span>
-                                <span class="text-lg font-black text-blue-700" id="total_kalkulasi_{{ $vehicle->id }}">Rp 0</span>
-                            </div>
-                        </div>
+                        @endforeach
                     </div>
                 </div>
-                @endforeach
+
+                <!-- TABEL ITEM DATA KENDARAAN -->
+                <div class="p-6 bg-blue-50/50 border-t border-gray-100">
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="font-bold text-sm">Tabel Item Data Kendaraan</h3>
+                        <button type="button" id="btnAddRow" class="px-4 py-1.5 bg-gray-800 text-white text-xs font-bold rounded-lg hover:bg-gray-900 transition-colors whitespace-nowrap">
+                            + Tambah Baris
+                        </button>
+                    </div>
+                    <!-- Wadah untuk baris dinamis -->
+                    <div id="dynamicVehicleContainer" class="space-y-2">
+                        <p id="emptyMessage" class="text-xs text-gray-500 text-center py-6 italic">
+                            Belum ada item kendaraan. Tambahkan baris baru.
+                        </p>
+                    </div>
+                </div>
             </div>
 
             <!-- TOMBOL ACTION GLOBAL -->
@@ -364,9 +314,186 @@
 <!-- SCRIPT UNTUK FORMAT RUPIAH MULTIPLE KENDARAAN -->
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        const formatRupiah = (angka) => new Intl.NumberFormat('id-ID').format(angka || 0);
+        // 1. Ambil data kendaraan dari PHP (diubah jadi array JS)
+        const listKendaraan = @json($vehicles);
+        let rowIndex = 0; // Penghitung baris (index)
 
-        // Ambil semua elemen kendaraan (masing-masing punya form mandiri)
+        const btnAddRow = document.getElementById('btnAddRow');
+        const container = document.getElementById('dynamicVehicleContainer');
+        const emptyMessage = document.getElementById('emptyMessage');
+
+        // 2. Fungsi Membuat Dropdown Options Kendaraan
+        const buatOptionsKendaraan = () => {
+            let options = '<option value="">-- Pilih Kendaraan --</option>';
+            listKendaraan.forEach(v => {
+                options += `<option value="${v.id}">${v.nopol} - ${v.merk} ${v.tipe}</option>`;
+            });
+            return options;
+        };
+
+        const pasangEventPadaBaris = (barisElemen) => {
+            // A. Aksi Tombol Hapus Baris
+            const btnDelete = barisElemen.querySelector('.btn-delete-row');
+            btnDelete.addEventListener('click', function() {
+                barisElemen.remove(); // Hapus elemen HTML baris ini
+                
+                // Cek apakah tabel kosong, jika ya, munculkan pesan kosong lagi
+                if (container.querySelectorAll('.vehicle-row').length === 0) {
+                    if (emptyMessage) emptyMessage.style.display = 'block';
+                }
+                
+                // Panggil ulang cek label ACC jika baris (5 tahunan) dihapus
+                if (typeof checkGlobalAccLabel === 'function') checkGlobalAccLabel();
+            });
+
+            // B. Format Rupiah untuk Input Pajak & Jasa di baris baru
+            const inputUangList = barisElemen.querySelectorAll('.input-uang');
+            inputUangList.forEach(inputTampil => {
+                const inputAsli = inputTampil.nextElementSibling; // Mengambil <input type="hidden"> di sebelahnya
+                
+                inputTampil.addEventListener('input', function(e) {
+                    let angkaMurni = this.value.replace(/[^0-9]/g, '');
+                    inputAsli.value = angkaMurni || 0;
+                    this.value = angkaMurni ? formatRupiah(angkaMurni) : '';
+                    hitungUlangSemuaBaris();
+                });
+            });
+
+            // C. Trigger Update Label ACC saat dropdown layanan diganti
+            const selectLayanan = barisElemen.querySelector('.select-layanan');
+            if (selectLayanan) {
+                selectLayanan.addEventListener('change', function() {
+                    if (typeof checkGlobalAccLabel === 'function') checkGlobalAccLabel();
+                });
+            }
+        };
+
+        // 3. Aksi ketika tombol "Tambah Baris" diklik
+        btnAddRow.addEventListener('click', function() {
+            if(emptyMessage) emptyMessage.style.display = 'none';
+
+            // Buat elemen div untuk baris baru
+            const barisBaru = document.createElement('div');
+            barisBaru.className = 'vehicle-row p-4 rounded-lg border border-blue-100 grid grid-cols-1 md:grid-cols-4 gap-4 relative';
+            barisBaru.dataset.index = rowIndex;
+
+            // Gambar HTML-nya (Perhatikan name="transaksi[INDEX][kolom]")
+            barisBaru.innerHTML = `
+                <!-- Tombol Hapus Baris -->
+                <button type="button" class="btn-delete-row absolute -top-2 -right-2 bg-red-600 w-6 h-6 rounded-full text-white text-xs flex items-center justify-center shadow-lg hover:bg-red-700" title="Hapus baris">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+
+                <!-- Pilih Kendaraan -->
+                <div class="md:col-span-2">
+                    <label class="block text-[11px] uppercase font-bold text-gray-800 mb-1">Pilih Kendaraan *</label>
+                    <select name="transaksi[${rowIndex}][vehicle_id]" required class="w-full pr-3 py-1.5 border border-gray-300 rounded focus:ring-1 focus:ring-blue-500 text-gray-800 text-sm">
+                        ${buatOptionsKendaraan()}
+                    </select>
+                </div>
+
+                <!-- Pilih Layanan -->
+                <div class="md:col-span-2">
+                    <label class="block text-[11px] uppercase font-bold text-gray-800 mb-1">Layanan *</label>
+                    <select name="transaksi[${rowIndex}][jenis_layanan]" class="select-layanan w-full pr-3 py-1.5 border border-gray-300 rounded focus:ring-1 focus:ring-blue-500 text-gray-800 text-sm">
+                        <option value="Pajak Tahunan">Pajak Tahunan</option>
+                        <option value="Pajak 5 Tahunan">Pajak 5 Tahunan</option>
+                    </select>
+                </div>
+
+                <!-- Input Pajak -->
+                <div>
+                    <label class="block text-[11px] uppercase font-bold text-gray-800 mb-1">Pajak</label>
+                    <div class="relative">
+                        <span class="absolute inset-y-0 left-3 flex items-center text-gray-400 font-bold text-[11px]">Rp</span>
+                        <input type="text" class="input-uang w-full pl-8 pr-3 py-1.5 border border-gray-300 rounded focus:ring-1 focus:ring-blue-500 font-bold text-gray-800 text-sm" placeholder="0">
+                        <input type="hidden" name="transaksi[${rowIndex}][biaya_pajak]" class="asli-pajak" value="0">
+                    </div>
+                </div>
+
+                <!-- Input Jasa -->
+                <div>
+                    <label class="block text-[11px] uppercase font-bold text-gray-800 mb-1">Jasa</label>
+                    <div class="relative">
+                        <span class="absolute inset-y-0 left-3 flex items-center text-gray-400 font-bold text-[11px]">Rp</span>
+                        <input type="text" class="input-uang w-full pl-8 pr-3 py-1.5 border border-gray-300 rounded focus:ring-1 focus:ring-blue-500 font-bold text-gray-800 text-sm" placeholder="0">
+                        <input type="hidden" name="transaksi[${rowIndex}][biaya_jasa]" class="asli-jasa" value="0">
+                    </div>
+                </div>
+
+                <!-- Akumulasi Rincian Biaya Lainnya -->
+                <div>
+                    <label class="block text-[11px] uppercase font-bold text-gray-800 mb-1">Lainnya</label>
+                    <div class="relative">
+                        <span class="absolute inset-y-0 left-3 flex items-center text-gray-400 font-bold text-[11px]">Rp</span>
+                        <!-- Dibuat readonly dan abu-abu karena otomatis terisi dari atas -->
+                        <input type="text" class="tampil-lainnya w-full pl-8 pr-3 py-1.5 border border-gray-200 rounded bg-gray-50 text-gray-600 text-sm font-bold cursor-not-allowed outline-none" placeholder="0" readonly>
+                        <input type="hidden" name="transaksi[${rowIndex}][biaya_lain]" class="asli-lainnya" value="0">
+                    </div>
+                </div>
+
+                <!-- Akumulasi Keseluruhan (Total Per Baris) -->
+                <div>
+                    <label class="block text-[11px] uppercase font-bold text-gray-800 mb-1">Total</label>
+                    <div class="relative">
+                        <span class="absolute inset-y-0 left-3 flex items-center text-gray-400 font-bold text-[11px]">Rp</span>
+                        <!-- Dibuat readonly dan biru agar menonjol -->
+                        <input type="text" class="tampil-total w-full pl-8 pr-3 py-1.5 border border-blue-200 rounded bg-blue-50 text-blue-700 text-sm font-bold cursor-not-allowed outline-none" placeholder="0" readonly>
+                        <input type="hidden" name="transaksi[${rowIndex}][total_biaya]" class="asli-total" value="0">
+                    </div>
+                </div>
+            `;
+
+            container.appendChild(barisBaru);
+
+            // 4. Pasang Event Listener (Format Rupiah & Kalkulasi) khusus untuk baris ini
+            pasangEventPadaBaris(barisBaru);
+
+            rowIndex++; // Naikkan index untuk baris selanjutnya
+            hitungUlangSemuaBaris();
+        });
+
+        // Fungsi Utama untuk menghitung ulang semua baris secara Real-Time
+        const hitungUlangSemuaBaris = () => {
+            // 1. Ambil & jumlahkan total Biaya Global di bagian atas
+            let totalGlobal = 0;
+            document.querySelectorAll('.input-global-lain').forEach(inputTampil => {
+                let idAsli = inputTampil.id.replace('tampil_global_', 'asli_global_');
+                let nilaiAsli = parseInt(document.getElementById(idAsli).value) || 0;
+                totalGlobal += nilaiAsli;
+            });
+
+            // 2. Update kolom "Lainnya" dan "Total" di setiap baris kendaraan
+            document.querySelectorAll('.vehicle-row').forEach(row => {
+                const pajak = parseInt(row.querySelector('.asli-pajak').value) || 0;
+                const jasa = parseInt(row.querySelector('.asli-jasa').value) || 0;
+
+                // Update Input "Lainnya"
+                const tampilLainnya = row.querySelector('.tampil-lainnya');
+                const asliLainnya = row.querySelector('.asli-lainnya');
+                if (asliLainnya && tampilLainnya) {
+                    asliLainnya.value = totalGlobal;
+                    tampilLainnya.value = totalGlobal > 0 ? formatRupiah(totalGlobal) : '';
+                }
+
+                // Update Input "Total" (Pajak + Jasa + Lainnya)
+                const totalBaris = pajak + jasa + totalGlobal;
+                const tampilTotal = row.querySelector('.tampil-total');
+                const asliTotal = row.querySelector('.asli-total');
+                if (asliTotal && tampilTotal) {
+                    asliTotal.value = totalBaris;
+                    tampilTotal.value = totalBaris > 0 ? formatRupiah(totalBaris) : '';
+                }
+            });
+        };
+
+
+        const formatRupiah = (angka) => new Intl.NumberFormat('id-ID').format(angka || 0);
+        const formatTgl = (tglStr) => tglStr ? tglStr.split('-').reverse().join('/') : '-';
+
+        // =======================================================
+        // 1. KALKULASI & FORMAT RUPIAH FORM (PER KENDARAAN)
+        // =======================================================
         const vehicleCards = document.querySelectorAll('.vehicle-card');
 
         vehicleCards.forEach(card => {
@@ -378,7 +505,6 @@
             const jasaAsli = document.getElementById(`jasa_asli_${vid}`);
             const labelTotal = document.getElementById(`total_kalkulasi_${vid}`);
             
-            // Ambil semua input rincian lain HANYA di dalam card kendaraan ini
             const detailLainInputs = card.querySelectorAll('.input-detail-lain');
 
             const hitungTotal = () => {
@@ -423,44 +549,51 @@
             hitungTotal();
         });
 
-        // LOGIKA PERUBAHAN LABEL ACC TIDAK HADIR
         // =======================================================
-        const selectLayananElems = document.querySelectorAll('.select-layanan');
-        
-        // Fungsi untuk memperbarui label spesifik milik 1 kendaraan
-        const updateLabelAcc = (selectElem) => {
-            const vid = selectElem.dataset.vid; // Ambil ID kendaraan
-            const labelAcc = document.getElementById(`label_acc_tidak_hadir_${vid}`);
+        // 2. FORMAT RUPIAH UNTUK BIAYA GLOBAL
+        // =======================================================
+        const inputGlobalTampil = document.querySelectorAll('.input-global-lain');
+        inputGlobalTampil.forEach(tampil => {
+            let idAsli = tampil.id.replace('tampil_global_', 'asli_global_');
+            let asli = document.getElementById(idAsli);
             
-            if (labelAcc) {
-                if (selectElem.value === 'Pajak 5 Tahunan') {
-                    labelAcc.innerText = 'Acc Tidak Hadir Unit';
-                    labelAcc.classList.add('text-blue-600'); // Beri warna beda sbg penanda (opsional)
-                } else {
-                    labelAcc.innerText = 'Acc Tidak Hadir STNK';
-                    labelAcc.classList.remove('text-blue-600');
-                }
-            }
-        };
-
-        // Terapkan ke semua dropdown jenis_layanan
-        selectLayananElems.forEach(select => {
-            // 1. Jalankan sekali saat halaman dimuat (untuk old value)
-            updateLabelAcc(select);
-            
-            // 2. Jalankan setiap kali admin mengubah pilihan dropdown
-            select.addEventListener('change', function() {
-                updateLabelAcc(this);
+            tampil.addEventListener('input', function(e) {
+                let angkaMurni = this.value.replace(/[^0-9]/g, '');
+                asli.value = angkaMurni || 0;
+                this.value = angkaMurni ? formatRupiah(angkaMurni) : '';
+                hitungUlangSemuaBaris();
             });
         });
 
+        // =======================================================
+        // 3. LOGIKA PERUBAHAN LABEL ACC TIDAK HADIR
+        // =======================================================
+        const checkGlobalAccLabel = () => {
+            let has5Tahunan = false;
+            // Ubah pencarian menjadi .vehicle-row
+            document.querySelectorAll('.vehicle-row').forEach(row => {
+                // Cek apakah dropdown kendaraan sudah diisi/dipilih
+                const selectKendaraan = row.querySelector('select[name$="[vehicle_id]"]');
+                if (selectKendaraan && selectKendaraan.value !== "") {
+                    const layanan = row.querySelector('.select-layanan').value;
+                    if (layanan === 'Pajak 5 Tahunan') has5Tahunan = true;
+                }
+            });
+            
+            const labelAccGlobal = document.getElementById('label_global_acc_tidak_hadir');
+            if (labelAccGlobal) {
+                labelAccGlobal.innerText = has5Tahunan ? 'Acc Tidak Hadir Unit' : 'Acc Tidak Hadir STNK';
+                has5Tahunan ? labelAccGlobal.classList : labelAccGlobal.classList;
+            }
+        };
+        
+
+
         // ==============================================================
-        // LOGIKA POP-UP PREVIEW INVOICE (BARU)
+        // 4. LOGIKA POP-UP PREVIEW INVOICE
         // ==============================================================
         const previewTableBody = document.getElementById('previewTableBody');
-        const previewGrandTotal = document.getElementById('previewGrandTotal');
         
-        // Fungsi Terbilang Javascript
         function penyebut(nilai) {
             nilai = Math.abs(nilai);
             const huruf = ["", "Satu", "Dua", "Tiga", "Empat", "Lima", "Enam", "Tujuh", "Delapan", "Sembilan", "Sepuluh", "Sebelas"];
@@ -488,53 +621,55 @@
             btnShowPreview.addEventListener('click', function() {
                 let htmlContent = '';
                 let grandPajak = 0, grandJasa = 0, grandLain = 0, grandSemua = 0;
+                
                 let sumPendaftaran = 0, sumCekFisik = 0, sumAccTidakHadir = 0, sumAccDomisili = 0;
                 let sumPenetapan = 0, sumPengesahan1 = 0, sumPengesahan2 = 0, sumMaterai = 0;
+                
                 let selectedCount = 0;
-                let has5Tahunan = false; // Penanda untuk Acc Unit
+                let has5Tahunan = false;
+                
+                // AMBIL NILAI GLOBAL
+                const g_pnd  = parseInt(document.getElementById('asli_global_loket_pendaftaran').value) || 0;
+                const g_cf   = parseInt(document.getElementById('asli_global_loket_cek_fisik').value) || 0;
+                const g_acc  = parseInt(document.getElementById('asli_global_acc_tidak_hadir').value) || 0;
+                const g_dom  = parseInt(document.getElementById('asli_global_acc_domisili').value) || 0;
+                const g_pntp = parseInt(document.getElementById('asli_global_loket_penetapan').value) || 0;
+                const g_psh1 = parseInt(document.getElementById('asli_global_loket_pengesahan_1').value) || 0;
+                const g_psh2 = parseInt(document.getElementById('asli_global_loket_pengesahan_2').value) || 0;
+                const g_mtr  = parseInt(document.getElementById('asli_global_bea_materai').value) || 0;
+                
+                const subLainPerKendaraan = g_pnd + g_cf + g_acc + g_dom + g_pntp + g_psh1 + g_psh2 + g_mtr;
 
-                document.querySelectorAll('.vehicle-card').forEach(card => {
-                    const vid = card.dataset.vid;
-                    const checkbox = card.querySelector(`input[name="transaksi[${vid}][is_selected]"]`);
+                // UBAH PENCARIAN ELEMENT MENJADI .vehicle-row
+                document.querySelectorAll('.vehicle-row').forEach(row => {
+                    const selectKendaraan = row.querySelector('select[name$="[vehicle_id]"]');
                     
-                    if (checkbox && checkbox.checked) {
+                    // Cek jika dropdown kendaraan tidak kosong (sudah pilih kendaraan)
+                    if (selectKendaraan && selectKendaraan.value !== "") {
                         selectedCount++;
                         
-                        // 1. Ambil Nama Kendaraan & Layanan
-                        const nopolText = card.querySelector('input[disabled]').value;
+                        // Ambil Teks dari Dropdown yang dipilih (Nopol - Merk Type)
+                        const nopolText = selectKendaraan.options[selectKendaraan.selectedIndex].text;
                         const splitText = nopolText.split(' - ');
                         const nopol = splitText[0];
                         const merk = splitText[1] || '-';
 
-                        const layananElem = card.querySelector(`select[name="transaksi[${vid}][jenis_layanan]"]`);
+                        const layananElem = row.querySelector('.select-layanan');
                         const layanan = layananElem.options[layananElem.selectedIndex].text;
                         
-                        // DETEKSI 5 TAHUNAN
                         if (layananElem.value === 'Pajak 5 Tahunan') has5Tahunan = true;
                         
-                        // 2. Ambil Biaya
-                        const pajak = parseInt(document.getElementById(`pajak_asli_${vid}`).value) || 0;
-                        const jasa = parseInt(document.getElementById(`jasa_asli_${vid}`).value) || 0;
+                        // Ambil Pajak dan Jasa dari class .asli-pajak dan .asli-jasa (Sesuai HTML baris dinamis)
+                        const pajak = parseInt(row.querySelector('.asli-pajak').value) || 0;
+                        const jasa = parseInt(row.querySelector('.asli-jasa').value) || 0;
                         
-                        const pend = parseInt(document.getElementById(`asli_loket_pendaftaran_${vid}`).value) || 0;
-                        const cekf = parseInt(document.getElementById(`asli_loket_cek_fisik_${vid}`).value) || 0;
-                        const acc = parseInt(document.getElementById(`asli_acc_tidak_hadir_${vid}`).value) || 0;
-                        const dom = parseInt(document.getElementById(`asli_acc_domisili_${vid}`).value) || 0;
-                        const pntp = parseInt(document.getElementById(`asli_loket_penetapan_${vid}`).value) || 0;
-                        const psh1 = parseInt(document.getElementById(`asli_loket_pengesahan_1_${vid}`).value) || 0;
-                        const psh2 = parseInt(document.getElementById(`asli_loket_pengesahan_2_${vid}`).value) || 0;
-                        const mtr = parseInt(document.getElementById(`asli_bea_materai_${vid}`).value) || 0;
+                        const subTotal = pajak + jasa + subLainPerKendaraan;
 
-                        const subLain = pend + cekf + acc + dom + pntp + psh1 + psh2 + mtr;
-                        const subTotal = pajak + jasa + subLain;
+                        sumPendaftaran += g_pnd; sumCekFisik += g_cf; sumAccTidakHadir += g_acc; sumAccDomisili += g_dom;
+                        sumPenetapan += g_pntp; sumPengesahan1 += g_psh1; sumPengesahan2 += g_psh2; sumMaterai += g_mtr;
 
-                        // Tambahkan ke Grand Total
-                        sumPendaftaran += pend; sumCekFisik += cekf; sumAccTidakHadir += acc; sumAccDomisili += dom;
-                        sumPenetapan += pntp; sumPengesahan1 += psh1; sumPengesahan2 += psh2; sumMaterai += mtr;
+                        grandPajak += pajak; grandJasa += jasa; grandLain += subLainPerKendaraan; grandSemua += subTotal;
 
-                        grandPajak += pajak; grandJasa += jasa; grandLain += subLain; grandSemua += subTotal;
-
-                        // 3. Susun Baris Tabel HTML (Border Kotak-Kotak Ala Invoice)
                         htmlContent += `
                             <tr>
                                 <td class="border border-gray-900 py-2 px-2 text-center">${selectedCount}</td>
@@ -543,7 +678,7 @@
                                 <td class="border border-gray-900 py-2 px-2 text-center text-xs">${layanan}</td>
                                 <td class="border border-gray-900 py-2 px-2 text-right text-xs">${formatRupiah(pajak)}</td>
                                 <td class="border border-gray-900 py-2 px-2 text-right text-xs">${formatRupiah(jasa)}</td>
-                                <td class="border border-gray-900 py-2 px-2 text-right text-xs">${formatRupiah(subLain)}</td>
+                                <td class="border border-gray-900 py-2 px-2 text-right text-xs">${formatRupiah(subLainPerKendaraan)}</td>
                                 <td class="border border-gray-900 py-2 px-2 text-right font-bold flex justify-between text-xs">
                                     <span>Rp</span> <span>${formatRupiah(subTotal)}</span>
                                 </td>
@@ -552,29 +687,49 @@
                     }
                 });
 
+                // UBAH PESAN ALERT JIKA KOSONG
                 if (selectedCount === 0) {
-                    alert('Silakan centang minimal 1 kendaraan yang ingin diproses!');
+                    alert('Silakan tambahkan baris dan pilih minimal 1 kendaraan yang ingin diproses!');
                     return;
                 }
 
-                // Tempelkan data ke dalam Modal
-                document.getElementById('previewTableBody').innerHTML = htmlContent;
+                previewTableBody.innerHTML = htmlContent;
                 
-                // Header Date
                 const inputTglMasuk = document.querySelector('input[name="tgl_masuk"]');
-                document.getElementById('prevInvDate').innerText = `: ${inputTglMasuk.value.split('-').reverse().join('/')}`;
+                document.getElementById('prevInvDate').innerText = `: ${formatTgl(inputTglMasuk.value)}`;
 
-                // Set Total Kalkulasi
+                // Hitung Termin
+                const tglMulaiVal = document.getElementById('tgl_mulai_termin').value;
+                const tglJatuhVal = document.getElementById('tgl_jatuh_tempo').value;
+                const prevTerminHari = document.getElementById('prevTerminHari');
+                const prevCatatan = document.getElementById('prevCatatan');
+                
+                if(tglMulaiVal && tglJatuhVal) {
+                    const date1 = new Date(tglMulaiVal);
+                    const date2 = new Date(tglJatuhVal);
+                    const diffDays = Math.ceil((date2 - date1) / (1000 * 60 * 60 * 24));
+                    
+                    if (diffDays >= 0) {
+                        if(prevTerminHari) prevTerminHari.innerText = ': ' + diffDays;
+                        if(prevCatatan) prevCatatan.innerHTML = `Pembayaran tagihan ini memiliki termin <strong>${diffDays} Hari</strong> terhitung sejak tanggal berkas diterima (${formatTgl(tglMulaiVal)}). Jatuh tempo pembayaran pada tanggal <strong class="text-red-600">${formatTgl(tglJatuhVal)}</strong>.`;
+                    } else {
+                        if(prevTerminHari) prevTerminHari.innerText = ': -';
+                        if(prevCatatan) prevCatatan.innerHTML = `<span class="text-red-500 italic"><i class="fa-solid fa-triangle-exclamation"></i> Tanggal Jatuh Tempo tidak boleh mundur!</span>`;
+                    }
+                } else {
+                    if(prevTerminHari) prevTerminHari.innerText = ': -';
+                    if(prevCatatan) prevCatatan.innerHTML = `<span class="text-red-500 italic">Silakan isi tanggal mulai dan jatuh tempo di form!</span>`;
+                }
+
+                // Render Total
                 document.getElementById('prevGrandTotalPajak').innerText = formatRupiah(grandPajak);
                 document.getElementById('prevGrandTotalJasa').innerText = formatRupiah(grandJasa);
                 document.getElementById('prevGrandTotalLain').innerText = formatRupiah(grandLain);
                 document.getElementById('prevGrandTotalBiaya').innerText = formatRupiah(grandSemua);
                 document.getElementById('prevTotalLainBawah').innerText = formatRupiah(grandLain);
-                
-                // Set Terbilang
                 document.getElementById('prevTerbilang').innerText = '** ' + terbilangJS(grandSemua) + ' **';
 
-                // Set Rincian Biaya Lain
+                // Render Rincian Bawah
                 document.getElementById('prevPendaftaran').innerText = sumPendaftaran > 0 ? formatRupiah(sumPendaftaran) : '-';
                 document.getElementById('prevCekFisik').innerText = sumCekFisik > 0 ? formatRupiah(sumCekFisik) : '-';
                 document.getElementById('prevAccTidakHadir').innerText = sumAccTidakHadir > 0 ? formatRupiah(sumAccTidakHadir) : '-';
@@ -584,64 +739,38 @@
                 document.getElementById('prevPengesahan2').innerText = sumPengesahan2 > 0 ? formatRupiah(sumPengesahan2) : '-';
                 document.getElementById('prevMaterai').innerText = sumMaterai > 0 ? formatRupiah(sumMaterai) : '-';
 
-                // LOGIKA PERUBAHAN NAMA LABEL ACC (BERDASARKAN LAYANAN KENDARAAN YG DIPILIH)
+                // Label ACC
                 const prevLabelAcc = document.getElementById('prevLabelAcc');
-                if (has5Tahunan) {
-                    prevLabelAcc.innerText = 'Acc Tidak Hadir Unit';
-                    prevLabelAcc.classList.add('text-blue-700');
-                } else {
-                    prevLabelAcc.innerText = 'Acc Tidak Hadir STNK';
-                    prevLabelAcc.classList.remove('text-blue-700');
+                if(prevLabelAcc) {
+                    if (has5Tahunan) {
+                        prevLabelAcc.innerText = 'Acc Tidak Hadir Unit';
+                        prevLabelAcc.classList;
+                    } else {
+                        prevLabelAcc.innerText = 'Acc Tidak Hadir STNK';
+                        prevLabelAcc.classList;
+                    }
                 }
 
-                // Tampilkan Modal
                 previewModal.classList.remove('hidden');
-                
-                // ==========================================
-                // LOGIKA HITUNG SELISIH HARI (TERMIN) OTOMATIS
-                // ==========================================
-                const formatTgl = (tglStr) => tglStr ? tglStr.split('-').reverse().join('/') : '-';
-                
-                const tglMulaiVal = document.getElementById('tgl_mulai_termin').value;
-                const tglJatuhVal = document.getElementById('tgl_jatuh_tempo').value;
-                
-                if(tglMulaiVal && tglJatuhVal) {
-                    const date1 = new Date(tglMulaiVal);
-                    const date2 = new Date(tglJatuhVal);
-                    
-                    // Hitung selisih waktu (dalam milidetik) lalu konversi ke Hari
-                    const diffTime = date2 - date1;
-                    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-                    
-                    if (diffDays >= 0) {
-                        document.getElementById('prevTerminHari').innerText = ': ' + diffDays;
-                        document.getElementById('prevCatatan').innerHTML = `Pembayaran tagihan ini memiliki termin <strong>${diffDays} Hari</strong> terhitung sejak tanggal berkas diterima (${formatTgl(tglMulaiVal)}). Jatuh tempo pembayaran pada tanggal <strong class="text-red-600">${formatTgl(tglJatuhVal)}</strong>.`;
-                    } else {
-                        document.getElementById('prevCatatan').innerHTML = `<span class="text-red-500 italic"><i class="fa-solid fa-triangle-exclamation"></i> Tanggal Jatuh Tempo tidak boleh mundur dari Tanggal Mulai!</span>`;
-                    }
-                } else {
-                    document.getElementById('prevCatatan').innerHTML = `<span class="text-red-500 italic">Silakan isi tanggal mulai dan jatuh tempo di form terlebih dahulu!</span>`;
-                }
             });
         }
 
-        // Aksi Tutup Modal
+        // =======================================================
+        // 5. KONTROL MODAL & SUBMIT FORM
+        // =======================================================
         const closeModal = () => {
             if(previewModal) previewModal.classList.add('hidden');
         };
         document.getElementById('btnCloseModal')?.addEventListener('click', closeModal);
         document.getElementById('btnCancelModal')?.addEventListener('click', closeModal);
 
-        // Aksi Eksekusi Form Sebenarnya
         document.getElementById('btnSubmitReal')?.addEventListener('click', function() {
-            // Tampilkan efek loading opsional pada tombol
             this.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Menyimpan...';
             this.disabled = true;
-            
-            // Submit Form yang sesungguhnya!
             document.getElementById('collectiveForm').submit();
         });
     });
 </script>
+
 
 @endsection
