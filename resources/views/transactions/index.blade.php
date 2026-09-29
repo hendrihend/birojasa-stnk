@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('title', 'Daftar Transaksi')
-@section('header_title', 'Daftar Transaksi & Pengurusan')
+@section('header_title', 'Daftar Transaksi')
 
 @section('content')
 

@@ -21,13 +21,13 @@
     @endif
 
     <!-- ==================================================== -->
-    <!-- TAHAP 1: FORM PENCARIAN KLIEN                        -->
+    <!-- TAHAP 1: FORM PENCARIAN KLIEN (DENGAN SELECT2)       -->
     <!-- ==================================================== -->
     <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
         <form action="{{ route('transactions.create') }}" method="GET" class="flex flex-col md:flex-row gap-4 items-end">
             <div class="w-full">
                 <label class="block text-sm font-bold text-gray-700 mb-1">Pilih Klien untuk Transaksi Kolektif</label>
-                <select name="client_id" required class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none">
+                <select name="client_id" id="pilih_klien" required class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none">
                     <option value="">-- Cari dan Pilih Klien --</option>
                     @foreach($clients as $client)
                         <option value="{{ $client->id }}" {{ request('client_id') == $client->id ? 'selected' : '' }}>
@@ -43,13 +43,14 @@
     </div>
 
     <!-- ==================================================== -->
-    <!-- TAHAP 2: DAFTAR KENDARAAN (Muncul Setelah Klien Dipilih) -->
+    <!-- TAHAP 2: DAFTAR KENDARAAN                            -->
     <!-- ==================================================== -->
     @if($selectedClient && count($vehicles) > 0)
     <form action="{{ route('transactions.store') }}" method="POST" id="collectiveForm">
         @csrf
         <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-            <!-- HEADER GLOBAL -->
+            
+            <!-- HEADER GLOBAL (DENGAN FUNGSI OLD INPUT) -->
             <div class="p-6 border-b border-gray-100 bg-gray-50/50 flex flex-col md:flex-row justify-between gap-4 md:items-center">
                 <div class="flex items-center gap-3">
                     <div class="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 text-lg">
@@ -57,30 +58,27 @@
                     </div>
                     <div>
                         <h2 class="text-lg font-bold text-gray-800">Invoice Kolektif: {{ $selectedClient->nama_lengkap }}</h2>
-                        <p class="text-xs text-gray-500">Pilih kendaraan yang akan diurus dan isi rincian biayanya.</p>
+                        <p class="text-xs text-gray-500">Centang kendaraan yang akan diurus dan isi rincian biayanya.</p>
                     </div>
                 </div>
                 
-                <!-- Tanggal Masuk & Termin (Global untuk 1 Invoice) -->
                 <div class="flex flex-wrap gap-3 w-full md:w-auto">
                     <div>
-                        <!-- <label class="block text-[11px] font-bold text-gray-700 mb-1">Tgl Masuk Berkas *</label> -->
-                        <input type="hidden" name="tgl_masuk" value="{{ old('tgl_masuk', date('Y-m-d')) }}" required class="w-full px-3 py-1.5 border border-gray-300 rounded focus:ring-1 outline-none text-sm">
+                        <input type="hidden" name="tgl_masuk" value="{{ old('tgl_masuk', date('Y-m-d')) }}">
                     </div>
                     <div>
                         <label class="block text-[11px] font-bold text-gray-700 mb-1">Dari Tgl (Mulai Termin) *</label>
-                        <input type="date" name="tgl_mulai_termin" id="tgl_mulai_termin" value="{{ old('tgl_mulai_termin', date('Y-m-d')) }}" class="w-full px-3 py-1.5 border border-gray-300 rounded focus:ring-1 outline-none text-sm text-blue-700">
+                        <input type="date" name="tgl_mulai_termin" id="tgl_mulai_termin" value="{{ old('tgl_mulai_termin', date('Y-m-d')) }}" required class="w-full px-3 py-1.5 border border-gray-300 rounded focus:ring-1 outline-none text-sm text-blue-700">
                     </div>
                     <div>
                         <label class="block text-[11px] font-bold text-gray-700 mb-1">Sampai Tgl (Jatuh Tempo) *</label>
-                        <input type="date" name="tgl_jatuh_tempo" id="tgl_jatuh_tempo" class="w-full px-3 py-1.5 border border-gray-300 rounded focus:ring-1 outline-none text-sm text-red-600">
+                        <input type="date" name="tgl_jatuh_tempo" id="tgl_jatuh_tempo" value="{{ old('tgl_jatuh_tempo') }}" required class="w-full px-3 py-1.5 border border-gray-300 rounded focus:ring-1 outline-none text-sm text-red-600">
                     </div>
                 </div>
             </div>
 
-            <!-- LOOPING KENDARAAN KLIEN -->
             <div class="p-6 space-y-8">
-                <!-- BIAYA LAINNYA GLOBAL (SATU KALI INPUT) -->
+                <!-- BIAYA LAINNYA GLOBAL -->
                 <div class="p-6 bg-blue-50/50 border-t border-gray-100">
                     <h3 class="text-sm font-bold text-gray-700 mb-4 uppercase tracking-wider"><i class="fa-solid fa-file-invoice-dollar text-blue-600 mr-2"></i> Rincian Biaya Lainnya</h3>
                     <div class="grid grid-cols-2 md:grid-cols-4 gap-4 bg-white p-5 rounded-xl border border-blue-100 shadow-sm">
@@ -97,19 +95,21 @@
                             ];
                         @endphp
                         @foreach($rincianGlobal as $item)
+                        <!-- OLD INPUT UNTUK BIAYA GLOBAL -->
+                        @php $oldVal = old('global_biaya.'.$item['id'], 0); @endphp
                         <div>
                             <label id="label_global_{{ $item['id'] }}" class="block text-xs font-bold text-gray-700 mb-1">{{ $item['label'] }}</label>
                             <div class="relative">
                                 <span class="absolute inset-y-0 left-3 flex items-center text-gray-400 font-bold text-[11px]">Rp</span>
-                                <input type="text" id="tampil_global_{{ $item['id'] }}" placeholder="0" class="input-global-lain w-full pl-8 pr-3 py-1.5 border border-gray-300 rounded focus:ring-1 focus:ring-blue-500 font-bold text-gray-800 text-sm">
-                                <input type="hidden" name="global_biaya[{{ $item['id'] }}]" id="asli_global_{{ $item['id'] }}" value="0">
+                                <input type="text" id="tampil_global_{{ $item['id'] }}" value="{{ $oldVal > 0 ? number_format($oldVal, 0, ',', '.') : '' }}" placeholder="0" class="input-global-lain w-full pl-8 pr-3 py-1.5 border border-gray-300 rounded focus:ring-1 focus:ring-blue-500 font-bold text-gray-800 text-sm">
+                                <input type="hidden" name="global_biaya[{{ $item['id'] }}]" id="asli_global_{{ $item['id'] }}" value="{{ $oldVal }}">
                             </div>
                         </div>
                         @endforeach
                     </div>
                 </div>
 
-                <!-- TABEL ITEM DATA KENDARAAN -->
+                <!-- TABEL DATA KENDARAAN -->
                 <div class="p-6 bg-blue-50/50 border-t border-gray-100">
                     <div class="flex justify-between items-center mb-4">
                         <h3 class="font-bold text-sm">Tabel Item Data Kendaraan</h3>
@@ -117,7 +117,6 @@
                             + Tambah Baris
                         </button>
                     </div>
-                    <!-- Wadah untuk baris dinamis -->
                     <div id="dynamicVehicleContainer" class="space-y-2">
                         <p id="emptyMessage" class="text-xs text-gray-500 text-center py-6 italic">
                             Belum ada item kendaraan. Tambahkan baris baru.
@@ -144,20 +143,14 @@
     @endif
 
     <!-- ==================================================== -->
-    <!-- MODAL PREVIEW INVOICE KOLEKTIF (GAYA KERTAS PRINT)   -->
+    <!-- MODAL PREVIEW INVOICE KOLEKTIF                       -->
     <!-- ==================================================== -->
     <div id="previewModal" class="hidden fixed inset-0 z-50 bg-gray-900/70 backdrop-blur-sm overflow-y-auto flex items-center justify-center p-4 transition-opacity">
         <div class="bg-white shadow-2xl w-full max-w-5xl flex flex-col scale-100 max-h-[95vh] relative">
-            
-            <!-- Tombol Close Melayang -->
             <button type="button" id="btnCloseModal" class="absolute right-4 top-4 text-gray-400 hover:text-red-500 hover:bg-red-50 w-10 h-10 rounded-full flex items-center justify-center transition-colors z-10">
                 <i class="fa-solid fa-xmark text-2xl"></i>
             </button>
-
-            <!-- KERTAS INVOICE (Isi Modal) -->
             <div class="p-10 overflow-y-auto bg-white flex-1 relative border-b-4 border-blue-600">
-                
-                <!-- HEADER KOP SURAT -->
                 <div class="flex justify-between items-start mb-8">
                     <div class="w-1/2">
                         <div class="flex items-center gap-2 mb-2">
@@ -167,8 +160,6 @@
                                 <p class="text-[10px] text-gray-500 italic mt-0.5">Committed to Service, Excellence in Every Process</p>
                             </div>
                         </div>
-                        <p class="text-xs text-gray-700 mt-3">Alamat: Jl. Contoh Kemerdekaan No. 45, Kota Anda, 12345</p>
-                        <p class="text-xs text-gray-700">No.Telp : +62 812-3456-7890</p>
                     </div>
                     <div class="w-1/2 text-right">
                         <h2 class="text-4xl font-black text-gray-900 tracking-widest mb-4">INVOICE</h2>
@@ -180,17 +171,11 @@
                     </div>
                 </div>
 
-                <!-- INFO KEPADA YTH -->
                 <div class="mb-6">
                     <p class="text-sm text-gray-700 mb-1">Kepada Yth :</p>
                     <h3 class="font-bold text-lg text-gray-900 uppercase">{{ $selectedClient->nama_lengkap ?? '' }}</h3>
-                    <p class="text-xs text-gray-700 mt-1">{{ $selectedClient->alamat ?? '-' }}</p>
-                    <p class="text-xs text-gray-700 mt-1">No. WhatsApp / Telp: {{ $selectedClient->no_whatsapp ?? '-' }}</p>
                 </div>
 
-                <p class="text-sm text-gray-800 mb-2">Dengan ini, kami menyampaikan pengajuan atas <strong>Layanan Biro Jasa Kolektif</strong> <span class="float-right underline text-xs">Kendaraan Terlampir:</span></p>
-
-                <!-- TABEL UTAMA (RINCIAN KENDARAAN) -->
                 <table class="w-full text-sm border-collapse border border-gray-900 mb-6">
                     <thead>
                         <tr class="bg-gray-100">
@@ -204,9 +189,7 @@
                             <th class="border border-gray-900 py-2 px-2 text-center w-28">Total</th>
                         </tr>
                     </thead>
-                    <tbody id="previewTableBody">
-                        <!-- Baris akan diisi JS -->
-                    </tbody>
+                    <tbody id="previewTableBody"></tbody>
                     <tfoot>
                         <tr class="bg-gray-100 font-bold">
                             <td colspan="4" class="border border-gray-900 py-3 px-3 text-right tracking-widest text-sm uppercase">Grand Total</td>
@@ -220,27 +203,20 @@
                     </tfoot>
                 </table>
 
-                <!-- TERBILANG -->
                 <div class="mb-10 text-sm">
                     <div class="flex mb-2 items-center">
                         <div class="w-32 text-gray-700 uppercase font-bold text-xs tracking-wider">TERBILANG:</div>
                         <div class="font-bold italic flex-1 capitalize bg-gray-100 px-3 py-1.5 rounded" id="prevTerbilang">** Nol Rupiah **</div>
                     </div>
-
-                    <!-- TAMBAHAN BARU: CATATAN JATUH TEMPO -->
                     <div class="flex items-start mt-4">
                         <div class="w-32 text-gray-700 font-bold text-xs mt-1">CATATAN:</div>
-                        <div class="flex-1 bg-yellow-50 border border-yellow-200 px-3 py-2 text-xs text-gray-800 rounded" id="prevCatatan">
-                            <!-- Teks catatan akan diisi otomatis oleh JS -->
-                        </div>
+                        <div class="flex-1 bg-yellow-50 border border-yellow-200 px-3 py-2 text-xs text-gray-800 rounded" id="prevCatatan"></div>
                     </div>
                 </div>
 
-                <!-- TABEL RINCIAN BIAYA LAIN (GABUNGAN SEMUA KENDARAAN) -->
                 <div class="flex justify-between items-start text-sm">
                     <div class="w-1/2">
                         <p class="font-bold text-gray-700 uppercase">Rincian Biaya Lainnya :</p>
-                        <p class="text-xs text-gray-500 italic mt-1">Akumulasi total dari seluruh kendaraan di atas.</p>
                     </div>
                     <div class="w-1/2 flex justify-end">
                         <table class="w-[85%] border-collapse border border-gray-900 text-xs">
@@ -256,7 +232,6 @@
                                     <td class="border border-gray-900 px-3 py-1.5 text-right font-medium" id="prevCekFisik">-</td>
                                 </tr>
                                 <tr>
-                                    <!-- LABEL INI AKAN BERUBAH OTOMATIS OLEH JAVASCRIPT -->
                                     <td class="border border-gray-900 px-3 py-1.5 text-gray-700 transition-colors" id="prevLabelAcc">Acc Tidak Hadir STNK</td>
                                     <td class="border border-gray-900 px-3 py-1.5">Rp</td>
                                     <td class="border border-gray-900 px-3 py-1.5 text-right font-medium" id="prevAccTidakHadir">-</td>
@@ -272,12 +247,12 @@
                                     <td class="border border-gray-900 px-3 py-1.5 text-right font-medium" id="prevPenetapan">-</td>
                                 </tr>
                                 <tr>
-                                    <td class="border border-gray-900 px-3 py-1.5 text-gray-700">Loket Pengesahan Pertama</td>
+                                    <td class="border border-gray-900 px-3 py-1.5 text-gray-700">Loket Pengesahan 1</td>
                                     <td class="border border-gray-900 px-3 py-1.5">Rp</td>
                                     <td class="border border-gray-900 px-3 py-1.5 text-right font-medium" id="prevPengesahan1">-</td>
                                 </tr>
                                 <tr>
-                                    <td class="border border-gray-900 px-3 py-1.5 text-gray-700">Loket Pengesahan Kedua</td>
+                                    <td class="border border-gray-900 px-3 py-1.5 text-gray-700">Loket Pengesahan 2</td>
                                     <td class="border border-gray-900 px-3 py-1.5">Rp</td>
                                     <td class="border border-gray-900 px-3 py-1.5 text-right font-medium" id="prevPengesahan2">-</td>
                                 </tr>
@@ -295,10 +270,7 @@
                         </table>
                     </div>
                 </div>
-
             </div>
-
-            <!-- Modal Footer (Tombol Aksi) -->
             <div class="px-6 py-4 bg-gray-100 flex justify-end gap-3 border-t border-gray-200">
                 <button type="button" id="btnCancelModal" class="px-6 py-2.5 bg-white border border-gray-300 hover:bg-gray-50 text-gray-700 font-bold rounded-lg transition-colors">
                     Cek Lagi
@@ -311,46 +283,112 @@
     </div>
 </div>
 
-<!-- SCRIPT UNTUK FORMAT RUPIAH MULTIPLE KENDARAAN -->
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        // 1. Ambil data kendaraan dari PHP (diubah jadi array JS)
-        const listKendaraan = @json($vehicles);
-        let rowIndex = 0; // Penghitung baris (index)
+<!-- ==================================================== -->
+<!-- SCRIPT UNTUK SELECT2 & PENGELOLAAN BARIS DINAMIS     -->
+<!-- ==================================================== -->
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+<style>
+    .select2-container .select2-selection--single {
+        height: 42px !important; padding: 6px 12px; border: 1px solid #d1d5db !important; border-radius: 0.5rem !important; outline: none;
+    }
+    .select2-container--default .select2-selection--single .select2-selection__arrow { height: 40px !important; right: 12px !important; }
+    .select2-container--default .select2-selection--single .select2-selection__rendered { line-height: 28px !important; color: #374151 !important; font-weight: 500; }
+    .select2-container--default.select2-container--focus .select2-selection--single { border-color: #3b82f6 !important; box-shadow: 0 0 0 1px rgba(59, 130, 246, 0.5) !important; }
+</style>
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 
-        const btnAddRow = document.getElementById('btnAddRow');
+<script>
+    $(document).ready(function() {
+        $('#pilih_klien').select2({
+            placeholder: "-- Ketik untuk mencari Klien --",
+            allowClear: true,
+            width: '100%',
+            language: { noResults: function() { return "Klien tidak ditemukan"; } }
+        });
+    });
+
+    document.addEventListener('DOMContentLoaded', function() {
+        // Fungsi Format Rupiah Tahan Banting
+        const formatRupiah = (angka) => {
+            const num = Number(angka) || 0;
+            return new Intl.NumberFormat('id-ID').format(num);
+        };
+        const formatTgl = (tglStr) => tglStr ? tglStr.split('-').reverse().join('/') : '-';
+
+        let rowIndex = 0; 
+        @if($selectedClient && count($vehicles) > 0)
+            const listKendaraan = @json($vehicles);
+        @else
+            const listKendaraan = [];
+        @endif
+
         const container = document.getElementById('dynamicVehicleContainer');
         const emptyMessage = document.getElementById('emptyMessage');
+        const btnAddRow = document.getElementById('btnAddRow');
 
-        // 2. Fungsi Membuat Dropdown Options Kendaraan
-        const buatOptionsKendaraan = () => {
+        const buatOptionsKendaraan = (selectedId = '') => {
             let options = '<option value="">-- Pilih Kendaraan --</option>';
             listKendaraan.forEach(v => {
-                options += `<option value="${v.id}">${v.nopol} - ${v.merk} ${v.tipe}</option>`;
+                let selected = (v.id == selectedId) ? 'selected' : '';
+                options += `<option value="${v.id}" ${selected}>${v.nopol} - ${v.merk} ${v.tipe}</option>`;
             });
             return options;
         };
 
+        // FUNGSI HITUNG TOTAL TAHAN BANTING (Tidak akan crash lagi)
+        const hitungUlangSemuaBaris = () => {
+            try {
+                let totalGlobal = 0;
+                document.querySelectorAll('.input-global-lain').forEach(inputTampil => {
+                    const idAsli = inputTampil.id.replace('tampil_global_', 'asli_global_');
+                    const elAsli = document.getElementById(idAsli);
+                    if (elAsli) {
+                        totalGlobal += (Number(elAsli.value) || 0);
+                    }
+                });
+
+                document.querySelectorAll('.vehicle-row').forEach(row => {
+                    const elPajak = row.querySelector('.asli-pajak');
+                    const elJasa = row.querySelector('.asli-jasa');
+                    
+                    const pajak = elPajak ? (Number(elPajak.value) || 0) : 0;
+                    const jasa = elJasa ? (Number(elJasa.value) || 0) : 0;
+
+                    const tampilLainnya = row.querySelector('.tampil-lainnya');
+                    const asliLainnya = row.querySelector('.asli-lainnya');
+                    if (asliLainnya && tampilLainnya) {
+                        asliLainnya.value = totalGlobal;
+                        tampilLainnya.value = totalGlobal > 0 ? formatRupiah(totalGlobal) : '';
+                    }
+
+                    const totalBaris = pajak + jasa + totalGlobal;
+                    const tampilTotal = row.querySelector('.tampil-total');
+                    const asliTotal = row.querySelector('.asli-total');
+                    if (asliTotal && tampilTotal) {
+                        asliTotal.value = totalBaris;
+                        tampilTotal.value = totalBaris > 0 ? formatRupiah(totalBaris) : '';
+                    }
+                });
+            } catch (e) {
+                console.error("Error menghitung total:", e);
+            }
+        };
+
         const pasangEventPadaBaris = (barisElemen) => {
-            // A. Aksi Tombol Hapus Baris
             const btnDelete = barisElemen.querySelector('.btn-delete-row');
             btnDelete.addEventListener('click', function() {
-                barisElemen.remove(); // Hapus elemen HTML baris ini
-                
-                // Cek apakah tabel kosong, jika ya, munculkan pesan kosong lagi
+                barisElemen.remove(); 
                 if (container.querySelectorAll('.vehicle-row').length === 0) {
                     if (emptyMessage) emptyMessage.style.display = 'block';
                 }
-                
-                // Panggil ulang cek label ACC jika baris (5 tahunan) dihapus
                 if (typeof checkGlobalAccLabel === 'function') checkGlobalAccLabel();
+                hitungUlangSemuaBaris();
             });
 
-            // B. Format Rupiah untuk Input Pajak & Jasa di baris baru
             const inputUangList = barisElemen.querySelectorAll('.input-uang');
             inputUangList.forEach(inputTampil => {
-                const inputAsli = inputTampil.nextElementSibling; // Mengambil <input type="hidden"> di sebelahnya
-                
+                const inputAsli = inputTampil.nextElementSibling; 
                 inputTampil.addEventListener('input', function(e) {
                     let angkaMurni = this.value.replace(/[^0-9]/g, '');
                     inputAsli.value = angkaMurni || 0;
@@ -359,220 +397,153 @@
                 });
             });
 
-            // C. Trigger Update Label ACC saat dropdown layanan diganti
             const selectLayanan = barisElemen.querySelector('.select-layanan');
             if (selectLayanan) {
                 selectLayanan.addEventListener('change', function() {
                     if (typeof checkGlobalAccLabel === 'function') checkGlobalAccLabel();
                 });
             }
+
+            const selectKendaraan = barisElemen.querySelector('.select-kendaraan');
+            if (selectKendaraan) {
+                $(selectKendaraan).on('change', function() {
+                    if (typeof checkGlobalAccLabel === 'function') checkGlobalAccLabel();
+                });
+            }
         };
 
-        // 3. Aksi ketika tombol "Tambah Baris" diklik
-        btnAddRow.addEventListener('click', function() {
-            if(emptyMessage) emptyMessage.style.display = 'none';
+        // FUNGSI TAMBAH BARIS TAHAN BANTING (Menerima Data Lama Jika Ada)
+        const tambahBaris = (dataLama = null) => {
+            try {
+                if(emptyMessage) emptyMessage.style.display = 'none';
 
-            // Buat elemen div untuk baris baru
-            const barisBaru = document.createElement('div');
-            barisBaru.className = 'vehicle-row p-4 rounded-lg border border-blue-100 grid grid-cols-1 md:grid-cols-4 gap-4 relative';
-            barisBaru.dataset.index = rowIndex;
+                // Ekstrak data lama jika ada (dari error validasi)
+                const vid = dataLama && dataLama.vehicle_id ? dataLama.vehicle_id : '';
+                const lay = dataLama && dataLama.jenis_layanan ? dataLama.jenis_layanan : 'Pajak Tahunan';
+                const pjk = dataLama && dataLama.biaya_pajak ? Number(dataLama.biaya_pajak.toString().replace(/[^0-9]/g, '')) : 0;
+                const jsa = dataLama && dataLama.biaya_jasa ? Number(dataLama.biaya_jasa.toString().replace(/[^0-9]/g, '')) : 0;
 
-            // Gambar HTML-nya (Perhatikan name="transaksi[INDEX][kolom]")
-            barisBaru.innerHTML = `
-                <!-- Tombol Hapus Baris -->
-                <button type="button" class="btn-delete-row absolute -top-2 -right-2 bg-red-600 w-6 h-6 rounded-full text-white text-xs flex items-center justify-center shadow-lg hover:bg-red-700" title="Hapus baris">
-                    <i class="fa-solid fa-xmark"></i>
-                </button>
+                const pjkTampil = pjk > 0 ? formatRupiah(pjk) : '';
+                const jsaTampil = jsa > 0 ? formatRupiah(jsa) : '';
 
-                <!-- Pilih Kendaraan -->
-                <div class="md:col-span-2">
-                    <label class="block text-[11px] uppercase font-bold text-gray-800 mb-1">Pilih Kendaraan *</label>
-                    <select name="transaksi[${rowIndex}][vehicle_id]" required class="w-full pr-3 py-1.5 border border-gray-300 rounded focus:ring-1 focus:ring-blue-500 text-gray-800 text-sm">
-                        ${buatOptionsKendaraan()}
-                    </select>
-                </div>
+                const barisBaru = document.createElement('div');
+                barisBaru.className = 'vehicle-row p-4 rounded-lg border border-blue-100 grid grid-cols-1 md:grid-cols-4 gap-4 relative';
+                barisBaru.dataset.index = rowIndex;
 
-                <!-- Pilih Layanan -->
-                <div class="md:col-span-2">
-                    <label class="block text-[11px] uppercase font-bold text-gray-800 mb-1">Layanan *</label>
-                    <select name="transaksi[${rowIndex}][jenis_layanan]" class="select-layanan w-full pr-3 py-1.5 border border-gray-300 rounded focus:ring-1 focus:ring-blue-500 text-gray-800 text-sm">
-                        <option value="Pajak Tahunan">Pajak Tahunan</option>
-                        <option value="Pajak 5 Tahunan">Pajak 5 Tahunan</option>
-                    </select>
-                </div>
+                barisBaru.innerHTML = `
+                    <button type="button" class="btn-delete-row absolute -top-2 -right-2 bg-red-600 w-6 h-6 rounded-full text-white text-xs flex items-center justify-center shadow-lg hover:bg-red-700" title="Hapus baris">
+                        <i class="fa-solid fa-xmark"></i>
+                    </button>
 
-                <!-- Input Pajak -->
-                <div>
-                    <label class="block text-[11px] uppercase font-bold text-gray-800 mb-1">Pajak</label>
-                    <div class="relative">
-                        <span class="absolute inset-y-0 left-3 flex items-center text-gray-400 font-bold text-[11px]">Rp</span>
-                        <input type="text" class="input-uang w-full pl-8 pr-3 py-1.5 border border-gray-300 rounded focus:ring-1 focus:ring-blue-500 font-bold text-gray-800 text-sm" placeholder="0">
-                        <input type="hidden" name="transaksi[${rowIndex}][biaya_pajak]" class="asli-pajak" value="0">
+                    <div class="md:col-span-2">
+                        <label class="block text-[11px] uppercase font-bold text-gray-800 mb-1">Pilih Kendaraan *</label>
+                        <select name="transaksi[${rowIndex}][vehicle_id]" required class="select-kendaraan w-full pr-3 py-1.5 border border-gray-300 rounded focus:ring-1 focus:ring-blue-500 text-gray-800 text-sm">
+                            ${buatOptionsKendaraan(vid)}
+                        </select>
                     </div>
-                </div>
 
-                <!-- Input Jasa -->
-                <div>
-                    <label class="block text-[11px] uppercase font-bold text-gray-800 mb-1">Jasa</label>
-                    <div class="relative">
-                        <span class="absolute inset-y-0 left-3 flex items-center text-gray-400 font-bold text-[11px]">Rp</span>
-                        <input type="text" class="input-uang w-full pl-8 pr-3 py-1.5 border border-gray-300 rounded focus:ring-1 focus:ring-blue-500 font-bold text-gray-800 text-sm" placeholder="0">
-                        <input type="hidden" name="transaksi[${rowIndex}][biaya_jasa]" class="asli-jasa" value="0">
+                    <div class="md:col-span-2">
+                        <label class="block text-[11px] uppercase font-bold text-gray-800 mb-1">Layanan *</label>
+                        <select name="transaksi[${rowIndex}][jenis_layanan]" class="select-layanan w-full pr-3 py-1.5 border border-gray-300 rounded focus:ring-1 focus:ring-blue-500 text-gray-800 text-sm">
+                            <option value="Pajak Tahunan" ${lay === 'Pajak Tahunan' ? 'selected' : ''}>Pajak Tahunan</option>
+                            <option value="Pajak 5 Tahunan" ${lay === 'Pajak 5 Tahunan' ? 'selected' : ''}>Pajak 5 Tahunan</option>
+                        </select>
                     </div>
-                </div>
 
-                <!-- Akumulasi Rincian Biaya Lainnya -->
-                <div>
-                    <label class="block text-[11px] uppercase font-bold text-gray-800 mb-1">Lainnya</label>
-                    <div class="relative">
-                        <span class="absolute inset-y-0 left-3 flex items-center text-gray-400 font-bold text-[11px]">Rp</span>
-                        <!-- Dibuat readonly dan abu-abu karena otomatis terisi dari atas -->
-                        <input type="text" class="tampil-lainnya w-full pl-8 pr-3 py-1.5 border border-gray-200 rounded bg-gray-50 text-gray-600 text-sm font-bold cursor-not-allowed outline-none" placeholder="0" readonly>
-                        <input type="hidden" name="transaksi[${rowIndex}][biaya_lain]" class="asli-lainnya" value="0">
+                    <div>
+                        <label class="block text-[11px] uppercase font-bold text-gray-800 mb-1">Pajak</label>
+                        <div class="relative">
+                            <span class="absolute inset-y-0 left-3 flex items-center text-gray-400 font-bold text-[11px]">Rp</span>
+                            <input type="text" class="input-uang w-full pl-8 pr-3 py-1.5 border border-gray-300 rounded focus:ring-1 focus:ring-blue-500 font-bold text-gray-800 text-sm" value="${pjkTampil}" placeholder="0">
+                            <input type="hidden" name="transaksi[${rowIndex}][biaya_pajak]" class="asli-pajak" value="${pjk}">
+                        </div>
                     </div>
-                </div>
 
-                <!-- Akumulasi Keseluruhan (Total Per Baris) -->
-                <div>
-                    <label class="block text-[11px] uppercase font-bold text-gray-800 mb-1">Total</label>
-                    <div class="relative">
-                        <span class="absolute inset-y-0 left-3 flex items-center text-gray-400 font-bold text-[11px]">Rp</span>
-                        <!-- Dibuat readonly dan biru agar menonjol -->
-                        <input type="text" class="tampil-total w-full pl-8 pr-3 py-1.5 border border-blue-200 rounded bg-blue-50 text-blue-700 text-sm font-bold cursor-not-allowed outline-none" placeholder="0" readonly>
-                        <input type="hidden" name="transaksi[${rowIndex}][total_biaya]" class="asli-total" value="0">
+                    <div>
+                        <label class="block text-[11px] uppercase font-bold text-gray-800 mb-1">Jasa</label>
+                        <div class="relative">
+                            <span class="absolute inset-y-0 left-3 flex items-center text-gray-400 font-bold text-[11px]">Rp</span>
+                            <input type="text" class="input-uang w-full pl-8 pr-3 py-1.5 border border-gray-300 rounded focus:ring-1 focus:ring-blue-500 font-bold text-gray-800 text-sm" value="${jsaTampil}" placeholder="0">
+                            <input type="hidden" name="transaksi[${rowIndex}][biaya_jasa]" class="asli-jasa" value="${jsa}">
+                        </div>
                     </div>
-                </div>
-            `;
 
-            container.appendChild(barisBaru);
+                    <div>
+                        <label class="block text-[11px] uppercase font-bold text-gray-800 mb-1">Lainnya</label>
+                        <div class="relative">
+                            <span class="absolute inset-y-0 left-3 flex items-center text-gray-400 font-bold text-[11px]">Rp</span>
+                            <input type="text" class="tampil-lainnya w-full pl-8 pr-3 py-1.5 border border-gray-200 rounded bg-gray-50 text-gray-600 text-sm font-bold cursor-not-allowed outline-none" placeholder="0" readonly>
+                            <input type="hidden" name="transaksi[${rowIndex}][biaya_lain]" class="asli-lainnya" value="0">
+                        </div>
+                    </div>
 
-            // 4. Pasang Event Listener (Format Rupiah & Kalkulasi) khusus untuk baris ini
-            pasangEventPadaBaris(barisBaru);
+                    <div>
+                        <label class="block text-[11px] uppercase font-bold text-gray-800 mb-1">Total</label>
+                        <div class="relative">
+                            <span class="absolute inset-y-0 left-3 flex items-center text-gray-400 font-bold text-[11px]">Rp</span>
+                            <input type="text" class="tampil-total w-full pl-8 pr-3 py-1.5 border border-blue-200 rounded bg-blue-50 text-blue-700 text-sm font-bold cursor-not-allowed outline-none" placeholder="0" readonly>
+                            <input type="hidden" name="transaksi[${rowIndex}][total_biaya]" class="asli-total" value="0">
+                        </div>
+                    </div>
+                `;
 
-            rowIndex++; // Naikkan index untuk baris selanjutnya
-            hitungUlangSemuaBaris();
-        });
+                if(container) container.appendChild(barisBaru);
+                pasangEventPadaBaris(barisBaru);
 
-        // Fungsi Utama untuk menghitung ulang semua baris secara Real-Time
-        const hitungUlangSemuaBaris = () => {
-            // 1. Ambil & jumlahkan total Biaya Global di bagian atas
-            let totalGlobal = 0;
-            document.querySelectorAll('.input-global-lain').forEach(inputTampil => {
-                let idAsli = inputTampil.id.replace('tampil_global_', 'asli_global_');
-                let nilaiAsli = parseInt(document.getElementById(idAsli).value) || 0;
-                totalGlobal += nilaiAsli;
-            });
-
-            // 2. Update kolom "Lainnya" dan "Total" di setiap baris kendaraan
-            document.querySelectorAll('.vehicle-row').forEach(row => {
-                const pajak = parseInt(row.querySelector('.asli-pajak').value) || 0;
-                const jasa = parseInt(row.querySelector('.asli-jasa').value) || 0;
-
-                // Update Input "Lainnya"
-                const tampilLainnya = row.querySelector('.tampil-lainnya');
-                const asliLainnya = row.querySelector('.asli-lainnya');
-                if (asliLainnya && tampilLainnya) {
-                    asliLainnya.value = totalGlobal;
-                    tampilLainnya.value = totalGlobal > 0 ? formatRupiah(totalGlobal) : '';
+                // Aktifkan Select2 Untuk Kendaraan
+                if (typeof $!== 'undefined') {$(barisBaru).find('.select-kendaraan').select2({
+                        placeholder: "-- Cari & Pilih Kendaraan --",
+                        width: '100%',
+                        language: { noResults: function() { return "Kendaraan tidak ditemukan"; } }
+                    });
                 }
 
-                // Update Input "Total" (Pajak + Jasa + Lainnya)
-                const totalBaris = pajak + jasa + totalGlobal;
-                const tampilTotal = row.querySelector('.tampil-total');
-                const asliTotal = row.querySelector('.asli-total');
-                if (asliTotal && tampilTotal) {
-                    asliTotal.value = totalBaris;
-                    tampilTotal.value = totalBaris > 0 ? formatRupiah(totalBaris) : '';
-                }
-            });
+                rowIndex++;
+            } catch(e) {
+                console.error("Gagal menambah baris:", e);
+            }
         };
 
-
-        const formatRupiah = (angka) => new Intl.NumberFormat('id-ID').format(angka || 0);
-        const formatTgl = (tglStr) => tglStr ? tglStr.split('-').reverse().join('/') : '-';
-
-        // =======================================================
-        // 1. KALKULASI & FORMAT RUPIAH FORM (PER KENDARAAN)
-        // =======================================================
-        const vehicleCards = document.querySelectorAll('.vehicle-card');
-
-        vehicleCards.forEach(card => {
-            const vid = card.dataset.vid; // Ambil ID kendaraan dari atribut data-vid
-            
-            const pajakTampil = document.getElementById(`pajak_tampil_${vid}`);
-            const pajakAsli = document.getElementById(`pajak_asli_${vid}`);
-            const jasaTampil = document.getElementById(`jasa_tampil_${vid}`);
-            const jasaAsli = document.getElementById(`jasa_asli_${vid}`);
-            const labelTotal = document.getElementById(`total_kalkulasi_${vid}`);
-            
-            const detailLainInputs = card.querySelectorAll('.input-detail-lain');
-
-            const hitungTotal = () => {
-                let totalPajak = parseInt(pajakAsli.value) || 0;
-                let totalJasa = parseInt(jasaAsli.value) || 0;
-                let subtotalLain = 0;
-
-                detailLainInputs.forEach(inputTampil => {
-                    let idAsli = inputTampil.id.replace('tampil_', 'asli_');
-                    let inputAsli = document.getElementById(idAsli);
-                    let nilai = parseInt(inputAsli.value) || 0;
-                    subtotalLain += nilai;
-                    
-                    if(inputAsli.value > 0 && document.activeElement !== inputTampil) {
-                        inputTampil.value = formatRupiah(nilai);
-                    }
-                });
-
-                if(pajakAsli.value > 0 && document.activeElement !== pajakTampil) pajakTampil.value = formatRupiah(totalPajak);
-                if(jasaAsli.value > 0 && document.activeElement !== jasaTampil) jasaTampil.value = formatRupiah(totalJasa);
-                
-                labelTotal.innerText = 'Rp ' + formatRupiah(totalPajak + totalJasa + subtotalLain);
-            };
-
-            const attachListener = (tampil, asli) => {
-                tampil.addEventListener('input', function(e) {
-                    let angkaMurni = this.value.replace(/[^0-9]/g, '');
-                    asli.value = angkaMurni;
-                    this.value = angkaMurni ? formatRupiah(angkaMurni) : '';
-                    hitungTotal();
-                });
-            };
-
-            attachListener(pajakTampil, pajakAsli);
-            attachListener(jasaTampil, jasaAsli);
-            
-            detailLainInputs.forEach(inputTampil => {
-                let idAsli = inputTampil.id.replace('tampil_', 'asli_');
-                attachListener(inputTampil, document.getElementById(idAsli));
+        if(btnAddRow) {
+            btnAddRow.addEventListener('click', () => {
+                tambahBaris();
+                hitungUlangSemuaBaris();
             });
+        }
 
-            hitungTotal();
-        });
+        // ==============================================================
+        // MENGEMBALIKAN SEMUA BARIS YANG SEBELUMNYA DIKETIK JIKA ERROR
+        // ==============================================================
+        const oldTransaksiData = @json(old('transaksi', []));
+        if (oldTransaksiData && typeof oldTransaksiData === 'object') {
+            const keys = Object.keys(oldTransaksiData);
+            if (keys.length > 0) {
+                // Gambar ulang semua baris yang pernah ditambah user
+                keys.forEach(key => {
+                    tambahBaris(oldTransaksiData[key]);
+                });
+                // Hitung total akumulasinya SATU KALI setelah semua tergambar (Mencegah Crash/Nol)
+                setTimeout(() => { hitungUlangSemuaBaris(); }, 100);
+            }
+        }
 
-        // =======================================================
-        // 2. FORMAT RUPIAH UNTUK BIAYA GLOBAL
-        // =======================================================
+        // Event Input Biaya Global
         const inputGlobalTampil = document.querySelectorAll('.input-global-lain');
         inputGlobalTampil.forEach(tampil => {
-            let idAsli = tampil.id.replace('tampil_global_', 'asli_global_');
-            let asli = document.getElementById(idAsli);
+            const idAsli = tampil.id.replace('tampil_global_', 'asli_global_');
+            const asli = document.getElementById(idAsli);
             
             tampil.addEventListener('input', function(e) {
                 let angkaMurni = this.value.replace(/[^0-9]/g, '');
-                asli.value = angkaMurni || 0;
+                if (asli) asli.value = angkaMurni || 0;
                 this.value = angkaMurni ? formatRupiah(angkaMurni) : '';
                 hitungUlangSemuaBaris();
             });
         });
 
-        // =======================================================
-        // 3. LOGIKA PERUBAHAN LABEL ACC TIDAK HADIR
-        // =======================================================
         const checkGlobalAccLabel = () => {
             let has5Tahunan = false;
-            // Ubah pencarian menjadi .vehicle-row
             document.querySelectorAll('.vehicle-row').forEach(row => {
-                // Cek apakah dropdown kendaraan sudah diisi/dipilih
                 const selectKendaraan = row.querySelector('select[name$="[vehicle_id]"]');
                 if (selectKendaraan && selectKendaraan.value !== "") {
                     const layanan = row.querySelector('.select-layanan').value;
@@ -583,17 +554,16 @@
             const labelAccGlobal = document.getElementById('label_global_acc_tidak_hadir');
             if (labelAccGlobal) {
                 labelAccGlobal.innerText = has5Tahunan ? 'Acc Tidak Hadir Unit' : 'Acc Tidak Hadir STNK';
-                has5Tahunan ? labelAccGlobal.classList : labelAccGlobal.classList;
             }
         };
-        
-
 
         // ==============================================================
-        // 4. LOGIKA POP-UP PREVIEW INVOICE
+        // LOGIKA POP-UP PREVIEW INVOICE (DENGAN TOTAL FIX)
         // ==============================================================
         const previewTableBody = document.getElementById('previewTableBody');
-        
+        const btnShowPreview = document.getElementById('btnShowPreview');
+        const previewModal = document.getElementById('previewModal');
+
         function penyebut(nilai) {
             nilai = Math.abs(nilai);
             const huruf = ["", "Satu", "Dua", "Tiga", "Empat", "Lima", "Enam", "Tujuh", "Delapan", "Sembilan", "Sepuluh", "Sebelas"];
@@ -613,9 +583,6 @@
             let hasil = nilai < 0 ? "Minus " + penyebut(nilai).trim() : penyebut(nilai).trim();
             return hasil + " Rupiah";
         }
-
-        const btnShowPreview = document.getElementById('btnShowPreview');
-        const previewModal = document.getElementById('previewModal');
         
         if(btnShowPreview) {
             btnShowPreview.addEventListener('click', function() {
@@ -628,40 +595,39 @@
                 let selectedCount = 0;
                 let has5Tahunan = false;
                 
-                // AMBIL NILAI GLOBAL
-                const g_pnd  = parseInt(document.getElementById('asli_global_loket_pendaftaran').value) || 0;
-                const g_cf   = parseInt(document.getElementById('asli_global_loket_cek_fisik').value) || 0;
-                const g_acc  = parseInt(document.getElementById('asli_global_acc_tidak_hadir').value) || 0;
-                const g_dom  = parseInt(document.getElementById('asli_global_acc_domisili').value) || 0;
-                const g_pntp = parseInt(document.getElementById('asli_global_loket_penetapan').value) || 0;
-                const g_psh1 = parseInt(document.getElementById('asli_global_loket_pengesahan_1').value) || 0;
-                const g_psh2 = parseInt(document.getElementById('asli_global_loket_pengesahan_2').value) || 0;
-                const g_mtr  = parseInt(document.getElementById('asli_global_bea_materai').value) || 0;
+                const getVal = (id) => Number(document.getElementById(id)?.value) || 0;
+
+                const g_pnd  = getVal('asli_global_loket_pendaftaran');
+                const g_cf   = getVal('asli_global_loket_cek_fisik');
+                const g_acc  = getVal('asli_global_acc_tidak_hadir');
+                const g_dom  = getVal('asli_global_acc_domisili');
+                const g_pntp = getVal('asli_global_loket_penetapan');
+                const g_psh1 = getVal('asli_global_loket_pengesahan_1');
+                const g_psh2 = getVal('asli_global_loket_pengesahan_2');
+                const g_mtr  = getVal('asli_global_bea_materai');
                 
                 const subLainPerKendaraan = g_pnd + g_cf + g_acc + g_dom + g_pntp + g_psh1 + g_psh2 + g_mtr;
 
-                // UBAH PENCARIAN ELEMENT MENJADI .vehicle-row
                 document.querySelectorAll('.vehicle-row').forEach(row => {
                     const selectKendaraan = row.querySelector('select[name$="[vehicle_id]"]');
                     
-                    // Cek jika dropdown kendaraan tidak kosong (sudah pilih kendaraan)
                     if (selectKendaraan && selectKendaraan.value !== "") {
                         selectedCount++;
                         
-                        // Ambil Teks dari Dropdown yang dipilih (Nopol - Merk Type)
                         const nopolText = selectKendaraan.options[selectKendaraan.selectedIndex].text;
                         const splitText = nopolText.split(' - ');
                         const nopol = splitText[0];
                         const merk = splitText[1] || '-';
 
                         const layananElem = row.querySelector('.select-layanan');
-                        const layanan = layananElem.options[layananElem.selectedIndex].text;
+                        const layanan = layananElem ? layananElem.options[layananElem.selectedIndex].text : '-';
                         
-                        if (layananElem.value === 'Pajak 5 Tahunan') has5Tahunan = true;
+                        if (layananElem && layananElem.value === 'Pajak 5 Tahunan') has5Tahunan = true;
                         
-                        // Ambil Pajak dan Jasa dari class .asli-pajak dan .asli-jasa (Sesuai HTML baris dinamis)
-                        const pajak = parseInt(row.querySelector('.asli-pajak').value) || 0;
-                        const jasa = parseInt(row.querySelector('.asli-jasa').value) || 0;
+                        const elPajak = row.querySelector('.asli-pajak');
+                        const elJasa = row.querySelector('.asli-jasa');
+                        const pajak = elPajak ? (Number(elPajak.value) || 0) : 0;
+                        const jasa = elJasa ? (Number(elJasa.value) || 0) : 0;
                         
                         const subTotal = pajak + jasa + subLainPerKendaraan;
 
@@ -687,7 +653,6 @@
                     }
                 });
 
-                // UBAH PESAN ALERT JIKA KOSONG
                 if (selectedCount === 0) {
                     alert('Silakan tambahkan baris dan pilih minimal 1 kendaraan yang ingin diproses!');
                     return;
@@ -696,11 +661,10 @@
                 previewTableBody.innerHTML = htmlContent;
                 
                 const inputTglMasuk = document.querySelector('input[name="tgl_masuk"]');
-                document.getElementById('prevInvDate').innerText = `: ${formatTgl(inputTglMasuk.value)}`;
+                if(inputTglMasuk) document.getElementById('prevInvDate').innerText = `: ${formatTgl(inputTglMasuk.value)}`;
 
-                // Hitung Termin
-                const tglMulaiVal = document.getElementById('tgl_mulai_termin').value;
-                const tglJatuhVal = document.getElementById('tgl_jatuh_tempo').value;
+                const tglMulaiVal = document.getElementById('tgl_mulai_termin')?.value;
+                const tglJatuhVal = document.getElementById('tgl_jatuh_tempo')?.value;
                 const prevTerminHari = document.getElementById('prevTerminHari');
                 const prevCatatan = document.getElementById('prevCatatan');
                 
@@ -721,7 +685,6 @@
                     if(prevCatatan) prevCatatan.innerHTML = `<span class="text-red-500 italic">Silakan isi tanggal mulai dan jatuh tempo di form!</span>`;
                 }
 
-                // Render Total
                 document.getElementById('prevGrandTotalPajak').innerText = formatRupiah(grandPajak);
                 document.getElementById('prevGrandTotalJasa').innerText = formatRupiah(grandJasa);
                 document.getElementById('prevGrandTotalLain').innerText = formatRupiah(grandLain);
@@ -729,7 +692,6 @@
                 document.getElementById('prevTotalLainBawah').innerText = formatRupiah(grandLain);
                 document.getElementById('prevTerbilang').innerText = '** ' + terbilangJS(grandSemua) + ' **';
 
-                // Render Rincian Bawah
                 document.getElementById('prevPendaftaran').innerText = sumPendaftaran > 0 ? formatRupiah(sumPendaftaran) : '-';
                 document.getElementById('prevCekFisik').innerText = sumCekFisik > 0 ? formatRupiah(sumCekFisik) : '-';
                 document.getElementById('prevAccTidakHadir').innerText = sumAccTidakHadir > 0 ? formatRupiah(sumAccTidakHadir) : '-';
@@ -739,38 +701,32 @@
                 document.getElementById('prevPengesahan2').innerText = sumPengesahan2 > 0 ? formatRupiah(sumPengesahan2) : '-';
                 document.getElementById('prevMaterai').innerText = sumMaterai > 0 ? formatRupiah(sumMaterai) : '-';
 
-                // Label ACC
                 const prevLabelAcc = document.getElementById('prevLabelAcc');
                 if(prevLabelAcc) {
-                    if (has5Tahunan) {
-                        prevLabelAcc.innerText = 'Acc Tidak Hadir Unit';
-                        prevLabelAcc.classList;
-                    } else {
-                        prevLabelAcc.innerText = 'Acc Tidak Hadir STNK';
-                        prevLabelAcc.classList;
-                    }
+                    prevLabelAcc.innerText = has5Tahunan ? 'Acc Tidak Hadir Unit' : 'Acc Tidak Hadir STNK';
                 }
 
                 previewModal.classList.remove('hidden');
             });
         }
 
-        // =======================================================
-        // 5. KONTROL MODAL & SUBMIT FORM
-        // =======================================================
         const closeModal = () => {
             if(previewModal) previewModal.classList.add('hidden');
         };
         document.getElementById('btnCloseModal')?.addEventListener('click', closeModal);
         document.getElementById('btnCancelModal')?.addEventListener('click', closeModal);
 
-        document.getElementById('btnSubmitReal')?.addEventListener('click', function() {
+        document.getElementById('btnSubmitReal')?.addEventListener('click', function(e) {
+            if(container.querySelectorAll('.vehicle-row').length === 0) {
+                e.preventDefault();
+                alert('Silakan tambahkan baris dan pilih minimal 1 kendaraan!');
+                return;
+            }
+            // Cegah double submit
             this.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Menyimpan...';
-            this.disabled = true;
+            setTimeout(() => { this.disabled = true; }, 50); 
             document.getElementById('collectiveForm').submit();
         });
     });
 </script>
-
-
 @endsection
