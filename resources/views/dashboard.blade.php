@@ -8,9 +8,7 @@
 
   <!-- Kolom Pencarian Cepat (Quick Search) -->
     <div class="mb-6 bg-gradient-to-r from-blue-50/60 via-white to-white rounded-2xl shadow-sm border border-gray-300 p-2 pl-3 flex items-center gap-2 hover:shadow-md transition-shadow">
-        <div class="w-11 h-11 rounded-xl bg-blue-100 text-blue-600 flex items-center justify-center text-lg shrink-0">
-            <i class="fa-solid fa-magnifying-glass"></i>
-        </div>
+        
 
         <!-- Ubah route-nya menjadi 'dashboard' -->
         <form action="{{ route('dashboard') }}" method="GET" class="flex-1 flex items-center gap-2">

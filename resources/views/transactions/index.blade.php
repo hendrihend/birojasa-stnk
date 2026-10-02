@@ -35,11 +35,7 @@
     ?>
 
     <!-- Action Bar -->
-    <div class="flex flex-col md:flex-row justify-normal items-center gap-4 mb-6">
-        <a href="{{ route('transactions.create') }}" class="px-5 py-2.5 bg-gray-900 hover:bg-gray-800 text-white font-bold rounded-lg shadow-sm transition-colors w-full md:w-auto text-center">
-            + Buat Transaksi Baru
-        </a>
-        <!-- Kotak Pencarian -->
+    <div class="flex flex-col md:flex-row justify-between items-center gap-4 mb-6">
         <form action="{{ route('transactions.index') }}" method="GET" class="flex w-full md:w-auto gap-2">
             <input type="text" name="search" value="{{ request('search') }}" placeholder="Cari No. Invoice atau Nopol..." class="w-full md:w-80 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-shadow">
             
@@ -47,6 +43,12 @@
                 <a href="{{ route('transactions.index') }}" class="px-4 py-2 bg-red-100 hover:bg-red-200 text-red-600 font-bold rounded-lg transition-colors flex items-center">Reset</a>
             @endif
         </form>
+
+        <a href="{{ route('transactions.create') }}" class="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg shadow-sm transition-colors w-full md:w-auto text-center flex items-center justify-center gap-2 order-1 md:order-2">
+            + Buat Transaksi Baru
+        </a>
+        <!-- Kotak Pencarian -->
+        
     </div>
 
     <!-- Tabel Data Transaksi -->
