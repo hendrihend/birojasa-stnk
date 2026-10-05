@@ -23,7 +23,20 @@ class STNKRecordController extends Controller
                                        $q2->where('nama_lengkap', 'like', "%{$search}%");
                                    });
                              });
-            })->orderBy('tgl_jatuh_tempo_pajak', 'asc')->paginate(10)->withQueryString();
+            })
+            // Filter Status (dropdown: Aktif / Nonaktif)
+            ->when($request->status, function ($query, $status) {
+                return $query->where('status_aktif', $status === 'aktif');
+            })
+            // Filter Rentang Tanggal Jatuh Tempo Pajak (dari)
+            ->when($request->tgl_dari, function ($query, $tglDari) {
+                return $query->whereDate('tgl_jatuh_tempo_pajak', '>=', $tglDari);
+            })
+            // Filter Rentang Tanggal Jatuh Tempo Pajak (sampai)
+            ->when($request->tgl_sampai, function ($query, $tglSampai) {
+                return $query->whereDate('tgl_jatuh_tempo_pajak', '<=', $tglSampai);
+            })
+            ->orderBy('tgl_jatuh_tempo_pajak', 'asc')->paginate(10)->withQueryString();
         return view('stnk_records.index', compact('records'));
     }
 

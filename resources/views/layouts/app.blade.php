@@ -20,12 +20,19 @@
         <!-- Sidebar navigation -->
         <aside class="w-64 bg-blue-50 text-gray-600 flex flex-col border-r border-gray-200 flex-shrink-0" id="sidebar">
             <!-- Logo -->
-            <div class="h-[84px] px-5 flex items-center gap-3 border-b border-gray-100">
-                <img src="{{ asset('images/images_logo.png') }}" alt="Logo Biro Jasa STNK" class="w-10 h-10 object-contain flex-shrink-0">
-                <div id="sidebarBrand" class="overflow-hidden whitespace-nowrap">
-                    <h2 class="text-base font-bold tracking-wide text-gray-800 leading-tight">BIRO JASA</h2>
-                    <p class="text-[10px] text-blue-600 mt-0.5 uppercase tracking-widest font-semibold">Sistem Manajemen STNK</p>
+            <div id="sidebarTopBar" class="h-[84px] px-5 flex items-center justify-between gap-3 border-b border-gray-100">
+                <div id="sidebarLogoGroup" class="flex items-center gap-3 overflow-hidden">
+                    <img src="{{ asset('images/images_logo.png') }}" alt="Logo Biro Jasa STNK" class="w-10 h-10 object-contain flex-shrink-0">
+                    <div id="sidebarBrand" class="overflow-hidden whitespace-nowrap">
+                        <h2 class="text-base font-bold tracking-wide text-gray-800 leading-tight">BIRO JASA</h2>
+                        <p class="text-[10px] text-blue-600 mt-0.5 uppercase tracking-widest font-semibold">Sistem Manajemen STNK</p>
+                    </div>
                 </div>
+
+                <!-- Hamburger (dipindah dari header ke sidebar) -->
+                <button type="button" onclick="toggleSidebar()" class="w-8 h-8 flex items-center justify-center rounded-lg text-gray-500 hover:bg-blue-600/10 hover:text-blue-600 transition flex-shrink-0">
+                    <i class="fa-solid fa-bars text-sm"></i>
+                </button>
             </div>
             <!-- Navigasi -->
             <nav class="flex-1 overflow-y-auto py-4 space-y-1">
@@ -119,11 +126,6 @@
                 <!-- Header -->
                 <header class="h-[64px] bg-white border-b border-gray-200 flex items-center justify-between px-6 flex-shrink-0">
                     <div class="flex items-center gap-5">
-                        <!-- Hamburger -->
-                        <button type="button" onclick="toggleSidebar()" class="w-9 h-9 flex items-center justify-center rounded-lg text-gray-500 hover:bg-gray-100 hover:text-gray-700 transition">
-                            <i class="fa-solid fa-bars text-lg"></i>
-                        </button>
-
                         <!-- Page Title -->
                         <h1 class="text-2xl font-semibold text-gray-800">
                             @yield('header_title')
@@ -156,6 +158,8 @@
             const sidebar = document.getElementById('sidebar');
             const brand = document.getElementById('sidebarBrand');
             const footer = document.getElementById('sidebarFooter');
+            const topBar = document.getElementById('sidebarTopBar');
+            const logoGroup = document.getElementById('sidebarLogoGroup');
             const menuTexts = document.querySelectorAll('.menu-text');
 
             const isCollapsed = sidebar.classList.contains('w-20');
@@ -166,6 +170,10 @@
 
                 brand.classList.remove('hidden');
                 footer.classList.remove('hidden');
+                logoGroup.classList.remove('hidden');
+
+                topBar.classList.remove('justify-start', 'px-4');
+                topBar.classList.add('justify-between', 'px-5');
 
                 menuTexts.forEach(item => {
                     item.classList.remove('hidden');
@@ -177,6 +185,10 @@
 
                 brand.classList.add('hidden');
                 footer.classList.add('hidden');
+                logoGroup.classList.add('hidden');
+
+                topBar.classList.remove('justify-between', 'px-5');
+                topBar.classList.add('justify-start', 'px-4');
 
                 menuTexts.forEach(item => {
                     item.classList.add('hidden');
@@ -228,20 +240,20 @@
         document.addEventListener('DOMContentLoaded', function () {
             // Cari kotak input pencarian di halaman
             const searchInput = document.querySelector('input[name="search"]');
-            
+
             if (searchInput) {
                 let timeout = null;
-                
+
                 // Dengarkan setiap kali ada tombol keyboard yang ditekan
                 searchInput.addEventListener('input', function () {
                     // Batalkan pencarian sebelumnya jika user masih mengetik cepat
                     clearTimeout(timeout);
-                    
+
                     const query = this.value;
                     const form = this.closest('form');
                     // Buat URL pencarian
                     const url = form.action + '?search=' + encodeURIComponent(query);
-                    
+
                     // Beri jeda 500 milidetik (Setengah detik) setelah user berhenti mengetik
                     // agar server tidak kelebihan beban (teknik ini disebut Debouncing)
                     timeout = setTimeout(() => {
@@ -252,16 +264,16 @@
                                 // Ubah teks yang diterima menjadi elemen HTML
                                 const parser = new DOMParser();
                                 const doc = parser.parseFromString(html, 'text/html');
-                                
+
                                 // Ambil tabel dari hasil yang baru, lalu timpa tabel yang lama
                                 const newTable = doc.querySelector('table');
                                 const currentTable = document.querySelector('table');
-                                
+
                                 if (newTable && currentTable) {
                                     currentTable.innerHTML = newTable.innerHTML;
                                 }
                             });
-                    }, 500); 
+                    }, 500);
                 });
             }
         });
@@ -303,6 +315,6 @@
 
         });
     </script>
-    
+
 </body>
 </html>

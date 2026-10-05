@@ -42,12 +42,12 @@
             <input type="text" name="search" value="{{ request('search') }}" placeholder="Cari No. Invoice atau Nopol..." class="w-full md:w-80 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-shadow">
             
             @if(request('search'))
-                <a href="{{ route('transactions.index') }}" class="px-4 py-2 bg-red-100 hover:bg-red-200 text-red-600 font-bold rounded-lg transition-colors flex items-center">Reset</a>
+                <a href="{{ route('transactions.index') }}" class="px-4 py-2 bg-red-100 hover:bg-red-200 text-red-600 font-semibold rounded-lg transition-colors flex items-center">Reset</a>
             @endif
         </form>
 
-        <a href="{{ route('transactions.create') }}" class="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-lg shadow-sm transition-colors w-full md:w-auto text-center">
-            + Buat Transaksi Baru
+        <a href="{{ route('transactions.create') }}" class="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg shadow-sm transition-colors w-full md:w-auto text-center">
+            + Tambah Transaksi Baru
         </a>
     </div>
 
@@ -57,12 +57,12 @@
             <table class="w-full text-left border-collapse">
                 <thead>
                     <tr class="bg-gray-50 border-b border-gray-200 text-sm text-gray-600 uppercase tracking-wider">
-                        <th colspan="2" class="p-4 font-bold">No. Invoice & Tgl</th>
-                        <th class="p-4 font-bold">Kendaraan</th>
-                        <th class="p-4 font-bold">Layanan</th>
-                        <th class="p-4 font-bold text-center">Status</th>
-                        <th class="p-4 font-bold text-right">Total Biaya</th>
-                        <th class="p-4 font-bold text-center">Aksi</th>
+                        <th colspan="2" class="p-4 font-semibold">No. Invoice & Tgl</th>
+                        <th class="p-4 font-semibold">Kendaraan</th>
+                        <th class="p-4 font-semibold">Layanan</th>
+                        <th class="p-4 font-semibold text-center">Status</th>
+                        <th class="p-4 font-semibold text-right">Total Biaya</th>
+                        <th class="p-4 font-semibold text-center">Aksi</th>
                     </tr>
                 </thead>
                 <!-- ========================================================== -->
@@ -122,14 +122,14 @@
                                     {{ $statusGroup }}
                                 </span>
                             </td>
-                            <td class="p-4 text-right font-bold text-gray-800">
+                            <td class="p-4 text-right font-semibold text-gray-800">
                                 Rp {{ number_format($totalBiayaGroup, 0, ',', '.') }}
                             </td>
                             <td class="p-4 flex justify-center gap-2 items-center">
                                 
                                 <!-- Tombol Lihat Rincian (Khusus Kolektif) -->
                                 @if($jumlahKendaraan > 1)
-                                <button type="button" onclick="toggleRincian('{{ $baseInvoice }}')" title="Lihat Detail Invoice" class="text-blue-600 hover:bg-blue-100 font-bold px-2 py-1.5 rounded transition-colors text-xs flex items-center gap-1 border border-blue-200">
+                                <button type="button" onclick="toggleRincian('{{ $baseInvoice }}')" title="Lihat Detail Invoice" class="text-blue-600 hover:bg-blue-100 font-semibold px-2 py-1.5 rounded transition-colors text-xs flex items-center gap-1 border border-blue-200">
                                     <i class="fa-solid fa-list-ul"></i>
                                 </button>
                                 @endif
