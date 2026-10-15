@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Invoice - {{ $baseInvoice }}</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
     <style>
         @media print {
             @page { margin: 1cm; size: A4 portrait; }
@@ -66,6 +68,7 @@
         $sumPengesahan1 = $transactions->sum('loket_pengesahan_1');
         $sumPengesahan2 = $transactions->sum('loket_pengesahan_2');
         $sumMaterai = $transactions->sum('bea_materai');
+        $namaFile = 'Invoice-' . str_replace(['/', '\\'], '-', $baseInvoice) . '.pdf';
     @endphp
 
     <!-- Tombol Navigasi (Hilang saat diprint) -->
@@ -75,14 +78,14 @@
         </a>
         <div class="font-semibold text-lg text-gray-700">Preview Invoice</div>
         <div class="flex gap-3">
-            <button onclick="window.print()" class="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded shadow transition-colors flex items-center gap-2">
-                <i class="fa-solid fa-print"></i> Print / Cetak PDF
+            <button id="btn-pdf" onclick="downloadPDF()" class="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded shadow transition-colors flex items-center gap-2">
+                <i class="fa-solid fa-print"></i> Download PDF
             </button>
         </div>
     </div>
 
     <!-- KERTAS INVOICE -->
-    <div class="max-w-5xl mx-auto bg-white border border-gray-200 p-10 min-h-[29.7cm] shadow-lg print:shadow-none print:border-none relative">
+    <div id="invoice-paper" class="max-w-5xl mx-auto bg-white border border-gray-200 p-10 min-h-[29.7cm] shadow-lg print:shadow-none print:border-none relative">
         
         <!-- HEADER KOP SURAT -->
         <div class="flex justify-between items-start mb-8">
@@ -155,8 +158,8 @@
                     <td class="border border-gray-900 py-2 px-3 text-right text-xs">{{ number_format($trx->biaya_pajak, 0, ',', '.') }}</td>
                     <td class="border border-gray-900 py-2 px-3 text-right text-xs">{{ number_format($trx->biaya_jasa, 0, ',', '.') }}</td>
                     <td class="border border-gray-900 py-2 px-3 text-right text-xs">{{ number_format($trx->biaya_lain, 0, ',', '.') }}</td>
-                    <td class="border border-gray-900 py-2 px-3 text-right font-bold justify-between text-xs flex">
-                        <span>Rp</span> <span>{{ number_format($trx->total_biaya, 0, ',', '.') }}</span>
+                    <td class="border border-gray-900 py-2 px-3 font-bold text-xs"><div class="flex justify-between">
+                        <span>Rp</span> <span>{{ number_format($trx->total_biaya, 0, ',', '.') }}</span></div>
                     </td>
                 </tr>
                 @endforeach
@@ -167,8 +170,8 @@
                     <td class="border border-gray-900 py-3 px-3 text-right text-xs">{{ number_format($grandTotalPajak, 0, ',', '.') }}</td>
                     <td class="border border-gray-900 py-3 px-3 text-right text-xs">{{ number_format($grandTotalJasa, 0, ',', '.') }}</td>
                     <td class="border border-gray-900 py-3 px-3 text-right text-xs">{{ number_format($grandTotalLain, 0, ',', '.') }}</td>
-                    <td class="border border-gray-900 py-3 px-3 text-right flex justify-between text-xs">
-                        <span>Rp</span> <span>{{ number_format($grandTotalBiaya, 0, ',', '.') }}</span>
+                    <td class="border border-gray-900 py-3 px-3 text-xs"><div class="flex justify-between">
+                        <span>Rp</span> <span>{{ number_format($grandTotalBiaya, 0, ',', '.') }}</span></div>
                     </td>
                 </tr>
             </tbody>
@@ -260,11 +263,56 @@
             <!-- Rekening Bank Kanan -->
             <div class="text-right">
                 <p class="text-xs text-gray-500 mb-1">Pembayaran tagihan mohon ditransfer pada rekening tertera:</p>
-                <p class="font-black text-gray-900 text-lg tracking-wider">BANK BCA No.Rek 1234567890</p>
+                <p class="font-bold black text-gray-900 text-lg tracking-wider">BANK BCA No.Rek 1234567890</p>
                 <p class="text-sm font-bold text-gray-700">a/n NAMA PEMILIK BIRO JASA</p>
             </div>
         </div>
 
     </div>
+    <script>
+    
+    const NAMA_FILE = @json($namaFile);
+
+function downloadPDF() {
+    if (typeof html2pdf === 'undefined') {
+        alert('Library html2pdf belum termuat. Cek koneksi internet atau adblocker, lalu refresh halaman.');
+        return;
+    }
+
+    const element = document.getElementById('invoice-paper');
+    const btn = document.getElementById('btn-pdf');
+    if (!element || !btn) {
+        alert('Elemen invoice-paper atau btn-pdf tidak ditemukan. Cek id di HTML.');
+        return;
+    }
+
+    const label = btn.innerHTML;
+    const hapus = ['shadow-lg', 'border', 'min-h-[29.7cm]'];
+    hapus.forEach(c => element.classList.remove(c));
+
+    btn.disabled = true;
+    btn.innerText = 'Membuat PDF...';
+
+    const opt = {
+        margin: 10,
+        filename: NAMA_FILE,
+        image: { type: 'jpeg', quality: 0.98 },
+        html2canvas: { scale: 2, useCORS: true },
+        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
+        pagebreak: { mode: ['css', 'legacy'], avoid: 'tr' }
+    };
+
+    html2pdf().set(opt).from(element).save()
+        .catch(err => {
+            console.error(err);
+            alert('Gagal membuat PDF: ' + err.message);
+        })
+        .finally(() => {
+            hapus.forEach(c => element.classList.add(c));
+            btn.disabled = false;
+            btn.innerHTML = label;
+        });
+}
+</script>
 </body>
 </html>

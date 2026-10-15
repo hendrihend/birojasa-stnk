@@ -301,7 +301,7 @@
 <script>
     $(document).ready(function() {
         $('#pilih_klien').select2({
-            placeholder: "-- Ketik untuk mencari Klien --",
+            placeholder: "Ketik untuk mencari Klien",
             allowClear: true,
             width: '100%',
             language: { noResults: function() { return "Klien tidak ditemukan"; } }

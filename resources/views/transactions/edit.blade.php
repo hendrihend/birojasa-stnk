@@ -103,7 +103,7 @@
                 <div class="p-6 bg-blue-50/50 border-t border-gray-100">
                     <div class="flex justify-between items-center mb-4">
                         <h3 class="font-bold text-sm">Tabel Item Data Kendaraan</h3>
-                        <button type="button" id="btnAddRow" class="px-4 py-1.5 bg-gray-800 text-white text-xs font-bold rounded-lg hover:bg-gray-900 transition-colors whitespace-nowrap">
+                        <button type="button" id="btnAddRow" class="px-4 py-1.5 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-lg shadow-sm flex items-center gap-2">
                             + Tambah Baris
                         </button>
                     </div>
